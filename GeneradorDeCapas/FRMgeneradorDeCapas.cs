@@ -11,31 +11,31 @@ using System.Diagnostics;
 
 namespace GeneradorDeCapas
 {
-	public partial class FRMgeneradorDeCapas : Form
-	{
-		Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
-		{
-			{typeof(bool), "bool"},
-			{typeof(byte), "byte"},
-			{typeof(char), "char"},
-			{typeof(DateTime), "DateTime"},
-			{typeof(decimal),"double"},
-			{typeof(double),"double"},
-			{typeof(Guid),"Guid"},
-			{typeof(short),"int"},         // Int16
+    public partial class FRMgeneradorDeCapas : Form
+    {
+        Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
+        {
+            {typeof(bool), "bool"},
+            {typeof(byte), "byte"},
+            {typeof(char), "char"},
+            {typeof(DateTime), "DateTime"},
+            {typeof(decimal),"double"},
+            {typeof(double),"double"},
+            {typeof(Guid),"Guid"},
+            {typeof(short),"int"},         // Int16
 			{typeof(int),"int"},             // Int32
 			{typeof(long),"int"},           // Int64
 			{typeof(sbyte),"double"},
-			{typeof(float),"double"},         // Single
+            {typeof(float),"double"},         // Single
 			{typeof(string),"string"},
-			{typeof(TimeSpan),"TimeSpan"},
-			{typeof(ushort),"uint"},       // UInt16
+            {typeof(TimeSpan),"TimeSpan"},
+            {typeof(ushort),"uint"},       // UInt16
 			{typeof(uint),"uint"},           // UInt32
 			{typeof(ulong),"uint" }         // UInt64
 		};
 
-		Dictionary<string, string> Mapeo = new Dictionary<string, string>
-		{
+        Dictionary<string, string> Mapeo = new Dictionary<string, string>
+        {
             { "long",       "OdbcType.BigInt" },           // BIGINT
 			{ "int",        "OdbcType.Int" },              // INTEGER
 			{ "short",      "OdbcType.SmallInt" },         // SMALLINT
@@ -73,6 +73,8 @@ namespace GeneradorDeCapas
 			{typeof(ulong),"Campo" }         // UInt64
 		};
 
+        private const string ERROR = "ERROR";
+
         List<string> tablasBase = new List<string>();
 
         public FRMgeneradorDeCapas()
@@ -98,6 +100,7 @@ namespace GeneradorDeCapas
             string resultado = string.Empty;
             List<DataColumn> claves = new List<DataColumn>();
             List<DataColumn> camposConsulta = new List<DataColumn>();
+            List<string> columnasError = new List<string>();
             if (RDBdb2.Checked)
             {
                 try
@@ -117,10 +120,22 @@ namespace GeneradorDeCapas
                             claves.Add(columna);
                         }
                         camposConsulta.Add(columna);
+
+                        if (Tipo(columna) == ERROR)
+                        {
+                            foreach (ListViewItem item in LSVcampos.Items)
+                            {
+                                if (item.SubItems[0].Text == columna.ColumnName)
+                                {
+                                    columnasError.Add(item.SubItems[0].Text + " - TIPO: " + item.SubItems[1].Text);
+                                    break;
+                                }
+                            }
+                        }
+
                         i++;
                     }
                 }
-
                 catch (Exception ex)
                 {
                     resultado = ex.Message;
@@ -148,46 +163,68 @@ namespace GeneradorDeCapas
                         claves.Add(columna);
                     }
                     camposConsulta.Add(columna);
+
+                    if (Tipo(columna) == ERROR)
+                    {
+                        foreach (ListViewItem item in LSVcampos.Items)
+                        {
+                            if (item.SubItems[0].Text == columna.ColumnName)
+                            {
+                                columnasError.Add(item.SubItems[0].Text + " - TIPO: " + item.SubItems[1].Text);
+                                break;
+                            }
+                        }
+                    }
+
                     i++;
                 }
             }
-            if (CHKquitarEsquema.Checked)
-            {
-                string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                tabla = partes[partes.Length - 1];
-            }
-            if (CHKcontrollers.Checked)
-            {
-                resultado = Controllers(tabla, claves);
-                resultado += "\r\n";
-            }
-            if (CHKdto.Checked)
-            {
-                resultado += Dto(tabla, camposConsulta);
-                resultado += "\r\n";
-            }
-            if (CHKmodel.Checked)
-            {
-                resultado += Model(tabla, camposConsulta, claves);
-                resultado += "\r\n";
-            }
-            if (CHKrepositories.Checked)
-            {
-                resultado += Repositories(tabla, camposConsulta, claves, RDBdb2.Checked);
-                resultado += "\r\n";
-                resultado += RepositoriesInterface(tabla, claves);
-                resultado += "\r\n";
-            }
-            if (CHKservice.Checked)
-            {
-                resultado += Service(tabla, camposConsulta, claves, RDBdb2.Checked);
-                resultado += "\r\n";
-                resultado += ServiceInterface(tabla, claves, RDBdb2.Checked);
-            }
 
-            if (System.IO.Directory.Exists(TXTpathCapas.Text))
+            if (columnasError.Count > 0)
             {
-                Process.Start("explorer.exe", TXTpathCapas.Text);
+                string columnas = string.Join("\r\n", columnasError);
+                MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+            else
+            {
+                if (CHKquitarEsquema.Checked)
+                {
+                    string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    tabla = partes[partes.Length - 1];
+                }
+                if (CHKcontrollers.Checked)
+                {
+                    resultado = Controllers(tabla, claves);
+                    resultado += "\r\n";
+                }
+                if (CHKdto.Checked)
+                {
+                    resultado += Dto(tabla, camposConsulta);
+                    resultado += "\r\n";
+                }
+                if (CHKmodel.Checked)
+                {
+                    resultado += Model(tabla, camposConsulta, claves);
+                    resultado += "\r\n";
+                }
+                if (CHKrepositories.Checked)
+                {
+                    resultado += Repositories(tabla, camposConsulta, claves, RDBdb2.Checked);
+                    resultado += "\r\n";
+                    resultado += RepositoriesInterface(tabla, claves);
+                    resultado += "\r\n";
+                }
+                if (CHKservice.Checked)
+                {
+                    resultado += Service(tabla, camposConsulta, claves, RDBdb2.Checked);
+                    resultado += "\r\n";
+                    resultado += ServiceInterface(tabla, claves, RDBdb2.Checked);
+                }
+
+                if (System.IO.Directory.Exists(TXTpathCapas.Text))
+                {
+                    Process.Start("explorer.exe", TXTpathCapas.Text);
+                } 
             }
 
             return resultado;
@@ -1145,8 +1182,15 @@ namespace GeneradorDeCapas
 				return string.Empty;
 
 			Type tipo = column.DataType;
-			return TIPOS[tipo];
-		}
+            if (TIPOS.Keys.Contains(tipo))
+            {
+                return TIPOS[tipo];
+            }
+            else
+            {
+                return ERROR;
+            }
+        }
 
         private void BTNgenerar_Click(object sender, EventArgs e)
         {
