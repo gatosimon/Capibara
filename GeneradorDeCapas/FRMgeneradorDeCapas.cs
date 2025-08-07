@@ -342,7 +342,7 @@ namespace GeneradorDeCapas
             try
             {
                 string pathControllers = TXTpathCapas.Text + @"\Controllers\";
-                string pathClaseController = pathControllers + tabla + ".cs";
+                string pathClaseController = pathControllers + tabla + "Controller.cs";
                 if (!Directory.Exists(pathControllers))
                 {
                     Directory.CreateDirectory(pathControllers);
@@ -544,7 +544,7 @@ namespace GeneradorDeCapas
                 //ALTA
                 if (DB2)
                 {
-                    Repositories.AppendLine("\t\tpublic string alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
+                    Repositories.AppendLine("\t\tpublic (string, bool) alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
                     Repositories.AppendLine("\t\t{");
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
@@ -558,22 +558,22 @@ namespace GeneradorDeCapas
                             Repositories.AppendLine();
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Alta correcta de " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + "\", false);");
                             Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
                 else 
                 { 
-                    Repositories.AppendLine("\t\tpublic string alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
+                    Repositories.AppendLine("\t\tpublic (string, bool) alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
                     Repositories.AppendLine("\t\t{");
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
@@ -581,11 +581,11 @@ namespace GeneradorDeCapas
                             Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + "Model).State = EntityState.Added;");
                             Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
 		                    Repositories.AppendLine();
-                            Repositories.AppendLine("\t\t\t\treturn \"Alta correcta de " + nombreDeClase + "\";");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -593,7 +593,7 @@ namespace GeneradorDeCapas
                 //BAJA
                 if (DB2)
                 {
-                    Repositories.AppendLine("\t\tpublic string baja" + nombreDeClase + "(" + columnasClave + ", " + nombreDeClase + " " + nombreClasePrimeraMinuscula + ")");
+                    Repositories.AppendLine("\t\tpublic (string, bool) baja" + nombreDeClase + "(" + columnasClave + ", " + nombreDeClase + " " + nombreClasePrimeraMinuscula + ")");
                     Repositories.AppendLine("\t\t{");
             	        Repositories.AppendLine("\t\t\ttry");
             	        Repositories.AppendLine("\t\t\t{");            	             
@@ -610,22 +610,22 @@ namespace GeneradorDeCapas
                             Repositories.AppendLine();
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Eliminación correcta de " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + "\", false);");
                             Repositories.AppendLine("\t\t\t\t}");
             	        Repositories.AppendLine("\t\t\t}");
             	        Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	        Repositories.AppendLine("\t\t\t{");
-                	        Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                	        Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	        Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}"); 
                 }
                 else
                 {
-	                Repositories.AppendLine("\t\tpublic string baja" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
+	                Repositories.AppendLine("\t\tpublic (string, bool) baja" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
                         Repositories.AppendLine("\t\t{");
             	                Repositories.AppendLine("\t\t\ttry");
             	                Repositories.AppendLine("\t\t\t{");
@@ -633,11 +633,11 @@ namespace GeneradorDeCapas
                 	                Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + "Model).State = EntityState.Modified;");
                 	                Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
 			                        Repositories.AppendLine();
-                	                Repositories.AppendLine("\t\t\t\treturn \"Eliminación correcta de " + nombreDeClase + "\";");
+                	                Repositories.AppendLine("\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
             	                Repositories.AppendLine("\t\t\t}");
             	                Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	                Repositories.AppendLine("\t\t\t{");
-                	                Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                	                Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	                Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");                
                 }
@@ -648,7 +648,7 @@ namespace GeneradorDeCapas
                     bool where = clavesConsulta.Count > 0;
                     if (where)
                     {
-                        Repositories.AppendLine("\t\tpublic string modificacion" + nombreDeClase + "(" + columnasClave + ", " + nombreDeClase + " " + nombreClasePrimeraMinuscula + ")");
+                        Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + columnasClave + ", " + nombreDeClase + " " + nombreClasePrimeraMinuscula + ")");
                         Repositories.AppendLine("\t\t{");
             	            Repositories.AppendLine("\t\t\ttry");
             	            Repositories.AppendLine("\t\t\t{");            	             
@@ -665,23 +665,23 @@ namespace GeneradorDeCapas
                                 Repositories.AppendLine();
                                 Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                                 Repositories.AppendLine("\t\t\t\t{");
-                                    Repositories.AppendLine("\t\t\t\t\treturn \"Modificación correcta de " + nombreDeClase + "\";");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
                                 Repositories.AppendLine("\t\t\t\t}");
                                 Repositories.AppendLine("\t\t\t\telse");
                                 Repositories.AppendLine("\t\t\t\t{");
-                                    Repositories.AppendLine("\t\t\t\t\treturn \"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + "\";");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + "\", false);");
                                 Repositories.AppendLine("\t\t\t\t}");
             	            Repositories.AppendLine("\t\t\t}");
             	            Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	            Repositories.AppendLine("\t\t\t{");
-                	            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                	            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	            Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}"); 
                     }
                 }
                 else
                 {
-	                Repositories.AppendLine("\t\tpublic string modificacion" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
+	                Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
                         Repositories.AppendLine("\t\t{");
             	                Repositories.AppendLine("\t\t\ttry");
             	                Repositories.AppendLine("\t\t\t{");
@@ -689,11 +689,11 @@ namespace GeneradorDeCapas
                 	                Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + "Model).State = EntityState.Modified;");
                 	                Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
 			                        Repositories.AppendLine();
-                	                Repositories.AppendLine("\t\t\t\treturn \"Modificación correcta de " + nombreDeClase + "\";");
+                	                Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
             	                Repositories.AppendLine("\t\t\t}");
             	                Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	                Repositories.AppendLine("\t\t\t{");
-                	                Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                	                Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	                Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");                
                 }
@@ -815,7 +815,7 @@ namespace GeneradorDeCapas
                 // RECUPERAR
                 if(DB2)
                 {
-                    Repositories.AppendLine("\t\tpublic string recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
+                    Repositories.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula +"Model)");
                     Repositories.AppendLine("\t\t{");
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
@@ -829,22 +829,22 @@ namespace GeneradorDeCapas
                             Repositories.AppendLine();
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Recuperación correcta de " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn \"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + "\";");
+                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + "\", false);");
                             Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic string recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
+                    Repositories.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model)");
                     Repositories.AppendLine("\t\t{");
             	            Repositories.AppendLine("\t\t\ttry");
             	            Repositories.AppendLine("\t\t\t{");
@@ -852,11 +852,11 @@ namespace GeneradorDeCapas
                 	            Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + "Model).State = EntityState.Modified;");
                 	            Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
 			            Repositories.AppendLine();
-                	            Repositories.AppendLine("\t\t\t\treturn \"Recuperación correcta de " + nombreDeClase + "\";");
+                	            Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
             	            Repositories.AppendLine("\t\t\t}");
             	            Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	            Repositories.AppendLine("\t\t\t{");
-                	            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                	            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	            Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -906,17 +906,17 @@ namespace GeneradorDeCapas
 			RepositoriesInterface.AppendLine("{");
 			RepositoriesInterface.AppendLine("\tpublic interface " + nombreDeClase + "RepositoriesInterface");
 			RepositoriesInterface.AppendLine("\t{");
-            RepositoriesInterface.AppendLine("\t\tstring alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
+            RepositoriesInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine("\t\tstring baja" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
+            RepositoriesInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine("\t\tstring modificacion" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
+            RepositoriesInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
             RepositoriesInterface.AppendLine();
             RepositoriesInterface.AppendLine("\t\t" + nombreDeClase + " obtenerPorId(" + columnasClave + ");");
             RepositoriesInterface.AppendLine();
             RepositoriesInterface.AppendLine("\t\tList <" + nombreDeClase + "> obtenerTodos();");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine("\t\tstring recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
+            RepositoriesInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + nombreDeClase + " " + nombreClasePrimeraMinuscula + "Model);");
 			RepositoriesInterface.AppendLine("\t}");
 			RepositoriesInterface.AppendLine("}");
 
@@ -977,7 +977,7 @@ namespace GeneradorDeCapas
 			        Service.AppendLine("\t\t}");
                     Service.AppendLine();
                     //ALTA
-                    Service.AppendLine("\t\tpublic string alta" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ")");
+                    Service.AppendLine("\t\tpublic (string, bool) alta" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ")");
                     Service.AppendLine("\t\t{");
                         Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " nuevo = new " + nombreDeClase + (DB2 ? origen : string.Empty) + "()");
                         Service.AppendLine("\t\t\t{");
@@ -988,13 +988,13 @@ namespace GeneradorDeCapas
                             i++;
                         }
                         Service.AppendLine("\t\t\t};");
-                    Service.AppendLine("\t\t\tstring respuesta = _repositories.alta" + nombreDeClase + "(nuevo);");
+                    Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.alta" + nombreDeClase + "(nuevo);");
                     Service.AppendLine();
                     Service.AppendLine("\t\t\treturn respuesta;");
                     Service.AppendLine("\t\t}");
                     Service.AppendLine();
                     //BAJA
-                    Service.AppendLine("\t\tpublic string baja" + nombreDeClase + "(" + columnasClaveTipo + ", int codigoBaja, string motivoBaja)");
+                    Service.AppendLine("\t\tpublic (string, bool) baja" + nombreDeClase + "(" + columnasClaveTipo + ", int codigoBaja, string motivoBaja)");
                     Service.AppendLine("\t\t{");
                         Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasClave + ");");
                         Service.AppendLine("\t\t\tif (solicitado != null)");
@@ -1004,13 +1004,13 @@ namespace GeneradorDeCapas
                             Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
                             Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
                         Service.AppendLine("\t\t\t}");
-                        Service.AppendLine("\t\t\tstring respuesta = _repositories.baja" + nombreDeClase + "(solicitado);");
+                        Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.baja" + nombreDeClase + "(solicitado);");
                         Service.AppendLine();
                         Service.AppendLine("\t\t\treturn respuesta;");
                     Service.AppendLine("\t\t}");
                     Service.AppendLine();
                     //MODIFICACION
-                    Service.AppendLine("\t\tpublic string modificacion" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ")");
+                    Service.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ")");
                     Service.AppendLine("\t\t{");
                         string columnasBusqueda = string.Join(", ", (from c in claves select nombreClasePrimeraMinuscula + origen + "." + c.ColumnName).ToList());
                         Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasBusqueda + ");");
@@ -1019,7 +1019,7 @@ namespace GeneradorDeCapas
                             Service.AppendLine("\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
                             Service.AppendLine("\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
                         Service.AppendLine("\t\t\t}");
-                        Service.AppendLine("\t\t\tstring respuesta = _repositories.modificacion" + nombreDeClase + "(solicitado);");
+                        Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.modificacion" + nombreDeClase + "(solicitado);");
                         Service.AppendLine();
                         Service.AppendLine("\t\t\treturn respuesta;");
                     Service.AppendLine("\t\t}");
@@ -1075,7 +1075,7 @@ namespace GeneradorDeCapas
                     Service.AppendLine("\t\t}");
                     Service.AppendLine();
                     //RECUPERACION
-                    Service.AppendLine("\t\tpublic string recuperar" + nombreDeClase + "(" + columnasClaveTipo + ")");
+                    Service.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + columnasClaveTipo + ")");
                     Service.AppendLine("\t\t{");
                         Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasClave + ");");
                         Service.AppendLine("\t\t\tif (solicitado != null)");
@@ -1085,7 +1085,7 @@ namespace GeneradorDeCapas
                             Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = 0;");
                             Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
                         Service.AppendLine("\t\t\t}");
-                        Service.AppendLine("\t\t\tstring respuesta = _repositories.recupera" + nombreDeClase + "(solicitado);");
+                        Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.recupera" + nombreDeClase + "(solicitado);");
                         Service.AppendLine();
                         Service.AppendLine("\t\t\treturn respuesta;");
                     Service.AppendLine("\t\t}");
@@ -1137,17 +1137,17 @@ namespace GeneradorDeCapas
 			ServiceInterface.AppendLine("{");
 			    ServiceInterface.AppendLine("\tpublic interface " + nombreDeClase + "ServiceInterface");
 			    ServiceInterface.AppendLine("\t{");
-			        ServiceInterface.AppendLine("\t\tstring alta" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ");");
+			        ServiceInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ");");
 			        ServiceInterface.AppendLine();
-                    ServiceInterface.AppendLine("\t\tstring baja" + nombreDeClase + "(" + columnasClave + ", int codigoBaja, string motivoBaja);");
+                    ServiceInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + columnasClave + ", int codigoBaja, string motivoBaja);");
                     ServiceInterface.AppendLine();
-                    ServiceInterface.AppendLine("\t\tstring modificacion" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ");");
+                    ServiceInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + nombreDeClase + origen + " " + nombreClasePrimeraMinuscula + origen + ");");
 			        ServiceInterface.AppendLine();
 			        ServiceInterface.AppendLine("\t\t" + nombreDeClase + origen +" obtenerPorId(" + columnasClave + ");");
                     ServiceInterface.AppendLine();
                     ServiceInterface.AppendLine("\t\tList<" + nombreDeClase + "> obtenerTodos();");
 			        ServiceInterface.AppendLine();
-			        ServiceInterface.AppendLine("\t\tstring recuperar" + nombreDeClase + "(" + columnasClave + ");");
+			        ServiceInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + columnasClave + ");");
 			    ServiceInterface.AppendLine("\t}");
 			ServiceInterface.AppendLine("}");
 
