@@ -80,19 +80,27 @@ namespace GeneradorDeCapas
         public FRMgeneradorDeCapas()
 		{
 			InitializeComponent();
-		}
+        }
+
+        private const int PANEL1_MIN = 510; // ancho/alto mínimo que querés para Panel1
+
         private void FRMgeneradorDeCapas_Load(object sender, EventArgs e)
         {
+            SPCclase.Panel1MinSize = PANEL1_MIN;
+
             CMBservidor.SelectedIndex = 0;
             CMBservidor.Text = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
 
             LSVcampos.View = View.Details;
             LSVcampos.CheckBoxes = true;
-            LSVcampos.Columns.Add("Nombre", 150);
+            LSVcampos.Columns.Add("Nombre", 200);
             LSVcampos.Columns.Add("Tipo", 80);
             LSVcampos.Columns.Add("Longitud", 70);
             LSVcampos.Columns.Add("Escala", 60);
             LSVcampos.Columns.Add("Acepta Nulos", 100);
+
+            EnsureFormMinimumSize();
+            EnforceSplitBounds();
         }
 
         private string Clase(string tabla)
@@ -127,7 +135,11 @@ namespace GeneradorDeCapas
                             {
                                 if (item.SubItems[0].Text == columna.ColumnName)
                                 {
-                                    columnasError.Add(item.SubItems[0].Text + " - TIPO: " + item.SubItems[1].Text);
+                                    columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                    item.BackColor = System.Drawing.Color.Red;
+                                    item.ForeColor = System.Drawing.Color.White;
+                                    item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                    item.ListView.Refresh();
                                     break;
                                 }
                             }
@@ -143,40 +155,51 @@ namespace GeneradorDeCapas
             }
             else
             {
-                string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
-                tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
-
-                string query = "SELECT TOP 1 * FROM " + tabla;
-
-                DataSet DS = new DataSet();
-                using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
+                try
                 {
-                    DA.Fill(DS);
-                }
+                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                int i = 0;
-                foreach (DataColumn columna in DS.Tables[0].Columns)
-                {
-                    if (LSVcampos.Items[i].Checked)
+                    string query = "SELECT TOP 1 * FROM " + tabla;
+
+                    DataSet DS = new DataSet();
+                    using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
                     {
-                        claves.Add(columna);
+                        DA.Fill(DS);
                     }
-                    camposConsulta.Add(columna);
 
-                    if (Tipo(columna) == ERROR)
+                    int i = 0;
+                    foreach (DataColumn columna in DS.Tables[0].Columns)
                     {
-                        foreach (ListViewItem item in LSVcampos.Items)
+                        if (LSVcampos.Items[i].Checked)
                         {
-                            if (item.SubItems[0].Text == columna.ColumnName)
+                            claves.Add(columna);
+                        }
+                        camposConsulta.Add(columna);
+
+                        if (Tipo(columna) == ERROR)
+                        {
+                            foreach (ListViewItem item in LSVcampos.Items)
                             {
-                                columnasError.Add(item.SubItems[0].Text + " - TIPO: " + item.SubItems[1].Text);
-                                break;
+                                if (item.SubItems[0].Text == columna.ColumnName)
+                                {
+                                    columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                    item.BackColor = System.Drawing.Color.Red;
+                                    item.ForeColor = System.Drawing.Color.White;
+                                    item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                    item.ListView.Refresh();
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    i++;
+                        i++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resultado = ex.Message;
                 }
             }
 
@@ -341,7 +364,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathControllers = TXTpathCapas.Text + @"\Controllers\";
+                string pathControllers = TXTpathCapas.Text + tabla +  @"\Controllers\";
                 string pathClaseController = pathControllers + tabla + "Controller.cs";
                 if (!Directory.Exists(pathControllers))
                 {
@@ -419,7 +442,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathDto = TXTpathCapas.Text + @"\Dto\";
+                string pathDto = TXTpathCapas.Text + tabla + @"\Dto\";
                 string pathClaseDto = pathDto + tabla + "Dto.cs";
                 if (!Directory.Exists(pathDto))
                 {
@@ -493,7 +516,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathModel = TXTpathCapas.Text + @"\Model\";
+                string pathModel = TXTpathCapas.Text + tabla + @"\Model\";
                 string pathClaseModel = pathModel + tabla + "Model.cs";
                 if (!Directory.Exists(pathModel))
                 {
@@ -556,18 +579,26 @@ namespace GeneradorDeCapas
                                 Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "Model." + c.ColumnName + ");");
                             }
                             Repositories.AppendLine();
-                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
-                            Repositories.AppendLine("\t\t\t\t}");
-                            Repositories.AppendLine("\t\t\t\telse");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + "\", false);");
-                            Repositories.AppendLine("\t\t\t\t}");
+                            if (CHKtryOrIf.Checked)
+                            {
+                                Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                                Repositories.AppendLine("\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
+                            }
+                            else
+                            {
+                                Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                                Repositories.AppendLine("\t\t\t\telse");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + "\", false);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                            }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -608,18 +639,26 @@ namespace GeneradorDeCapas
                                 Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                             }
                             Repositories.AppendLine();
-                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
-                            Repositories.AppendLine("\t\t\t\t}");
-                            Repositories.AppendLine("\t\t\t\telse");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + "\", false);");
-                            Repositories.AppendLine("\t\t\t\t}");
+                            if (CHKtryOrIf.Checked)
+                            {
+                                Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                                Repositories.AppendLine("\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
+                            }
+                            else
+                            {
+                                Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                                Repositories.AppendLine("\t\t\t\telse");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + "\", false);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                            }
             	        Repositories.AppendLine("\t\t\t}");
             	        Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	        Repositories.AppendLine("\t\t\t{");
-                	        Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                	        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	        Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}"); 
                 }
@@ -663,18 +702,26 @@ namespace GeneradorDeCapas
                                     Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                                 }
                                 Repositories.AppendLine();
-                                Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                                Repositories.AppendLine("\t\t\t\t{");
-                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
-                                Repositories.AppendLine("\t\t\t\t}");
-                                Repositories.AppendLine("\t\t\t\telse");
-                                Repositories.AppendLine("\t\t\t\t{");
-                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + "\", false);");
-                                Repositories.AppendLine("\t\t\t\t}");
+                                if (CHKtryOrIf.Checked)
+                                {
+                                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                                    Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
+                                }
+                                else
+                                {
+                                    Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                                    Repositories.AppendLine("\t\t\t\t{");
+                                        Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
+                                    Repositories.AppendLine("\t\t\t\t}");
+                                    Repositories.AppendLine("\t\t\t\telse");
+                                    Repositories.AppendLine("\t\t\t\t{");
+                                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + "\", false);");
+                                    Repositories.AppendLine("\t\t\t\t}");
+                                }
             	            Repositories.AppendLine("\t\t\t}");
             	            Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	            Repositories.AppendLine("\t\t\t{");
-                	            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                	            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	            Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}"); 
                     }
@@ -827,18 +874,26 @@ namespace GeneradorDeCapas
                                 Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "Model." + c.ColumnName + ");");
                             }
                             Repositories.AppendLine();
-                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
-                            Repositories.AppendLine("\t\t\t\t}");
-                            Repositories.AppendLine("\t\t\t\telse");
-                            Repositories.AppendLine("\t\t\t\t{");
-                                Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + "\", false);");
-                            Repositories.AppendLine("\t\t\t\t}");
+                            if (CHKtryOrIf.Checked)
+                            {
+                                Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                                Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
+                            }
+                            else
+                            {
+                                Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                                Repositories.AppendLine("\t\t\t\telse");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                    Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + "\", false);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                            }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -865,7 +920,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathRepositories = TXTpathCapas.Text + @"\Repositories\";
+                string pathRepositories = TXTpathCapas.Text + tabla + @"\Repositories\";
                 string pathClaseRepositories = pathRepositories + tabla + "Repositories.cs";
                 if (!Directory.Exists(pathRepositories))
                 {
@@ -888,7 +943,7 @@ namespace GeneradorDeCapas
             return Repositories.ToString();
 		}
 
-		private string RepositoriesInterface(string tabla, List<DataColumn> claves)
+        private string RepositoriesInterface(string tabla, List<DataColumn> claves)
 		{
 			string nombreDeClase = tabla;
 			string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
@@ -922,7 +977,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathRepositories = TXTpathCapas.Text + @"\Repositories\";
+                string pathRepositories = TXTpathCapas.Text + tabla + @"\Repositories\";
                 string pathClaseRepositoriesInterface = pathRepositories + tabla + "RepositoriesInterface.cs";
                 if (!Directory.Exists(pathRepositories))
                 {
@@ -1094,7 +1149,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathService = TXTpathCapas.Text + @"\Service\";
+                string pathService = TXTpathCapas.Text + tabla + @"\Service\";
                 string pathClaseService = pathService + tabla + "Service.cs";
                 if (!Directory.Exists(pathService))
                 {
@@ -1153,7 +1208,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathService = TXTpathCapas.Text + @"\Service\";
+                string pathService = TXTpathCapas.Text + tabla + @"\Service\";
                 string pathClaseServiceInterface = pathService + tabla + "ServiceInterface.cs";
                 if (!Directory.Exists(pathService))
                 {
@@ -1480,7 +1535,85 @@ namespace GeneradorDeCapas
                 {
                 }
             }
+            ComprobarTiposDeCampos(tablaSeleccionada);
             LSVcampos.Refresh();
+        }
+
+        private void ComprobarTiposDeCampos(string tabla)
+        {
+            List<string> columnasError = new List<string>();
+            DataSet DS = null;
+
+            if (RDBdb2.Checked)
+            {
+                try
+                {
+                    Ejecutar datos = EstablecerConexion();
+                    datos.Consulta = "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
+                    DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+
+                    DS = DB2.ObtenerDataSet();
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            else
+            {
+                try
+                {
+                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+
+                    string query = "SELECT TOP 1 * FROM " + tabla;
+
+                    using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
+                    {
+                        DA.Fill(DS);
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+
+            if (DS != null)
+            {
+                int i = 0;
+                foreach (DataColumn columna in DS.Tables[0].Columns)
+                {
+                    if (Tipo(columna) == ERROR)
+                    {
+                        foreach (ListViewItem item in LSVcampos.Items)
+                        {
+                            if (item.SubItems[0].Text == columna.ColumnName)
+                            {
+                                columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                item.BackColor = System.Drawing.Color.Red;
+                                item.ForeColor = System.Drawing.Color.White;
+                                item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                item.ListView.Refresh();
+                                break;
+                            }
+                        }
+                    }
+
+                    i++;
+                }
+            }
+
+            if (columnasError.Count > 0)
+            {
+                string columnas = string.Join("\r\n", columnasError);
+                MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                BTNgenerar.Enabled = false;
+            }
+            else
+            {
+                BTNgenerar.Enabled = true;
+            }
         }
 
         private void RDBsql_CheckedChanged(object sender, EventArgs e)
@@ -1536,6 +1669,68 @@ namespace GeneradorDeCapas
             CMBtablas.SelectionStart = texto.Length;
             CMBtablas.SelectionLength = 0;
             CMBtablas.EndUpdate();
+        }
+
+        private void SPCclase_ClientSizeChanged(object sender, EventArgs e)
+        {
+            if (SPCclase.SplitterDistance < 313)
+            {
+                SPCclase.SplitterDistance = 313;
+                SPCclase.ResumeLayout();
+                SPCclase.Refresh();
+            }
+        }
+
+        private void EnforceSplitBounds()
+        {
+            if (SPCclase.Orientation == Orientation.Vertical)
+            {
+                int min = SPCclase.Panel1MinSize;
+                int max = Math.Max(min, SPCclase.Width - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
+
+                if (SPCclase.SplitterDistance < min)
+                    SPCclase.SplitterDistance = min;
+                else if (SPCclase.SplitterDistance > max)
+                    SPCclase.SplitterDistance = max;
+            }
+            else // Horizontal
+            {
+                int min = SPCclase.Panel1MinSize;
+                int max = Math.Max(min, SPCclase.Height - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
+
+                if (SPCclase.SplitterDistance < min)
+                    SPCclase.SplitterDistance = min;
+                else if (SPCclase.SplitterDistance > max)
+                    SPCclase.SplitterDistance = max;
+            }
+        }
+
+        private void EnsureFormMinimumSize()
+        {
+            // Calcula un MinimumSize del Form para que nunca puedas redimensionarlo
+            // por debajo de la suma de mínimos de los panels + splitter + márgenes del form.
+            if (SPCclase.Orientation == Orientation.Vertical)
+            {
+                int extra = this.Width - SPCclase.Width; // bordes + margen entre form y split
+                int requiredWidth = SPCclase.Panel1MinSize + SPCclase.Panel2MinSize + SPCclase.SplitterWidth + extra;
+                this.MinimumSize = new System.Drawing.Size(requiredWidth, this.MinimumSize.Height);
+            }
+            else
+            {
+                int extra = this.Height - SPCclase.Height;
+                int requiredHeight = SPCclase.Panel1MinSize + SPCclase.Panel2MinSize + SPCclase.SplitterWidth + extra;
+                this.MinimumSize = new System.Drawing.Size(this.MinimumSize.Width, requiredHeight);
+            }
+        }
+
+        private void FRMgeneradorDeCapas_Resize(object sender, EventArgs e)
+        {
+            EnforceSplitBounds();
+        }
+
+        private void SPCclase_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            EnforceSplitBounds();
         }
     }
 }

@@ -465,6 +465,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8D3117BF4F3B4078AB8AA058377DB8B3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8F2A8225608BCC4D2D3D87378B073376"
         "OwnerKey" = "8:_21482A43E980465C8893F4D7CD94381E"
         "MsmSig" = "8:_UNDEFINED"
@@ -821,12 +827,6 @@
         {
         "MsmKey" = "8:_FFFDB35773B4B570102DECBB63EF421D"
         "OwnerKey" = "8:_21482A43E980465C8893F4D7CD94381E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C30716C209E21D37AE45DC7765CB51DF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1297,6 +1297,12 @@
         "OwnerKey" = "8:_1E82ADC73DAEB36543827EF51303B9FF"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C30716C209E21D37AE45DC7765CB51DF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -1315,6 +1321,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -1331,12 +1353,34 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_2EB3B17A0DAC4E0DA43F2ADDB2242707"
+            {
+            "Name" = "8:Generador de Capas"
+            "Condition" = "8:"
+            "Object" = "8:_21482A43E980465C8893F4D7CD94381E"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_FD9B5932_4955_4F65_84A8_168366F9E847"
+            "InstallerClass" = "11:FALSE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -2744,6 +2788,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D3117BF4F3B4078AB8AA058377DB8B3"
+            {
+            "SourcePath" = "8:..\\GeneradorDeCapas\\capas64x64.ico"
+            "TargetName" = "8:capas64x64.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8F2A8225608BCC4D2D3D87378B073376"
             {
             "AssemblyRegister" = "3:1"
@@ -3855,7 +3919,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Generador de Capas"
         "ProductCode" = "8:{BE88D6FB-D7D3-4437-A437-15163030FF1F}"
-        "PackageCode" = "8:{64791409-ACA2-4A4F-B2F0-5F3D5A3F1042}"
+        "PackageCode" = "8:{A5605E8B-C0C2-41E4-8383-481CEA890A0D}"
         "UpgradeCode" = "8:{222D8F49-3D1F-4391-85CF-ABF3ABB8830C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3975,9 +4039,9 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_566B917C48F2479FBDC9258DA12BD6A0"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C31A23A83C9E4FBA8F826051BB99827C"
             {
-            "Name" = "8:Generador De Capas"
+            "Name" = "8:Generador de Capas"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -3986,10 +4050,10 @@
             "Target" = "8:_21482A43E980465C8893F4D7CD94381E"
             "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
             "WorkingFolder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
-            "Icon" = "8:_6D8C9CE2C3EA4292BAA3EF47127CACF0"
+            "Icon" = "8:_8D3117BF4F3B4078AB8AA058377DB8B3"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_BBEE223E35B14657ADB127EC108BE3C7"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_EC1F4FD07678406EA4547FE220328E1D"
             {
             "Name" = "8:Generador de Capas"
             "Arguments" = "8:"
@@ -4000,7 +4064,7 @@
             "Target" = "8:_21482A43E980465C8893F4D7CD94381E"
             "Folder" = "8:_C912CDEAC22641339C27250F8A9D0D81"
             "WorkingFolder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
-            "Icon" = "8:_6D8C9CE2C3EA4292BAA3EF47127CACF0"
+            "Icon" = "8:_8D3117BF4F3B4078AB8AA058377DB8B3"
             "Feature" = "8:"
             }
         }
