@@ -608,7 +608,7 @@ namespace GeneradorDeCapas
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -668,7 +668,7 @@ namespace GeneradorDeCapas
             	        Repositories.AppendLine("\t\t\t}");
             	        Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	        Repositories.AppendLine("\t\t\t{");
-                	        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                	        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	        Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}"); 
                 }
@@ -731,7 +731,7 @@ namespace GeneradorDeCapas
             	            Repositories.AppendLine("\t\t\t}");
             	            Repositories.AppendLine("\t\t\tcatch (Exception ex)");
             	            Repositories.AppendLine("\t\t\t{");
-                	            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                	            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
             	            Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}"); 
                     }
@@ -903,7 +903,7 @@ namespace GeneradorDeCapas
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
                         Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -1741,25 +1741,31 @@ namespace GeneradorDeCapas
 
         private void EnforceSplitBounds()
         {
-            if (SPCclase.Orientation == Orientation.Vertical)
+            try
             {
-                int min = SPCclase.Panel1MinSize;
-                int max = Math.Max(min, SPCclase.Width - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
+                if (SPCclase.Orientation == Orientation.Vertical)
+                {
+                    int min = SPCclase.Panel1MinSize;
+                    int max = Math.Max(min, SPCclase.Width - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
 
-                if (SPCclase.SplitterDistance < min)
-                    SPCclase.SplitterDistance = min;
-                else if (SPCclase.SplitterDistance > max)
-                    SPCclase.SplitterDistance = max;
+                    if (SPCclase.SplitterDistance < min)
+                        SPCclase.SplitterDistance = min;
+                    else if (SPCclase.SplitterDistance > max)
+                        SPCclase.SplitterDistance = max;
+                }
+                else // Horizontal
+                {
+                    int min = SPCclase.Panel1MinSize;
+                    int max = Math.Max(min, SPCclase.Height - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
+
+                    if (SPCclase.SplitterDistance < min)
+                        SPCclase.SplitterDistance = min;
+                    else if (SPCclase.SplitterDistance > max)
+                        SPCclase.SplitterDistance = max;
+                }
             }
-            else // Horizontal
+            catch (Exception)
             {
-                int min = SPCclase.Panel1MinSize;
-                int max = Math.Max(min, SPCclase.Height - SPCclase.Panel2MinSize - SPCclase.SplitterWidth);
-
-                if (SPCclase.SplitterDistance < min)
-                    SPCclase.SplitterDistance = min;
-                else if (SPCclase.SplitterDistance > max)
-                    SPCclase.SplitterDistance = max;
             }
         }
 
