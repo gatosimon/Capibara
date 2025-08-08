@@ -53,10 +53,13 @@ namespace GeneradorDeCapas
             this.CHKcontrollers = new System.Windows.Forms.CheckBox();
             this.RDBsql = new System.Windows.Forms.RadioButton();
             this.RDBdb2 = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
+            this.LBLdirectorioCapas = new System.Windows.Forms.Label();
             this.TXTpathCapas = new System.Windows.Forms.TextBox();
             this.BTNdirectorioCapas = new System.Windows.Forms.Button();
             this.FBDdirectorioCapas = new System.Windows.Forms.FolderBrowserDialog();
+            this.BTNbuscarSolucion = new System.Windows.Forms.Button();
+            this.CMBnamespaces = new System.Windows.Forms.ComboBox();
+            this.OFDlistarDeSolucion = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).BeginInit();
             this.SPCclase.Panel1.SuspendLayout();
             this.SPCclase.Panel2.SuspendLayout();
@@ -81,7 +84,7 @@ namespace GeneradorDeCapas
             this.BTNgenerar.Location = new System.Drawing.Point(1078, 22);
             this.BTNgenerar.Name = "BTNgenerar";
             this.BTNgenerar.Size = new System.Drawing.Size(75, 25);
-            this.BTNgenerar.TabIndex = 9;
+            this.BTNgenerar.TabIndex = 7;
             this.BTNgenerar.Text = "&Generar";
             this.BTNgenerar.UseVisualStyleBackColor = true;
             this.BTNgenerar.Click += new System.EventHandler(this.BTNgenerar_Click);
@@ -186,6 +189,7 @@ namespace GeneradorDeCapas
             this.LBLtablaSeleccionada.Name = "LBLtablaSeleccionada";
             this.LBLtablaSeleccionada.Size = new System.Drawing.Size(0, 16);
             this.LBLtablaSeleccionada.TabIndex = 13;
+            this.LBLtablaSeleccionada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LSVcampos
             // 
@@ -229,7 +233,7 @@ namespace GeneradorDeCapas
             this.TXTespacioDeNombres.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TXTespacioDeNombres.Location = new System.Drawing.Point(180, 62);
             this.TXTespacioDeNombres.Name = "TXTespacioDeNombres";
-            this.TXTespacioDeNombres.Size = new System.Drawing.Size(697, 23);
+            this.TXTespacioDeNombres.Size = new System.Drawing.Size(561, 23);
             this.TXTespacioDeNombres.TabIndex = 5;
             this.TXTespacioDeNombres.Text = "WebAPI";
             // 
@@ -263,7 +267,7 @@ namespace GeneradorDeCapas
             this.CHKtryOrIf.Location = new System.Drawing.Point(617, 16);
             this.CHKtryOrIf.Name = "CHKtryOrIf";
             this.CHKtryOrIf.Size = new System.Drawing.Size(148, 39);
-            this.CHKtryOrIf.TabIndex = 7;
+            this.CHKtryOrIf.TabIndex = 6;
             this.CHKtryOrIf.Text = "Usar Try en DB2   ";
             this.CHKtryOrIf.UseVisualStyleBackColor = true;
             // 
@@ -378,29 +382,29 @@ namespace GeneradorDeCapas
             this.RDBdb2.UseVisualStyleBackColor = true;
             this.RDBdb2.CheckedChanged += new System.EventHandler(this.RDBdb2_CheckedChanged);
             // 
-            // label1
+            // LBLdirectorioCapas
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 99);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(144, 16);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "DIRECTORIO CAPAS:";
+            this.LBLdirectorioCapas.AutoSize = true;
+            this.LBLdirectorioCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLdirectorioCapas.Location = new System.Drawing.Point(12, 99);
+            this.LBLdirectorioCapas.Name = "LBLdirectorioCapas";
+            this.LBLdirectorioCapas.Size = new System.Drawing.Size(144, 16);
+            this.LBLdirectorioCapas.TabIndex = 18;
+            this.LBLdirectorioCapas.Text = "DIRECTORIO CAPAS:";
             // 
             // TXTpathCapas
             // 
             this.TXTpathCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TXTpathCapas.Location = new System.Drawing.Point(180, 96);
             this.TXTpathCapas.Name = "TXTpathCapas";
-            this.TXTpathCapas.Size = new System.Drawing.Size(697, 23);
-            this.TXTpathCapas.TabIndex = 6;
+            this.TXTpathCapas.Size = new System.Drawing.Size(561, 23);
+            this.TXTpathCapas.TabIndex = 8;
             this.TXTpathCapas.Text = "C:\\temp\\";
             // 
             // BTNdirectorioCapas
             // 
             this.BTNdirectorioCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNdirectorioCapas.Location = new System.Drawing.Point(883, 95);
+            this.BTNdirectorioCapas.Location = new System.Drawing.Point(747, 95);
             this.BTNdirectorioCapas.Name = "BTNdirectorioCapas";
             this.BTNdirectorioCapas.Size = new System.Drawing.Size(38, 25);
             this.BTNdirectorioCapas.TabIndex = 7;
@@ -408,12 +412,41 @@ namespace GeneradorDeCapas
             this.BTNdirectorioCapas.UseVisualStyleBackColor = true;
             this.BTNdirectorioCapas.Click += new System.EventHandler(this.BTNdirectorioCapas_Click);
             // 
+            // BTNbuscarSolucion
+            // 
+            this.BTNbuscarSolucion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNbuscarSolucion.Location = new System.Drawing.Point(747, 61);
+            this.BTNbuscarSolucion.Name = "BTNbuscarSolucion";
+            this.BTNbuscarSolucion.Size = new System.Drawing.Size(161, 25);
+            this.BTNbuscarSolucion.TabIndex = 6;
+            this.BTNbuscarSolucion.Text = "Listar desde solución";
+            this.BTNbuscarSolucion.UseVisualStyleBackColor = true;
+            this.BTNbuscarSolucion.Click += new System.EventHandler(this.BTNbuscarSolucion_Click);
+            // 
+            // CMBnamespaces
+            // 
+            this.CMBnamespaces.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CMBnamespaces.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CMBnamespaces.FormattingEnabled = true;
+            this.CMBnamespaces.Location = new System.Drawing.Point(914, 61);
+            this.CMBnamespaces.Name = "CMBnamespaces";
+            this.CMBnamespaces.Size = new System.Drawing.Size(254, 24);
+            this.CMBnamespaces.TabIndex = 7;
+            this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
+            // 
+            // OFDlistarDeSolucion
+            // 
+            this.OFDlistarDeSolucion.Filter = "Solución .Net|*.sln";
+            // 
             // FRMgeneradorDeCapas
             // 
             this.ClientSize = new System.Drawing.Size(1186, 829);
+            this.Controls.Add(this.CMBnamespaces);
+            this.Controls.Add(this.BTNbuscarSolucion);
             this.Controls.Add(this.BTNdirectorioCapas);
             this.Controls.Add(this.TXTpathCapas);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.LBLdirectorioCapas);
             this.Controls.Add(this.RDBdb2);
             this.Controls.Add(this.RDBsql);
             this.Controls.Add(this.GPBgenerar);
@@ -469,11 +502,14 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.RadioButton RDBsql;
         private System.Windows.Forms.RadioButton RDBdb2;
         private System.Windows.Forms.CheckBox CHKquitarEsquema;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label LBLdirectorioCapas;
         private System.Windows.Forms.TextBox TXTpathCapas;
         private System.Windows.Forms.Button BTNdirectorioCapas;
         private System.Windows.Forms.FolderBrowserDialog FBDdirectorioCapas;
         private System.Windows.Forms.CheckBox CHKtryOrIf;
+        private System.Windows.Forms.Button BTNbuscarSolucion;
+        private System.Windows.Forms.ComboBox CMBnamespaces;
+        private System.Windows.Forms.OpenFileDialog OFDlistarDeSolucion;
     }
 }
 

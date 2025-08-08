@@ -67,6 +67,7 @@
     <Compile Include="BaseDatos.cs" />
     <Compile Include="ComandoDB2.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Configuracion.cs" />
     <Compile Include="FRMgeneradorDeCapas.cs">
       <SubType>Form</SubType>
     </Compile>

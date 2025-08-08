@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Odbc;
 using System.IO;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace GeneradorDeCapas
 {
@@ -77,9 +78,18 @@ namespace GeneradorDeCapas
 
         List<string> tablasBase = new List<string>();
 
+        Configuracion configuracion;
+
         public FRMgeneradorDeCapas()
 		{
 			InitializeComponent();
+            configuracion = Configuracion.Cargar();
+            TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
+            TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
+            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
+            OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
+
+            ListarNameSpaces();
         }
 
         private const int PANEL1_MIN = 510; // ancho/alto mínimo que querés para Panel1
@@ -364,7 +374,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathControllers = TXTpathCapas.Text + tabla +  @"\Controllers\";
+                string pathControllers = TXTpathCapas.Text + @"\" + tabla +  @"\Controllers\";
                 string pathClaseController = pathControllers + tabla + "Controller.cs";
                 if (!Directory.Exists(pathControllers))
                 {
@@ -442,7 +452,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathDto = TXTpathCapas.Text + tabla + @"\Dto\";
+                string pathDto = TXTpathCapas.Text  + @"\" + tabla + @"\Dto\";
                 string pathClaseDto = pathDto + tabla + "Dto.cs";
                 if (!Directory.Exists(pathDto))
                 {
@@ -516,7 +526,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathModel = TXTpathCapas.Text + tabla + @"\Model\";
+                string pathModel = TXTpathCapas.Text + @"\" + tabla + @"\Model\";
                 string pathClaseModel = pathModel + tabla + "Model.cs";
                 if (!Directory.Exists(pathModel))
                 {
@@ -920,7 +930,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathRepositories = TXTpathCapas.Text + tabla + @"\Repositories\";
+                string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
                 string pathClaseRepositories = pathRepositories + tabla + "Repositories.cs";
                 if (!Directory.Exists(pathRepositories))
                 {
@@ -977,7 +987,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathRepositories = TXTpathCapas.Text + tabla + @"\Repositories\";
+                string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
                 string pathClaseRepositoriesInterface = pathRepositories + tabla + "RepositoriesInterface.cs";
                 if (!Directory.Exists(pathRepositories))
                 {
@@ -1149,7 +1159,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathService = TXTpathCapas.Text + tabla + @"\Service\";
+                string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
                 string pathClaseService = pathService + tabla + "Service.cs";
                 if (!Directory.Exists(pathService))
                 {
@@ -1208,7 +1218,7 @@ namespace GeneradorDeCapas
 
             try
             {
-                string pathService = TXTpathCapas.Text + tabla + @"\Service\";
+                string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
                 string pathClaseServiceInterface = pathService + tabla + "ServiceInterface.cs";
                 if (!Directory.Exists(pathService))
                 {
@@ -1249,50 +1259,67 @@ namespace GeneradorDeCapas
 
         private void BTNgenerar_Click(object sender, EventArgs e)
         {
-			TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
-		}
+            try
+            {
+                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+
+                configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
+                configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
+                configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
+                configuracion.Guardar();
+            }
+            catch (Exception)
+            {
+            }
+        }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (RDBdb2.Checked)
+            try
             {
-                CMBbases.Items.Clear();
-                CMBbases.Items.AddRange(new object[] {"CONTABIL", "CONTAICD", "CONTAIMV", "CONTCBEL", "CONTIDS", "DOCUMENT", "GENERAL", "GIS", "HISTABM", "HISTORIC", "INFORMAT", "LICENCIA", "RRHH", "SISUS", "TRIBUTOS"});
-            }
-            else
-            {
-                CMBbases.Items.Clear();
-
-                string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=master;Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
-
-                try
+                if (RDBdb2.Checked)
                 {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    CMBbases.Items.Clear();
+                    CMBbases.Items.AddRange(new object[] { "CONTABIL", "CONTAICD", "CONTAIMV", "CONTCBEL", "CONTIDS", "DOCUMENT", "GENERAL", "GIS", "HISTABM", "HISTORIC", "INFORMAT", "LICENCIA", "RRHH", "SISUS", "TRIBUTOS" });
+                }
+                else
+                {
+                    CMBbases.Items.Clear();
+
+                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=master;Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+
+                    try
                     {
-                        connection.Open();
-
-                        string query = "SELECT name FROM sys.databases WHERE state = 0"; // Solo bases "online"
-
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        using (SqlConnection connection = new SqlConnection(connectionString))
                         {
-                            while (reader.Read())
+                            connection.Open();
+
+                            string query = "SELECT name FROM sys.databases WHERE state = 0"; // Solo bases "online"
+
+                            using (SqlCommand command = new SqlCommand(query, connection))
+                            using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                CMBbases.Items.Add(reader.GetString(0));
+                                while (reader.Read())
+                                {
+                                    CMBbases.Items.Add(reader.GetString(0));
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                    }
                 }
-                catch (Exception ex)
+                if (CMBbases.Items.Count > 0)
                 {
+                    CMBbases.SelectedIndex = 0;
                 }
+                CMBbases.Refresh();
             }
-            if (CMBbases.Items.Count > 0)
+            catch (Exception)
             {
-                CMBbases.SelectedIndex = 0;
             }
-            CMBbases.Refresh();
         }
 
         private void CMBbases_SelectedIndexChanged(object sender, EventArgs e)
@@ -1308,61 +1335,145 @@ namespace GeneradorDeCapas
         private Ejecutar EstablecerConexion()
         {
             Ejecutar datos = new Ejecutar();
-            datos.BaseDeDatos = CMBbases.Items[CMBbases.SelectedIndex].ToString();
-            datos.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+            try
+            {
+                datos.BaseDeDatos = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                datos.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+            }
+            catch (Exception)
+            {
+            }            
             return datos;
         }
 
         private void TablasBase()
         {
-            CMBtablas.Items.Clear();
-            CMBtablas.Text = string.Empty;
-            LBLtablaSeleccionada.Text = string.Empty;
-            LSVcampos.Items.Clear();
-            tablasBase = new List<string>();
-            if (RDBdb2.Checked)
+            try
             {
-                try
-                {
-                    Ejecutar datos = EstablecerConexion();
-                    ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLCOUNT Columnas FROM SYSIBM.SYSTABLES WHERE TYPE = 'T' AND CREATOR = 'DB2ADMIN' ORDER BY Nombre", datos.ObtenerConexion());
-                    
-                    while (Db2.HayRegistros())
-                    {
-                        tablasBase.Add(Db2.CampoStr("Nombre"));
-                        CMBtablas.Items.Add(Db2.CampoStr("Nombre"));
-                    }
-                    Db2.Cerrar();
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            else
-            {
-                string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                CMBtablas.Items.Clear();
+                CMBtablas.Text = string.Empty;
+                LBLtablaSeleccionada.Text = string.Empty;
+                LSVcampos.Items.Clear();
+                tablasBase = new List<string>();
+                if (RDBdb2.Checked)
                 {
                     try
                     {
-                        conn.Open();
+                        Ejecutar datos = EstablecerConexion();
+                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLCOUNT Columnas FROM SYSIBM.SYSTABLES WHERE TYPE = 'T' AND CREATOR = 'DB2ADMIN' ORDER BY Nombre", datos.ObtenerConexion());
 
-                        string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
+                        while (Db2.HayRegistros())
+                        {
+                            tablasBase.Add(Db2.CampoStr("Nombre"));
+                            CMBtablas.Items.Add(Db2.CampoStr("Nombre"));
+                        }
+                        Db2.Cerrar();
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+                else
+                {
+                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        try
+                        {
+                            conn.Open();
+
+                            string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
                                  FROM INFORMATION_SCHEMA.TABLES 
                                  WHERE TABLE_TYPE = 'BASE TABLE'
                                  ORDER BY TABLE_SCHEMA, TABLE_NAME";
 
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                string schema = reader.GetString(0);
-                                string table = reader.GetString(1);
-                                tablasBase.Add($"{schema}.{table}");
-                                CMBtablas.Items.Add($"{schema}.{table}");
+                                while (reader.Read())
+                                {
+                                    string schema = reader.GetString(0);
+                                    string table = reader.GetString(1);
+                                    tablasBase.Add($"{schema}.{table}");
+                                    CMBtablas.Items.Add($"{schema}.{table}");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+                LSVcampos.Refresh();
+                if (CMBtablas.Items.Count > 0)
+                {
+                    CMBtablas.SelectedIndex = 0;
+                }
+                CMBtablas.Refresh();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void CamposTabla()
+		{
+            try
+            {
+                LBLtablaSeleccionada.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString() + ":";
+                LSVcampos.Items.Clear();
+                string tablaSeleccionada = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                if (RDBdb2.Checked)
+                {
+                    try
+                    {
+                        Ejecutar datos = EstablecerConexion();
+                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SI' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'", datos.ObtenerConexion());
+                        Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+
+                        while (Db2.HayRegistros())
+                        {
+                            var nombre = Db2.CampoStr("Nombre").ToUpper();
+                            var tipo = Db2.CampoStr("Tipo").ToUpper();
+                            var longitud = Db2.CampoInt("Longitud").ToString();
+                            var escala = Db2.CampoInt("Escala").ToString();
+                            var aceptaNulos = Db2.CampoStr("AceptaNulos");
+
+                            ListViewItem item = new ListViewItem(nombre);
+                            item.SubItems.Add(tipo);
+                            item.SubItems.Add(longitud);
+                            item.SubItems.Add(escala);
+                            item.SubItems.Add(aceptaNulos);
+                            LSVcampos.Items.Add(item);
+                        }
+                        Db2.Cerrar();
+
+                        if (LSVcampos.Items.Count > 0)
+                        {
+                            Db2 = new ComandoDB2("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')", datos.ObtenerConexion());
+                            List<string> claves = new List<string>();
+                            while (Db2.HayRegistros())
+                            {
+                                claves.Add(Db2.CampoStr("Clave"));
+                            }
+                            Db2.Cerrar();
+
+                            int minCantidad = claves.Min(s => s.Count(c => c == '+'));
+
+                            // Paso 2: filtrar los strings con esa cantidad mínima
+                            List<string> clave = claves
+                                .Where(s => s.Count(c => c == '+') == minCantidad)
+                                .Select(s => s.Split('+'))
+                                .FirstOrDefault().ToList();
+
+                            foreach (ListViewItem item in LSVcampos.Items)
+                            {
+                                if (clave.Contains(item.SubItems[0].Text))
+                                {
+                                    item.Checked = true;
+                                }
                             }
                         }
                     }
@@ -1370,139 +1481,26 @@ namespace GeneradorDeCapas
                     {
                     }
                 }
-            }
-            LSVcampos.Refresh();
-            if (CMBtablas.Items.Count > 0)
-            {
-                CMBtablas.SelectedIndex = 0;
-            }
-            CMBtablas.Refresh();
-        }
-
-        private void CamposTabla()
-		{
-            LBLtablaSeleccionada.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString() + ":";
-            LSVcampos.Items.Clear();
-            string tablaSeleccionada = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
-            if (RDBdb2.Checked)
-            {
-                try
+                else
                 {
-                    Ejecutar datos = EstablecerConexion();
-                    ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SI' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'", datos.ObtenerConexion());
-                    Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
-
-                    while (Db2.HayRegistros())
+                    try
                     {
-                        var nombre = Db2.CampoStr("Nombre").ToUpper();
-                        var tipo = Db2.CampoStr("Tipo").ToUpper();
-                        var longitud = Db2.CampoInt("Longitud").ToString();
-                        var escala = Db2.CampoInt("Escala").ToString();
-                        var aceptaNulos = Db2.CampoStr("AceptaNulos");
+                        string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                        string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
 
-                        ListViewItem item = new ListViewItem(nombre);
-                        item.SubItems.Add(tipo);
-                        item.SubItems.Add(longitud);
-                        item.SubItems.Add(escala);
-                        item.SubItems.Add(aceptaNulos);
-                        LSVcampos.Items.Add(item);
-                    }
-                    Db2.Cerrar();
-
-                    if (LSVcampos.Items.Count > 0)
-                    {
-                        Db2 = new ComandoDB2("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')", datos.ObtenerConexion());
-                        List<string> claves = new List<string>();
-                        while (Db2.HayRegistros())
-                        {
-                            claves.Add(Db2.CampoStr("Clave"));
-                        }
-                        Db2.Cerrar();
-
-                        int minCantidad = claves.Min(s => s.Count(c => c == '+'));
-
-                        // Paso 2: filtrar los strings con esa cantidad mínima
-                        List<string> clave = claves
-                            .Where(s => s.Count(c => c == '+') == minCantidad)
-                            .Select(s => s.Split('+'))
-                            .FirstOrDefault().ToList();
-
-                        foreach (ListViewItem item in LSVcampos.Items)
-                        {
-                            if (clave.Contains(item.SubItems[0].Text))
-                            {
-                                item.Checked = true;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            else
-            {
-                try
-                {
-                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
-
-                    string query = $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SI' ELSE 'NO' END AS AceptaNulos "
-                        + "FROM sys.columns c "
-                        + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
-                        + "JOIN sys.tables t ON c.object_id = t.object_id "
-                        + "WHERE t.name = @tabla "
-                        + "ORDER BY c.column_id;";
-
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                        tablaSeleccionada = partes[partes.Length - 1];
-
-                        cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
-
-                        try
-                        {
-                            conn.Open();
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    var nombre = reader["Nombre"].ToString().ToUpper();
-                                    var tipo = reader["Tipo"].ToString().ToUpper();
-                                    var longitud = reader["Longitud"].ToString();
-                                    var escala = reader["Escala"].ToString();
-                                    var aceptaNulos = reader["AceptaNulos"].ToString();
-
-                                    ListViewItem item = new ListViewItem(nombre);
-                                    item.SubItems.Add(tipo);
-                                    item.SubItems.Add(longitud);
-                                    item.SubItems.Add(escala);
-                                    item.SubItems.Add(aceptaNulos);
-                                    LSVcampos.Items.Add(item);
-                                }
-                            }
-                            conn.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                        }
-                    }
-
-                    // Seteo las claves primarias si es que contiene
-                    if (LSVcampos.Items.Count > 0)
-                    {
-                        string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                        tablaSeleccionada = partes[partes.Length - 1];
-                        query = "SELECT KU.COLUMN_NAME Nombre "
-                            + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
-                            + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
-                            + "WHERE TC.TABLE_NAME = @tabla AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                        string query = $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SI' ELSE 'NO' END AS AceptaNulos "
+                            + "FROM sys.columns c "
+                            + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
+                            + "JOIN sys.tables t ON c.object_id = t.object_id "
+                            + "WHERE t.name = @tabla "
+                            + "ORDER BY c.column_id;";
 
                         using (SqlConnection conn = new SqlConnection(connectionString))
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
+                            string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                            tablaSeleccionada = partes[partes.Length - 1];
+
                             cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
 
                             try
@@ -1513,14 +1511,17 @@ namespace GeneradorDeCapas
                                     while (reader.Read())
                                     {
                                         var nombre = reader["Nombre"].ToString().ToUpper();
+                                        var tipo = reader["Tipo"].ToString().ToUpper();
+                                        var longitud = reader["Longitud"].ToString();
+                                        var escala = reader["Escala"].ToString();
+                                        var aceptaNulos = reader["AceptaNulos"].ToString();
 
-                                        foreach (ListViewItem item in LSVcampos.Items)
-                                        {
-                                            if (item.SubItems[0].Text.ToUpper() == nombre)
-                                            {
-                                                item.Checked = true;
-                                            }
-                                        }
+                                        ListViewItem item = new ListViewItem(nombre);
+                                        item.SubItems.Add(tipo);
+                                        item.SubItems.Add(longitud);
+                                        item.SubItems.Add(escala);
+                                        item.SubItems.Add(aceptaNulos);
+                                        LSVcampos.Items.Add(item);
                                     }
                                 }
                                 conn.Close();
@@ -1529,14 +1530,59 @@ namespace GeneradorDeCapas
                             {
                             }
                         }
+
+                        // Seteo las claves primarias si es que contiene
+                        if (LSVcampos.Items.Count > 0)
+                        {
+                            string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                            tablaSeleccionada = partes[partes.Length - 1];
+                            query = "SELECT KU.COLUMN_NAME Nombre "
+                                + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
+                                + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
+                                + "WHERE TC.TABLE_NAME = @tabla AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                            using (SqlConnection conn = new SqlConnection(connectionString))
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+
+                                try
+                                {
+                                    conn.Open();
+                                    using (SqlDataReader reader = cmd.ExecuteReader())
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            var nombre = reader["Nombre"].ToString().ToUpper();
+
+                                            foreach (ListViewItem item in LSVcampos.Items)
+                                            {
+                                                if (item.SubItems[0].Text.ToUpper() == nombre)
+                                                {
+                                                    item.Checked = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    conn.Close();
+                                }
+                                catch (Exception ex)
+                                {
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
                     }
                 }
-                catch (Exception ex)
-                {
-                }
+                ComprobarTiposDeCampos(tablaSeleccionada);
+                LSVcampos.Refresh();
+
             }
-            ComprobarTiposDeCampos(tablaSeleccionada);
-            LSVcampos.Refresh();
+            catch (Exception)
+            {
+            }        
         }
 
         private void ComprobarTiposDeCampos(string tabla)
@@ -1618,33 +1664,45 @@ namespace GeneradorDeCapas
 
         private void RDBsql_CheckedChanged(object sender, EventArgs e)
         {
-            CHKquitarEsquema.Visible = RDBsql.Checked;
-            CHKquitarEsquema.Refresh();
-            if (RDBsql.Checked)
+            try
             {
-                CMBservidor.Items.Clear();
-                CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION" });
-                if (CMBservidor.Items.Count > 0)
+                CHKquitarEsquema.Visible = RDBsql.Checked;
+                CHKquitarEsquema.Refresh();
+                if (RDBsql.Checked)
                 {
-                    CMBservidor.SelectedIndex = 0;
+                    CMBservidor.Items.Clear();
+                    CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION" });
+                    if (CMBservidor.Items.Count > 0)
+                    {
+                        CMBservidor.SelectedIndex = 0;
+                    }
+                    CMBservidor.Refresh();
                 }
-                CMBservidor.Refresh();
+            }
+            catch (Exception)
+            {
             }
         }
 
         private void RDBdb2_CheckedChanged(object sender, EventArgs e)
         {
-            if (RDBdb2.Checked)
+            try
             {
-                CHKquitarEsquema.Visible = false;
-                CHKquitarEsquema.Refresh();
-                CMBservidor.Items.Clear();
-                CMBservidor.Items.AddRange(new object[] {"133.123.120.120", "SERVER04", "SERVER01"});
-                if (CMBservidor.Items.Count > 0)
+                if (RDBdb2.Checked)
                 {
-                    CMBservidor.SelectedIndex = 0;
+                    CHKquitarEsquema.Visible = false;
+                    CHKquitarEsquema.Refresh();
+                    CMBservidor.Items.Clear();
+                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
+                    if (CMBservidor.Items.Count > 0)
+                    {
+                        CMBservidor.SelectedIndex = 0;
+                    }
+                    CMBservidor.Refresh();
                 }
-                CMBservidor.Refresh();
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -1731,6 +1789,87 @@ namespace GeneradorDeCapas
         private void SPCclase_SplitterMoved(object sender, SplitterEventArgs e)
         {
             EnforceSplitBounds();
+        }
+
+        private void BTNbuscarSolucion_Click(object sender, EventArgs e)
+        {
+            OFDlistarDeSolucion.ShowDialog();
+            ListarNameSpaces();
+        }
+
+        private void ListarNameSpaces()
+        {
+            List<string> namespaces = ObtenerNamespacesDesdeSolucion(OFDlistarDeSolucion.FileName);
+            foreach (string item in namespaces)
+            {
+                CMBnamespaces.Items.Add(item);
+            }
+        }
+
+        private List<string> ObtenerNamespacesDesdeSolucion(string slnPath)
+        {
+            var namespaces = new HashSet<string>();
+            try
+            {
+                var slnDir = Path.GetDirectoryName(slnPath);
+
+                // 1. Leer el .sln y encontrar todos los .csproj
+                var csprojPaths = File.ReadAllLines(slnPath)
+                    .Where(line => line.Contains(".csproj"))
+                    .Select(line =>
+                    {
+                    // El .sln tiene líneas como: Project("{...}") = "Nombre", "Carpeta\Proyecto.csproj", "{GUID}"
+                    var parts = line.Split(',');
+                        if (parts.Length >= 2)
+                        {
+                            var relativePath = parts[1].Trim().Trim('"');
+                            return Path.Combine(slnDir, relativePath);
+                        }
+                        return null;
+                    })
+                    .Where(path => !string.IsNullOrEmpty(path) && File.Exists(path))
+                    .ToList();
+
+                // 2. Para cada proyecto, buscar todos los .cs
+                foreach (var csproj in csprojPaths)
+                {
+                    var projDir = Path.GetDirectoryName(csproj);
+                    var csFiles = Directory.GetFiles(projDir, "*.cs", SearchOption.AllDirectories);
+
+                    foreach (var file in csFiles)
+                    {
+                        foreach (var ns in ExtraerNamespacesDesdeArchivo(file))
+                            namespaces.Add(ns);
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+            }
+            return namespaces.ToList();
+        }
+
+        private IEnumerable<string> ExtraerNamespacesDesdeArchivo(string filePath)
+        {
+            var regex = new Regex(@"^\s*namespace\s+([A-Za-z0-9_.]+)", RegexOptions.Multiline);
+            string contenido = File.ReadAllText(filePath);
+
+            foreach (Match match in regex.Matches(contenido))
+            {
+                yield return match.Groups[1].Value;
+            }
+        }
+
+        private void CMBnamespaces_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                TXTespacioDeNombres.Text = CMBnamespaces.Items[CMBnamespaces.SelectedIndex].ToString();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
