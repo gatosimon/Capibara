@@ -32,7 +32,8 @@ namespace GeneradorDeCapas
             {typeof(TimeSpan),"TimeSpan"},
             {typeof(ushort),"uint"},       // UInt16
 			{typeof(uint),"uint"},           // UInt32
-			{typeof(ulong),"uint" }         // UInt64
+			{typeof(ulong),"uint" },         // UInt64
+            {typeof(Byte[]), "byte[]" }
 		};
 
         Dictionary<string, string> Mapeo = new Dictionary<string, string>
@@ -77,6 +78,7 @@ namespace GeneradorDeCapas
         private const string ERROR = "ERROR";
 
         List<string> tablasBase = new List<string>();
+        List<string> camposTabla = new List<string>();
 
         Configuracion configuracion;
 
@@ -124,7 +126,7 @@ namespace GeneradorDeCapas
                 try
                 {
                     Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    datos.Consulta = "SELECT " + string.Join(", ", camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
                     ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
                     DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
 
@@ -171,7 +173,7 @@ namespace GeneradorDeCapas
                     string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    string query = "SELECT TOP 1 * FROM " + tabla;
+                    string query = "SELECT TOP 1 " + string.Join(", ", camposTabla) + " FROM " + tabla;
 
                     DataSet DS = new DataSet();
                     using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
@@ -1241,12 +1243,12 @@ namespace GeneradorDeCapas
             return ServiceInterface.ToString();
 		}
 
-		public string Tipo(DataColumn column)
+		public string Tipo(DataColumn columna)
 		{
-			if (column == null || column.DataType == null)
+			if (columna == null || columna.DataType == null)
 				return string.Empty;
 
-			Type tipo = column.DataType;
+			Type tipo = columna.DataType;
             if (TIPOS.Keys.Contains(tipo))
             {
                 return TIPOS[tipo];
@@ -1420,6 +1422,7 @@ namespace GeneradorDeCapas
 
         private void CamposTabla()
 		{
+            camposTabla = new List<string>();
             try
             {
                 LBLtablaSeleccionada.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString() + ":";
@@ -1441,6 +1444,7 @@ namespace GeneradorDeCapas
                             var escala = Db2.CampoInt("Escala").ToString();
                             var aceptaNulos = Db2.CampoStr("AceptaNulos");
 
+                            camposTabla.Add(nombre);
                             ListViewItem item = new ListViewItem(nombre);
                             item.SubItems.Add(tipo);
                             item.SubItems.Add(longitud);
@@ -1516,6 +1520,7 @@ namespace GeneradorDeCapas
                                         var escala = reader["Escala"].ToString();
                                         var aceptaNulos = reader["AceptaNulos"].ToString();
 
+                                        camposTabla.Add(nombre);
                                         ListViewItem item = new ListViewItem(nombre);
                                         item.SubItems.Add(tipo);
                                         item.SubItems.Add(longitud);
@@ -1636,12 +1641,19 @@ namespace GeneradorDeCapas
                         {
                             if (item.SubItems[0].Text == columna.ColumnName)
                             {
-                                columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
-                                item.BackColor = System.Drawing.Color.Red;
-                                item.ForeColor = System.Drawing.Color.White;
-                                item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
-                                item.ListView.Refresh();
-                                break;
+                                if (item.SubItems[1].Text.Trim() == "CHAR" && columna.DataType == typeof(Byte[]))
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                    item.BackColor = System.Drawing.Color.Red;
+                                    item.ForeColor = System.Drawing.Color.White;
+                                    item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                    item.ListView.Refresh();
+                                    break;
+                                }
                             }
                         }
                     }
