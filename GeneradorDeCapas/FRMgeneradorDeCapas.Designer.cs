@@ -46,6 +46,7 @@ namespace GeneradorDeCapas
             this.GPBgenerar = new System.Windows.Forms.GroupBox();
             this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
             this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
+            this.CHKtypeScript = new System.Windows.Forms.CheckBox();
             this.CHKservice = new System.Windows.Forms.CheckBox();
             this.CHKrepositories = new System.Windows.Forms.CheckBox();
             this.CHKmodel = new System.Windows.Forms.CheckBox();
@@ -84,7 +85,7 @@ namespace GeneradorDeCapas
             this.BTNgenerar.Location = new System.Drawing.Point(1078, 22);
             this.BTNgenerar.Name = "BTNgenerar";
             this.BTNgenerar.Size = new System.Drawing.Size(75, 25);
-            this.BTNgenerar.TabIndex = 7;
+            this.BTNgenerar.TabIndex = 8;
             this.BTNgenerar.Text = "&Generar";
             this.BTNgenerar.UseVisualStyleBackColor = true;
             this.BTNgenerar.Click += new System.EventHandler(this.BTNgenerar_Click);
@@ -244,6 +245,7 @@ namespace GeneradorDeCapas
             this.GPBgenerar.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GPBgenerar.Controls.Add(this.CHKtryOrIf);
             this.GPBgenerar.Controls.Add(this.CHKquitarEsquema);
+            this.GPBgenerar.Controls.Add(this.CHKtypeScript);
             this.GPBgenerar.Controls.Add(this.CHKservice);
             this.GPBgenerar.Controls.Add(this.CHKrepositories);
             this.GPBgenerar.Controls.Add(this.CHKmodel);
@@ -264,10 +266,10 @@ namespace GeneradorDeCapas
             this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKtryOrIf.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtryOrIf.Location = new System.Drawing.Point(617, 16);
+            this.CHKtryOrIf.Location = new System.Drawing.Point(715, 16);
             this.CHKtryOrIf.Name = "CHKtryOrIf";
             this.CHKtryOrIf.Size = new System.Drawing.Size(148, 39);
-            this.CHKtryOrIf.TabIndex = 6;
+            this.CHKtryOrIf.TabIndex = 7;
             this.CHKtryOrIf.Text = "Usar Try en DB2   ";
             this.CHKtryOrIf.UseVisualStyleBackColor = true;
             // 
@@ -278,13 +280,27 @@ namespace GeneradorDeCapas
             this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKquitarEsquema.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(472, 16);
+            this.CHKquitarEsquema.Location = new System.Drawing.Point(570, 16);
             this.CHKquitarEsquema.Name = "CHKquitarEsquema";
             this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 39);
-            this.CHKquitarEsquema.TabIndex = 5;
+            this.CHKquitarEsquema.TabIndex = 6;
             this.CHKquitarEsquema.Text = "Quitar esquema   ";
             this.CHKquitarEsquema.UseVisualStyleBackColor = true;
             this.CHKquitarEsquema.Visible = false;
+            // 
+            // CHKtypeScript
+            // 
+            this.CHKtypeScript.AutoSize = true;
+            this.CHKtypeScript.Checked = true;
+            this.CHKtypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKtypeScript.Dock = System.Windows.Forms.DockStyle.Left;
+            this.CHKtypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKtypeScript.Location = new System.Drawing.Point(472, 16);
+            this.CHKtypeScript.Name = "CHKtypeScript";
+            this.CHKtypeScript.Size = new System.Drawing.Size(98, 39);
+            this.CHKtypeScript.TabIndex = 5;
+            this.CHKtypeScript.Text = "TypeScript";
+            this.CHKtypeScript.UseVisualStyleBackColor = true;
             // 
             // CHKservice
             // 
@@ -510,6 +526,7 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Button BTNbuscarSolucion;
         private System.Windows.Forms.ComboBox CMBnamespaces;
         private System.Windows.Forms.OpenFileDialog OFDlistarDeSolucion;
+        private System.Windows.Forms.CheckBox CHKtypeScript;
     }
 }
 

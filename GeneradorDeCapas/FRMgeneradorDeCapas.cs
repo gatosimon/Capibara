@@ -14,79 +14,31 @@ namespace GeneradorDeCapas
 {
     public partial class FRMgeneradorDeCapas : Form
     {
-        /*ANTES TENIA ESTOS VALORES*/
-        //{typeof(bool), "bool"},
-        //{typeof(byte), "byte"},
-        //{typeof(char), "char"},
-        //{typeof(DateTime), "DateTime"},
-        //{typeof(decimal),"double"},
-        //{typeof(double),"double"},
-        //{typeof(Guid),"Guid"},
-        //{typeof(short),"int"},         // Int16
-        //{typeof(int),"int"},             // Int32
-        //{typeof(long),"int"},           // Int64
-        //{typeof(sbyte),"double"},
-        //{typeof(float),"double"},         // Single
-        //{typeof(string),"string"},
-        //{typeof(TimeSpan),"TimeSpan"},
-        //{typeof(ushort),"uint"},       // UInt16
-        //{typeof(uint),"uint"},           // UInt32
-        //{typeof(ulong),"uint" },         // UInt64
-        //{typeof(Byte[]), "byte[]" }
         Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
         {
-            //{typeof(Boolean),   "bool"},
             {typeof(bool),      "bool"},
-            //{typeof(Byte),      "byte"},
             {typeof(byte),      "byte"},
             {typeof(Byte[]),    "byte[]"},
-            //{typeof(Char),      "char"},
             {typeof(char),      "char"},
-            //{typeof(Char[]),    ERROR},
             {typeof(char[]),    ERROR},
             {typeof(DateTime),  "DateTime"},
             {typeof(DBNull),    ERROR},
-            //{typeof(Decimal),   "double"},
             {typeof(decimal),   "double"},
-            //{typeof(Double),    "double"},
             {typeof(double),    "double"},
-            //{typeof(float),     "double"},		// Single
             {typeof(Guid),      "Guid"},
             {typeof(int),       "int"},			// Int32
             {typeof(Int16),     "int"},			// Int16
-            //{typeof(Int32),     "int"},			// Int32
             {typeof(Int64),     "int"},			// Int64
-            //{typeof(long),      "int"},			// Int64
             {typeof(Object),    ERROR},
             {typeof(SByte),     "double"},
-            //{typeof(short),     "int"},			// Int16
             {typeof(Single),    "double"},
-            //{typeof(String),    "string"},
             {typeof(string),    "string"},
             {typeof(TimeSpan),  "TimeSpan"},
-            //{typeof(UInt16),    "uint"},		// UInt16
-            //{typeof(UInt32),    "uint"},		// UInt32
-            //{typeof(UInt64),    "uint"},		// UInt64
             {typeof(ushort),    "uint"},
             {typeof(uint),      "uint"},
             {typeof(ulong),     "uint"}
         };
 
-        /*ANTES TENIA ESTOS VALORES*/
-        //{ "long",       "OdbcType.BigInt" },           // BIGINT
-        //{ "int",        "OdbcType.Int" },              // INTEGER
-        //{ "short",      "OdbcType.SmallInt" },         // SMALLINT
-        //{ "byte",       "OdbcType.TinyInt" },          // SMALLINT usado como byte en DB2
-        //{ "decimal",    "OdbcType.Numeric" },          // DECIMAL(p,s), NUMERIC
-        //{ "float",      "OdbcType.Real" },             // REAL
-        //{ "double",     "OdbcType.Double" },           // DOUBLE
-        //{ "bool",       "OdbcType.SmallInt" },         // DB2 no tiene BOOLEAN real en versiones antiguas
-        //{ "string",     "OdbcType.VarChar" },          // VARCHAR, usar NVarChar si es Unicode
-        //{ "char",       "OdbcType.Char" },             // CHAR(1)
-        //{ "DateTime",   "OdbcType.DateTime" },         // TIMESTAMP (Date si sólo fecha)
-        //{ "TimeSpan",   "OdbcType.Time" },             // TIME
-        //{ "Guid",       "OdbcType.Char" },             // DB2 no tiene UNIQUEIDENTIFIER → usar CHAR(36)
-        //{ "byte[]",     "OdbcType.VarBinary" }         // BLOB, VARBINARY, BYTEA
         Dictionary<string, string> Mapeo = new Dictionary<string, string>
         {
             { "bool",       "OdbcType.Bit"},            //"OdbcType.Smallint"}, 	// DB2 no tiene BOOLEAN real en versiones antiguas
@@ -106,68 +58,35 @@ namespace GeneradorDeCapas
             { "uint",       "OdbcType.BigInt"}          // BIGINT
 		};
 
-        /*ANTES TENIA ESTOS VALORES*/
-        //{typeof(bool), "CampoBool"},
-        //{typeof(byte), "Campo"},
-        //{typeof(char), "CampoStr"},
-        //{typeof(DateTime), "CampoDateTime"},
-        //{typeof(decimal),"CampoDouble"},
-        //{typeof(double),"CampoDouble"},
-        //{typeof(Guid),"Campo"},
-        //{typeof(short),"CampoInt"},         // Int16
-        //{typeof(int),"CampoInt"},             // Int32
-        //{typeof(long),"CampoInt"},           // Int64
-        //{typeof(sbyte),"CampoDouble"},
-        //{typeof(float),"CampoDouble"},         // Single
-        //{typeof(string),"CampoStr"},
-        //{typeof(TimeSpan),"Campo"},
-        //{typeof(ushort),"Campo"},       // UInt16
-        //{typeof(uint),"Campo"},           // UInt32
-        //{typeof(ulong),"Campo" }         // UInt64
-        Dictionary<Type, string> Campo = new Dictionary<Type, string>
+        Dictionary<Type, string> PropiedadesTS = new Dictionary<Type, string>
         {
-            //{typeof(Boolean),   "CampoBool"},
-            {typeof(bool),      "CampoBool"},
-            //{typeof(Byte),      "CampoInt"},
-            {typeof(byte),      "CampoInt"},
-            {typeof(Byte[]),    "CampoStr"},
-            //{typeof(Char),      "CampoStr"},
-            {typeof(char),      "CampoStr"},
-            //{typeof(Char[]),    "Campo"},
-            {typeof(char[]),    "Campo"},
-            {typeof(DateTime),  "CampoDT"},
-            {typeof(DBNull),    "Campo"},
-            //{typeof(Decimal),   "CampoDouble"},
-            {typeof(decimal),   "CampoDouble"},
-            //{typeof(Double),    "CampoDouble"},
-            {typeof(double),    "CampoDouble"},
-            //{typeof(float),     "CampoDouble"},     // Single
-            {typeof(Guid),      "Campo"},
-            {typeof(int),       "CampoInt"},		// Int32
-            {typeof(Int16),     "CampoInt"},		// Int16
-            //{typeof(Int32),     "CampoInt"},		// Int32
-            {typeof(Int64),     "CampoLong"},		// Int64
-            //{typeof(long),      "CampoLong"},		// Int64
-            {typeof(Object),    "Campo"},
-            {typeof(SByte),     "CampoDouble"},
-            //{typeof(short),     "CampoInt"},		// Int16
-            {typeof(Single),    "CampoDouble"},
-            //{typeof(String),    "CampoStr"},
-            {typeof(string),    "CampoStr"},
-            {typeof(TimeSpan),  "CampoDT"},
-            //{typeof(UInt16),    "CampoLong"},		// UInt16
-            //{typeof(UInt32),    "CampoLong"},		// UInt32
-            //{typeof(UInt64),    "CampoLong"},		// UInt64
-            {typeof(ushort),    "CampoLong"},
-            {typeof(uint),      "CampoLong"},
-            {typeof(ulong),     "CampoLong"}
+            {typeof(bool),      "Boolean;"},
+            {typeof(byte),      "number = 0;"},
+            {typeof(Byte[]),    "string = '';"},
+            {typeof(char),      "string = '';"},
+            {typeof(char[]),    "any;"},
+            {typeof(DateTime),  "Date;"},
+            {typeof(DBNull),    "null;"},
+            {typeof(decimal),   "number = 0;"},
+            {typeof(double),    "number = 0;"},
+            {typeof(Guid),      "any;"},
+            {typeof(int),       "number = 0;"},		// Int32
+            {typeof(Int16),     "number = 0;"},		// Int16
+            {typeof(Int64),     "number = 0;"},		// Int64
+            {typeof(Object),    "any;"},
+            {typeof(SByte),     "number = 0;"},
+            {typeof(Single),    "number = 0;"},
+            {typeof(string),    "string = '';"},
+            {typeof(TimeSpan),  "any;"},
+            {typeof(ushort),    "number = 0;"},
+            {typeof(uint),      "number = 0;"},
+            {typeof(ulong),     "number = 0;"}
         };
 
         private const string ERROR = "ERROR";
 
         List<string> tablasBase = new List<string>();
         List<string> camposTabla = new List<string>();
-        
 
         Configuracion configuracion;
 
@@ -343,6 +262,12 @@ namespace GeneradorDeCapas
                     resultado += Service(tabla, camposConsulta, claves, RDBdb2.Checked);
                     resultado += "\r\n";
                     resultado += ServiceInterface(tabla, claves, RDBdb2.Checked);
+                    resultado += "\r\n";
+                }
+                if (CHKtypeScript.Checked)
+                {
+                    resultado += TypeScript(tabla, camposConsulta);
+                    resultado += "\r\n";
                 }
 
                 if (System.IO.Directory.Exists(TXTpathCapas.Text))
@@ -1331,6 +1256,48 @@ namespace GeneradorDeCapas
 
             return ServiceInterface.ToString();
 		}
+
+        private string TypeScript(string tabla, List<DataColumn> columnas)
+        {
+            string nombreDeClase = tabla;
+            StringBuilder typeSript = new StringBuilder();
+
+
+            typeSript.AppendLine("export class " + nombreDeClase + "{");
+                typeSript.AppendLine("\tconstructor(init?: Partial<" + nombreDeClase + ">) {");
+                    typeSript.AppendLine("\t\tObject.assign(this, init);");
+                typeSript.AppendLine("\t}");
+
+                foreach (var columna in columnas)
+                {
+                    typeSript.AppendLine("\tpublic " + columna.ColumnName + ": " + PropiedadesTS[columna.DataType]);
+                }
+            typeSript.AppendLine("}");
+
+            try
+            {
+                string pathTypeScript = TXTpathCapas.Text + @"\" + tabla + @"\TypeScript\";
+                string pathClaseTypeScript = pathTypeScript + tabla + ".ts";
+                if (!Directory.Exists(pathTypeScript))
+                {
+                    Directory.CreateDirectory(pathTypeScript);
+                }
+                if (File.Exists(pathClaseTypeScript))
+                {
+                    File.Delete(pathClaseTypeScript);
+                }
+
+                StreamWriter clase = new StreamWriter(pathClaseTypeScript);
+                clase.Write(typeSript.ToString());
+                clase.Flush();
+                clase.Close();
+            }
+            catch (Exception)
+            {
+            }
+
+            return typeSript.ToString();
+        }
 
 		public string Tipo(DataColumn columna)
 		{
