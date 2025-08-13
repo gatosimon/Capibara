@@ -240,15 +240,27 @@ namespace GeneradorDeCapas
                     resultado = Controllers(tabla, claves);
                     resultado += "\r\n";
                 }
+                else
+                {
+                    Controllers(tabla, claves);
+                }
                 if (CHKdto.Checked)
                 {
                     resultado += Dto(tabla, camposConsulta);
                     resultado += "\r\n";
                 }
+                else
+                {
+                    Dto(tabla, camposConsulta);
+                }
                 if (CHKmodel.Checked)
                 {
                     resultado += Model(tabla, camposConsulta, claves);
                     resultado += "\r\n";
+                }
+                else
+                {
+                    Model(tabla, camposConsulta, claves);
                 }
                 if (CHKrepositories.Checked)
                 {
@@ -257,6 +269,11 @@ namespace GeneradorDeCapas
                     resultado += RepositoriesInterface(tabla, claves);
                     resultado += "\r\n";
                 }
+                else
+                {
+                    Repositories(tabla, camposConsulta, claves, RDBdb2.Checked);
+                    RepositoriesInterface(tabla, claves);
+                }
                 if (CHKservice.Checked)
                 {
                     resultado += Service(tabla, camposConsulta, claves, RDBdb2.Checked);
@@ -264,10 +281,19 @@ namespace GeneradorDeCapas
                     resultado += ServiceInterface(tabla, claves, RDBdb2.Checked);
                     resultado += "\r\n";
                 }
+                else
+                {
+                    Service(tabla, camposConsulta, claves, RDBdb2.Checked);
+                    ServiceInterface(tabla, claves, RDBdb2.Checked);
+                }
                 if (CHKtypeScript.Checked)
                 {
                     resultado += TypeScript(tabla, camposConsulta);
                     resultado += "\r\n";
+                }
+                else
+                {
+                    TypeScript(tabla, camposConsulta);
                 }
 
                 if (System.IO.Directory.Exists(TXTpathCapas.Text))
@@ -388,26 +414,29 @@ namespace GeneradorDeCapas
             Controller.AppendLine("\t}");
             Controller.AppendLine("}");
 
-            try
+            if (CHKcontrollers.Checked)
             {
-                string pathControllers = TXTpathCapas.Text + @"\" + tabla +  @"\Controllers\";
-                string pathClaseController = pathControllers + tabla + "Controller.cs";
-                if (!Directory.Exists(pathControllers))
+                try
                 {
-                    Directory.CreateDirectory(pathControllers);
-                }
-                if (File.Exists(pathClaseController))
-                {
-                    File.Delete(pathClaseController);
-                }
+                    string pathControllers = TXTpathCapas.Text + @"\" + tabla + @"\Controllers\";
+                    string pathClaseController = pathControllers + tabla + "Controller.cs";
+                    if (!Directory.Exists(pathControllers))
+                    {
+                        Directory.CreateDirectory(pathControllers);
+                    }
+                    if (File.Exists(pathClaseController))
+                    {
+                        File.Delete(pathClaseController);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseController);
-                clase.Write(Controller.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseController);
+                    clase.Write(Controller.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return Controller.ToString();
@@ -466,26 +495,29 @@ namespace GeneradorDeCapas
 			Dto.AppendLine("\t}");
 			Dto.AppendLine("}");
 
-            try
+            if (CHKdto.Checked)
             {
-                string pathDto = TXTpathCapas.Text  + @"\" + tabla + @"\Dto\";
-                string pathClaseDto = pathDto + tabla + "Dto.cs";
-                if (!Directory.Exists(pathDto))
+                try
                 {
-                    Directory.CreateDirectory(pathDto);
-                }
-                if (File.Exists(pathClaseDto))
-                {
-                    File.Delete(pathClaseDto);
-                }
+                    string pathDto = TXTpathCapas.Text + @"\" + tabla + @"\Dto\";
+                    string pathClaseDto = pathDto + tabla + "Dto.cs";
+                    if (!Directory.Exists(pathDto))
+                    {
+                        Directory.CreateDirectory(pathDto);
+                    }
+                    if (File.Exists(pathClaseDto))
+                    {
+                        File.Delete(pathClaseDto);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseDto);
-                clase.Write(Dto.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseDto);
+                    clase.Write(Dto.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return Dto.ToString();
@@ -540,26 +572,29 @@ namespace GeneradorDeCapas
 			Modelo.AppendLine("}");
 			Modelo.AppendLine("\r\n");
 
-            try
+            if (CHKmodel.Checked)
             {
-                string pathModel = TXTpathCapas.Text + @"\" + tabla + @"\Model\";
-                string pathClaseModel = pathModel + tabla + "Model.cs";
-                if (!Directory.Exists(pathModel))
+                try
                 {
-                    Directory.CreateDirectory(pathModel);
-                }
-                if (File.Exists(pathClaseModel))
-                {
-                    File.Delete(pathClaseModel);
-                }
+                    string pathModel = TXTpathCapas.Text + @"\" + tabla + @"\Model\";
+                    string pathClaseModel = pathModel + tabla + "Model.cs";
+                    if (!Directory.Exists(pathModel))
+                    {
+                        Directory.CreateDirectory(pathModel);
+                    }
+                    if (File.Exists(pathClaseModel))
+                    {
+                        File.Delete(pathClaseModel);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseModel);
-                clase.Write(Modelo.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseModel);
+                    clase.Write(Modelo.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return Modelo.ToString();
@@ -944,28 +979,31 @@ namespace GeneradorDeCapas
 			    Repositories.AppendLine("\t}");
 			Repositories.AppendLine("}");
 
-            try
+            if (CHKrepositories.Checked)
             {
-                string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
-                string pathClaseRepositories = pathRepositories + tabla + "Repositories.cs";
-                if (!Directory.Exists(pathRepositories))
+                try
                 {
-                    Directory.CreateDirectory(pathRepositories);
+                    string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
+                    string pathClaseRepositories = pathRepositories + tabla + "Repositories.cs";
+                    if (!Directory.Exists(pathRepositories))
+                    {
+                        Directory.CreateDirectory(pathRepositories);
+                    }
+                    if (File.Exists(pathClaseRepositories))
+                    {
+                        File.Delete(pathClaseRepositories);
+                    }
+
+                    StreamWriter clase = new StreamWriter(pathClaseRepositories);
+                    clase.Write(Repositories.ToString());
+                    clase.Flush();
+                    clase.Close();
                 }
-                if (File.Exists(pathClaseRepositories))
+                catch (Exception)
                 {
-                    File.Delete(pathClaseRepositories);
                 }
 
-                StreamWriter clase = new StreamWriter(pathClaseRepositories);
-                clase.Write(Repositories.ToString());
-                clase.Flush();
-                clase.Close();
             }
-            catch (Exception)
-            {
-            }
-
             return Repositories.ToString();
 		}
 
@@ -1001,26 +1039,29 @@ namespace GeneradorDeCapas
 			RepositoriesInterface.AppendLine("\t}");
 			RepositoriesInterface.AppendLine("}");
 
-            try
+            if (CHKrepositories.Checked)
             {
-                string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
-                string pathClaseRepositoriesInterface = pathRepositories + tabla + "RepositoriesInterface.cs";
-                if (!Directory.Exists(pathRepositories))
+                try
                 {
-                    Directory.CreateDirectory(pathRepositories);
-                }
-                if (File.Exists(pathClaseRepositoriesInterface))
-                {
-                    File.Delete(pathClaseRepositoriesInterface);
-                }
+                    string pathRepositories = TXTpathCapas.Text + @"\" + tabla + @"\Repositories\";
+                    string pathClaseRepositoriesInterface = pathRepositories + tabla + "RepositoriesInterface.cs";
+                    if (!Directory.Exists(pathRepositories))
+                    {
+                        Directory.CreateDirectory(pathRepositories);
+                    }
+                    if (File.Exists(pathClaseRepositoriesInterface))
+                    {
+                        File.Delete(pathClaseRepositoriesInterface);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseRepositoriesInterface);
-                clase.Write(RepositoriesInterface.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseRepositoriesInterface);
+                    clase.Write(RepositoriesInterface.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return RepositoriesInterface.ToString();
@@ -1173,26 +1214,29 @@ namespace GeneradorDeCapas
                 Service.AppendLine("\t}");
 			Service.AppendLine("}");
 
-            try
+            if (CHKservice.Checked)
             {
-                string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
-                string pathClaseService = pathService + tabla + "Service.cs";
-                if (!Directory.Exists(pathService))
+                try
                 {
-                    Directory.CreateDirectory(pathService);
-                }
-                if (File.Exists(pathClaseService))
-                {
-                    File.Delete(pathClaseService);
-                }
+                    string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
+                    string pathClaseService = pathService + tabla + "Service.cs";
+                    if (!Directory.Exists(pathService))
+                    {
+                        Directory.CreateDirectory(pathService);
+                    }
+                    if (File.Exists(pathClaseService))
+                    {
+                        File.Delete(pathClaseService);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseService);
-                clase.Write(Service.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseService);
+                    clase.Write(Service.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return Service.ToString();
@@ -1232,26 +1276,29 @@ namespace GeneradorDeCapas
 			    ServiceInterface.AppendLine("\t}");
 			ServiceInterface.AppendLine("}");
 
-            try
+            if (CHKservice.Checked)
             {
-                string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
-                string pathClaseServiceInterface = pathService + tabla + "ServiceInterface.cs";
-                if (!Directory.Exists(pathService))
+                try
                 {
-                    Directory.CreateDirectory(pathService);
-                }
-                if (File.Exists(pathClaseServiceInterface))
-                {
-                    File.Delete(pathClaseServiceInterface);
-                }
+                    string pathService = TXTpathCapas.Text + @"\" + tabla + @"\Service\";
+                    string pathClaseServiceInterface = pathService + tabla + "ServiceInterface.cs";
+                    if (!Directory.Exists(pathService))
+                    {
+                        Directory.CreateDirectory(pathService);
+                    }
+                    if (File.Exists(pathClaseServiceInterface))
+                    {
+                        File.Delete(pathClaseServiceInterface);
+                    }
 
-                StreamWriter clase = new StreamWriter(pathClaseServiceInterface);
-                clase.Write(ServiceInterface.ToString());
-                clase.Flush();
-                clase.Close();
-            }
-            catch (Exception)
-            {
+                    StreamWriter clase = new StreamWriter(pathClaseServiceInterface);
+                    clase.Write(ServiceInterface.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                } 
             }
 
             return ServiceInterface.ToString();
@@ -1274,28 +1321,30 @@ namespace GeneradorDeCapas
                 }
             typeSript.AppendLine("}");
 
-            try
+            if (CHKtypeScript.Checked)
             {
-                string pathTypeScript = TXTpathCapas.Text + @"\" + tabla + @"\TypeScript\";
-                string pathClaseTypeScript = pathTypeScript + tabla + ".ts";
-                if (!Directory.Exists(pathTypeScript))
+                try
                 {
-                    Directory.CreateDirectory(pathTypeScript);
+                    string pathTypeScript = TXTpathCapas.Text + @"\" + tabla + @"\TypeScript\";
+                    string pathClaseTypeScript = pathTypeScript + tabla + ".ts";
+                    if (!Directory.Exists(pathTypeScript))
+                    {
+                        Directory.CreateDirectory(pathTypeScript);
+                    }
+                    if (File.Exists(pathClaseTypeScript))
+                    {
+                        File.Delete(pathClaseTypeScript);
+                    }
+
+                    StreamWriter clase = new StreamWriter(pathClaseTypeScript);
+                    clase.Write(typeSript.ToString());
+                    clase.Flush();
+                    clase.Close();
                 }
-                if (File.Exists(pathClaseTypeScript))
+                catch (Exception)
                 {
-                    File.Delete(pathClaseTypeScript);
                 }
-
-                StreamWriter clase = new StreamWriter(pathClaseTypeScript);
-                clase.Write(typeSript.ToString());
-                clase.Flush();
-                clase.Close();
             }
-            catch (Exception)
-            {
-            }
-
             return typeSript.ToString();
         }
 
