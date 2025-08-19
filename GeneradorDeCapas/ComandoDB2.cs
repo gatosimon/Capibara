@@ -166,7 +166,7 @@ namespace GeneradorDeCapas
 				}
 			}
 			catch (Exception ex)
-			{
+			{				
 			}
 		}
 
@@ -788,6 +788,20 @@ namespace GeneradorDeCapas
 		}
 
 		/// <summary>
+		/// Obtiene los datos en un dataset;
+		/// </summary>
+		/// <returns></returns>
+		// Token: 0x06000964 RID: 2404 RVA: 0x0001F740 File Offset: 0x0001D940
+		public DataSet ObtenerSchema()
+		{
+			DataSet DS = new DataSet();
+			OdbcDataAdapter DA = new OdbcDataAdapter(this._comando);
+			DA.FillSchema(DS, SchemaType.Source);
+			DA.Dispose();
+			return DS;
+		}
+
+		/// <summary>
 		/// Devuelve el objeto OdbcDataReader que está siendo utilizado.
 		/// </summary>
 		/// <returns></returns>
@@ -869,7 +883,6 @@ namespace GeneradorDeCapas
 			}
 			this._lector = this._comando.ExecuteReader();
 		}
-
 
 		// Token: 0x0400039D RID: 925
 		private OdbcConnection _conexionDB2;

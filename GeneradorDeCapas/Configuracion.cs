@@ -6,8 +6,24 @@ using System.Xml.Serialization;
 public class Configuracion
 {
     public string PathSolucion { get; set; }
+    public bool SQL { get; set; }
+    public string Servidor { get; set; }
+    public string Base { get; set; }
+    public string Tabla { get; set; }
+    public string Consulta { get; set; }
     public string UltimoNamespaceSeleccionado { get; set; }
     public string RutaPorDefectoResultados { get; set; }
+    public Configuracion()
+    {
+        PathSolucion = string.Empty;
+        SQL = false;
+        Servidor = string.Empty;
+        Base = string.Empty;
+        Tabla = string.Empty;
+        Consulta = string.Empty;
+        UltimoNamespaceSeleccionado = string.Empty;
+        RutaPorDefectoResultados = string.Empty;
+    }
 
     public static string ArchivoConfigPorDefecto
     {

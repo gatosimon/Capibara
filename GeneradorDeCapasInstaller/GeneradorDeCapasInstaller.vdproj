@@ -4089,7 +4089,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_4BE81E11115441998B59FEDA8A4F0E7B"
             {
-            "Name" = "8:Generador de Capas"
+            "Name" = "8:Capificator"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

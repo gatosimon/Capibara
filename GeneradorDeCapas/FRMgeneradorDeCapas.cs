@@ -27,7 +27,7 @@ namespace GeneradorDeCapas
             {typeof(double),    "double"},
             {typeof(Guid),      "Guid"},
             {typeof(int),       "int"},			// Int32
-            {typeof(Int16),     "int"},			// Int16
+            {typeof(Int16),     "int"},			// Int16s
             {typeof(Int64),     "int"},			// Int64
             {typeof(Object),    ERROR},
             {typeof(SByte),     "double"},
@@ -44,19 +44,46 @@ namespace GeneradorDeCapas
             { "bool",       "OdbcType.Bit"},            //"OdbcType.Smallint"}, 	// DB2 no tiene BOOLEAN real en versiones antiguas
             { "byte",       "OdbcType.TinyInt"},        // SMALLINT usado como byte en DB2
             { "byte[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
-            { "char",   "   OdbcType.Char"},            // CHAR(1)
+            { "Byte[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
+            { "char",       "OdbcType.Char"},           // CHAR(1)
+            { "char[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
             { "DateTime",   "OdbcType.DateTime"},	    // TIMESTAMP (Date si sólo fecha)
+            { "DBNull",     ERROR},
             { "decimal",    "OdbcType.Numeric" },       // DECIMAL(p,s), NUMERIC
             { "double",     "OdbcType.Double"},	        // DOUBLE
             { "float",      "OdbcType.Real" }, 	        // REAL
             { "Guid",       "OdbcType.Char"},           // DB2 no tiene UNIQUEIDENTIFIER → usar CHAR(36)
             { "int",        "OdbcType.Int"},            // INTEGER
+            { "Int16",      "OdbcType.SmallInt" },      // SMALLINT	
+            { "Int64",      "OdbcType.BigInt" },	    // BIGINT
             { "long",       "OdbcType.BigInt" },	    // BIGINT
+            { "Object",     ERROR},
+            { "SByte",      "OdbcType.Double"},	        // DOUBLE
             { "short",      "OdbcType.SmallInt" },      // SMALLINT	
+            { "Single",     "OdbcType.Double"},	        // DOUBLE
             { "string",     "OdbcType.VarChar"},	    // VARCHAR, usar NVarChar si es Unicode	
             { "TimeSpan",   "OdbcType.Time"},	        // TIME
-            { "uint",       "OdbcType.BigInt"}          // BIGINT
-		};
+            { "uint",       "OdbcType.BigInt"},          // BIGINT
+            { "ulong",       "OdbcType.BigInt"},          // BIGINT
+            { "ushort",      "OdbcType.BigInt"}          // BIGINT
+        };
+
+        // Diccionario de mapeo de tipos .NET a tipos DB2
+        Dictionary<Type, string> TIPOSDB2 = new Dictionary<Type, string>
+        {
+            { typeof(bool), "BOOLEAN" },        // System.Boolean (DB2 11+)
+            { typeof(byte[]), "BLOB" },         // System.Byte[] (puede mapear BLOB, VARBINARY, etc.)
+            { typeof(DateTime), "DATE" },       // System.DateTime (puede mapear DATE, TIME o TIMESTAMP)
+            { typeof(decimal), "DECIMAL" },     // System.Decimal
+            { typeof(double), "DOUBLE" },       // System.Double
+            { typeof(float), "REAL" },          // System.Single
+            { typeof(int), "INTEGER" },         // System.Int32
+            { typeof(long), "BIGINT" },         // System.Int64
+            { typeof(short), "SMALLINT" },      // System.Int16
+            { typeof(string), "VARCHAR" },      // System.String (puede ser CHAR, VARCHAR, CLOB, LONGVAR)
+            { typeof(TimeSpan), "TIME" },       // System.TimeSpan 
+            { typeof(object), "ROWID" }         // System.Object (para ROWID u otros tipos especiales)
+        };
 
         Dictionary<Type, string> PropiedadesTS = new Dictionary<Type, string>
         {
@@ -77,7 +104,7 @@ namespace GeneradorDeCapas
             {typeof(SByte),     "number = 0;"},
             {typeof(Single),    "number = 0;"},
             {typeof(string),    "string = '';"},
-            {typeof(TimeSpan),  "any;"},
+            {typeof(TimeSpan),  "Date;"},
             {typeof(ushort),    "number = 0;"},
             {typeof(uint),      "number = 0;"},
             {typeof(ulong),     "number = 0;"}
@@ -120,9 +147,10 @@ namespace GeneradorDeCapas
 		{
 			InitializeComponent();
             configuracion = Configuracion.Cargar();
+            RDBsql.Checked = configuracion.SQL;
             TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
             TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
-            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
+            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
             OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
 
             ListarNameSpaces();
@@ -134,8 +162,19 @@ namespace GeneradorDeCapas
         {
             SPCclase.Panel1MinSize = PANEL1_MIN;
 
-            CMBservidor.SelectedIndex = 0;
+            int indice = CMBservidor.FindStringExact(configuracion.Servidor);
+            CMBservidor.SelectedIndex = indice > -1 ? indice : 0;
             CMBservidor.Text = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+
+            indice = CMBbases.FindStringExact(configuracion.Base);
+            CMBbases.SelectedIndex = indice > -1 ? indice : 0;
+            CMBbases.Text = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+
+            indice = CMBtablas.FindStringExact(configuracion.Tabla);
+            CMBtablas.SelectedIndex = indice > -1 ? indice : 0;
+            CMBtablas.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+
+            TXTgenerarAPartirDeConsulta.Text = configuracion.Consulta;
 
             LSVcampos.View = View.Details;
             LSVcampos.CheckBoxes = true;
@@ -149,8 +188,12 @@ namespace GeneradorDeCapas
             EnforceSplitBounds();
         }
 
-        private string Clase(string tabla)
+        private string Clase(string tabla, string consulta = "")
         {
+            if (consulta.Trim().Length > 0)
+            {
+                tabla = "CONSULTA";
+            }
             string resultado = string.Empty;
             List<DataColumn> claves = new List<DataColumn>();
             List<DataColumn> camposConsulta = new List<DataColumn>();
@@ -160,7 +203,7 @@ namespace GeneradorDeCapas
                 try
                 {
                     Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = "SELECT " + string.Join(", ", camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    datos.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
                     ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
                     DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
 
@@ -169,29 +212,37 @@ namespace GeneradorDeCapas
                     int i = 0;
                     foreach (DataColumn columna in DS.Tables[0].Columns)
                     {
-                        if (LSVcampos.Items[i].Checked)
+                        // Si genero a partir de una Query
+                        if (consulta.Trim().Length > 0)
                         {
-                            claves.Add(columna);
+                            camposConsulta.Add(columna);
                         }
-                        camposConsulta.Add(columna);
-
-                        if (Tipo(columna) == ERROR)
+                        else
                         {
-                            foreach (ListViewItem item in LSVcampos.Items)
+                            if (LSVcampos.Items[i].Checked)
                             {
-                                if (item.SubItems[0].Text == columna.ColumnName)
+                                claves.Add(columna);
+                            }
+                            camposConsulta.Add(columna);
+
+                            if (Tipo(columna) == ERROR)
+                            {
+                                foreach (ListViewItem item in LSVcampos.Items)
                                 {
-                                    columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
-                                    item.BackColor = System.Drawing.Color.Red;
-                                    item.ForeColor = System.Drawing.Color.White;
-                                    item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
-                                    item.ListView.Refresh();
-                                    break;
+                                    if (item.SubItems[0].Text == columna.ColumnName)
+                                    {
+                                        columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                        item.BackColor = System.Drawing.Color.Red;
+                                        item.ForeColor = System.Drawing.Color.White;
+                                        item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                        item.ListView.Refresh();
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        i++;
+                            i++;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -207,7 +258,7 @@ namespace GeneradorDeCapas
                     string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    string query = "SELECT TOP 1 " + string.Join(", ", camposTabla) + " FROM " + tabla;
+                    string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", camposTabla) + " FROM " + tabla;
 
                     DataSet DS = new DataSet();
                     using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
@@ -218,29 +269,37 @@ namespace GeneradorDeCapas
                     int i = 0;
                     foreach (DataColumn columna in DS.Tables[0].Columns)
                     {
-                        if (LSVcampos.Items[i].Checked)
+                        // Si genero a partir de una Query
+                        if (consulta.Trim().Length > 0)
                         {
-                            claves.Add(columna);
+                            camposConsulta.Add(columna);
                         }
-                        camposConsulta.Add(columna);
-
-                        if (Tipo(columna) == ERROR)
+                        else
                         {
-                            foreach (ListViewItem item in LSVcampos.Items)
+                            if (LSVcampos.Items[i].Checked)
                             {
-                                if (item.SubItems[0].Text == columna.ColumnName)
+                                claves.Add(columna);
+                            }
+                            camposConsulta.Add(columna);
+
+                            if (Tipo(columna) == ERROR)
+                            {
+                                foreach (ListViewItem item in LSVcampos.Items)
                                 {
-                                    columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
-                                    item.BackColor = System.Drawing.Color.Red;
-                                    item.ForeColor = System.Drawing.Color.White;
-                                    item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
-                                    item.ListView.Refresh();
-                                    break;
+                                    if (item.SubItems[0].Text == columna.ColumnName)
+                                    {
+                                        columnasError.Add(item.SubItems[0].Text + "\r\n     TIPO: " + item.SubItems[1].Text.Trim() + " (" + columna.DataType.ToString() + ")");
+                                        item.BackColor = System.Drawing.Color.Red;
+                                        item.ForeColor = System.Drawing.Color.White;
+                                        item.Font = new System.Drawing.Font(item.Font.FontFamily, item.Font.Size, System.Drawing.FontStyle.Bold);
+                                        item.ListView.Refresh();
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        i++;
+                            i++;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -352,8 +411,8 @@ namespace GeneradorDeCapas
             Controller.AppendLine("using System.Threading.Tasks;");
             Controller.AppendLine("using System.Web.Http;");
             Controller.AppendLine("using System.Web.Http.Cors;");
-            Controller.AppendLine("using " + espacioDeNombres + "." + origen + ";"); 
-            Controller.AppendLine("using " + espacioDeNombres + "." + SERVICE + ";");
+            if(espacioDeNombres.Trim().Length > 0) Controller.AppendLine("using " + espacioDeNombres + "." + origen + ";");
+            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine("using " + espacioDeNombres + "." + SERVICE + ";");
             Controller.AppendLine();
             Controller.AppendLine("namespace " + espacioDeNombres + ".Controllers");
             Controller.AppendLine("{");
@@ -480,7 +539,6 @@ namespace GeneradorDeCapas
 		private string ArmarDto(List<DataColumn> columnas)
 		{
 			string nombreDeClase = TABLA;
-			string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
 			string espacioDeNombres = TXTespacioDeNombres.Text;
 
 			StringBuilder Dto = new StringBuilder();
@@ -561,7 +619,6 @@ namespace GeneradorDeCapas
 		private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
 		{
 			string nombreDeClase = TABLA;
-			string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
 			string espacioDeNombres = TXTespacioDeNombres.Text;
 
 			StringBuilder Modelo = new StringBuilder();
@@ -646,8 +703,8 @@ namespace GeneradorDeCapas
 			List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
 			string columnasClave = string.Join(", ", (from c in claves select Tipo(c) + " " + c.ColumnName).ToList());
 			List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, Tipo(c)}).ToList();
-            string[] partes = espacioDeNombres.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            string espacio = partes[partes.Length - 1];
+            string[] partes = espacioDeNombres.Trim().Length > 0 ? espacioDeNombres.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries) : new string[] { };
+            string espacio = partes.Length > 0 ? partes[partes.Length - 1] : string.Empty;
 
             StringBuilder Repositories = new StringBuilder();
 
@@ -657,7 +714,7 @@ namespace GeneradorDeCapas
 			Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
 			Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            Repositories.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
+            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
 			Repositories.AppendLine();
             Repositories.AppendLine("namespace " + espacioDeNombres + ".Repositories");
 			Repositories.AppendLine("{");
@@ -1078,7 +1135,7 @@ namespace GeneradorDeCapas
 			RepositoriesInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
 			RepositoriesInterface.AppendLine("using System.Collections.Generic;");
 			RepositoriesInterface.AppendLine("using System.Data.Odbc;");
-			RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
+            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
 			RepositoriesInterface.AppendLine();
 			RepositoriesInterface.AppendLine("namespace " + espacioDeNombres + "." + REPOSITORIES);
 			RepositoriesInterface.AppendLine("{");
@@ -1142,8 +1199,8 @@ namespace GeneradorDeCapas
             Service.AppendLine("using SistemaMunicipalGeneral;");
 			Service.AppendLine("using System.Linq;");
 			Service.AppendLine("using System.Web;");
-			Service.AppendLine("using " + espacioDeNombres + "." + origen + ";");
-			Service.AppendLine("using " + espacioDeNombres + "." + REPOSITORIES + ";");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + origen + ";");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + REPOSITORIES + ";");
 			Service.AppendLine();
             Service.AppendLine("namespace " + espacioDeNombres + "." + SERVICE);
 			Service.AppendLine("{");
@@ -1315,7 +1372,7 @@ namespace GeneradorDeCapas
             ServiceInterface.AppendLine("using System.Collections.Generic;");
             ServiceInterface.AppendLine("using System.Data.Odbc;");
 			ServiceInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
-			ServiceInterface.AppendLine("using " + espacioDeNombres + "." + origen + ";");
+            if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine("using " + espacioDeNombres + "." + origen + ";");
 			ServiceInterface.AppendLine();
             ServiceInterface.AppendLine("namespace " + espacioDeNombres + "." + SERVICE);
 			ServiceInterface.AppendLine("{");
@@ -1425,8 +1482,20 @@ namespace GeneradorDeCapas
         {
             try
             {
-                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+                if (TXTgenerarAPartirDeConsulta.Text.Length > 0)
+                {
+                    TXTclase.Text += Clase(string.Empty, TXTgenerarAPartirDeConsulta.Text);
+                }
+                else
+                {
+                    TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+                }
 
+                configuracion.SQL = RDBsql.Checked;
+                configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+                configuracion.Base = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                configuracion.Tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
                 configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
@@ -1473,6 +1542,7 @@ namespace GeneradorDeCapas
                     }
                     catch (Exception ex)
                     {
+                        throw ex;
                     }
                 }
                 if (CMBbases.Items.Count > 0)
@@ -1535,6 +1605,7 @@ namespace GeneradorDeCapas
                     }
                     catch (Exception ex)
                     {
+                        throw ex;
                     }
                 }
                 else
@@ -1567,6 +1638,7 @@ namespace GeneradorDeCapas
                         }
                         catch (Exception ex)
                         {
+                            throw ex;
                         }
                     }
                 }
@@ -1582,69 +1654,104 @@ namespace GeneradorDeCapas
             }
         }
 
-        private void CamposTabla()
+        private void CamposTabla(string tabla = "", string consulta = "")
 		{
             camposTabla = new List<string>();
             try
             {
-                LBLtablaSeleccionada.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString() + ":";
+                LBLtablaSeleccionada.Text = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString()) + ":";
                 LSVcampos.Items.Clear();
-                string tablaSeleccionada = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
                 if (RDBdb2.Checked)
                 {
                     try
                     {
                         Ejecutar datos = EstablecerConexion();
-                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SI' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'", datos.ObtenerConexion());
-                        Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
-
-                        while (Db2.HayRegistros())
+                        ComandoDB2 Db2 = null;
+                        if (consulta.Trim().Length > 0)
                         {
-                            var nombre = Db2.CampoStr("Nombre").ToUpper();
-                            var tipo = Db2.CampoStr("Tipo").ToUpper();
-                            var longitud = Db2.CampoInt("Longitud").ToString();
-                            var escala = Db2.CampoInt("Escala").ToString();
-                            var aceptaNulos = Db2.CampoStr("AceptaNulos");
+                            Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
+                            Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+                            Db2.HayRegistros();
 
-                            camposTabla.Add(nombre);
-                            ListViewItem item = new ListViewItem(nombre);
-                            item.SubItems.Add(tipo);
-                            item.SubItems.Add(longitud);
-                            item.SubItems.Add(escala);
-                            item.SubItems.Add(aceptaNulos);
-                            LSVcampos.Items.Add(item);
+                            using (var reader = Db2.ObtenerLector())
+                            {
+                                DataTable schema = reader.GetSchemaTable();
+
+                                foreach (DataRow row in schema.Rows)
+                                {
+                                    var nombre = row["ColumnName"].ToString();
+                                    var tipo = (Type)row["DataType"];
+                                    var longitud = row["NumericPrecision"] != DBNull.Value ? Convert.ToInt32(row["NumericPrecision"]) : 0;
+                                    var escala = row["NumericScale"] != DBNull.Value ? Convert.ToInt32(row["NumericScale"]) : 0;
+                                    var aceptaNulos = (bool)row["AllowDBNull"];
+
+                                    string db2Type = TIPOSDB2.ContainsKey(tipo) ? TIPOSDB2[tipo] : tipo.Name;
+
+                                    ListViewItem item = new ListViewItem(nombre);
+                                    item.SubItems.Add(db2Type.ToUpper());
+                                    item.SubItems.Add(longitud.ToString());
+                                    item.SubItems.Add(escala.ToString());
+                                    item.SubItems.Add(aceptaNulos ? "SÍ" : "NO");
+                                    LSVcampos.Items.Add(item);
+                                }
+                            }
+                            Db2.Cerrar();
                         }
-                        Db2.Cerrar();
-
-                        if (LSVcampos.Items.Count > 0)
+                        else
                         {
-                            Db2 = new ComandoDB2("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')", datos.ObtenerConexion());
-                            List<string> claves = new List<string>();
+                            Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'", datos.ObtenerConexion());
+                            Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+
                             while (Db2.HayRegistros())
                             {
-                                claves.Add(Db2.CampoStr("Clave"));
+                                var nombre = Db2.CampoStr("Nombre").ToUpper();
+                                var tipo = Db2.CampoStr("Tipo").ToUpper();
+                                var longitud = Db2.CampoInt("Longitud").ToString();
+                                var escala = Db2.CampoInt("Escala").ToString();
+                                var aceptaNulos = Db2.CampoStr("AceptaNulos");
+
+                                camposTabla.Add(nombre);
+                                ListViewItem item = new ListViewItem(nombre);
+                                item.SubItems.Add(tipo);
+                                item.SubItems.Add(longitud);
+                                item.SubItems.Add(escala);
+                                item.SubItems.Add(aceptaNulos);
+                                LSVcampos.Items.Add(item);
                             }
                             Db2.Cerrar();
 
-                            int minCantidad = claves.Min(s => s.Count(c => c == '+'));
-
-                            // Paso 2: filtrar los strings con esa cantidad mínima
-                            List<string> clave = claves
-                                .Where(s => s.Count(c => c == '+') == minCantidad)
-                                .Select(s => s.Split('+'))
-                                .FirstOrDefault().ToList();
-
-                            foreach (ListViewItem item in LSVcampos.Items)
+                            if (LSVcampos.Items.Count > 0)
                             {
-                                if (clave.Contains(item.SubItems[0].Text))
+                                Db2 = new ComandoDB2("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')", datos.ObtenerConexion());
+                                List<string> claves = new List<string>();
+                                while (Db2.HayRegistros())
                                 {
-                                    item.Checked = true;
+                                    claves.Add(Db2.CampoStr("Clave"));
+                                }
+                                Db2.Cerrar();
+
+                                int minCantidad = claves.Min(s => s.Count(c => c == '+'));
+
+                                // Paso 2: filtrar los strings con esa cantidad mínima
+                                List<string> clave = claves
+                                    .Where(s => s.Count(c => c == '+') == minCantidad)
+                                    .Select(s => s.Split('+'))
+                                    .FirstOrDefault().ToList();
+
+                                foreach (ListViewItem item in LSVcampos.Items)
+                                {
+                                    if (clave.Contains(item.SubItems[0].Text))
+                                    {
+                                        item.Checked = true;
+                                    }
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
+                        throw ex;
                     }
                 }
                 else
@@ -1654,7 +1761,7 @@ namespace GeneradorDeCapas
                         string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
                         string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
 
-                        string query = $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SI' ELSE 'NO' END AS AceptaNulos "
+                        string query = consulta.Trim().Length > 0 ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
                             + "FROM sys.columns c "
                             + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
                             + "JOIN sys.tables t ON c.object_id = t.object_id "
@@ -1664,37 +1771,66 @@ namespace GeneradorDeCapas
                         using (SqlConnection conn = new SqlConnection(connectionString))
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                            tablaSeleccionada = partes[partes.Length - 1];
+                            if (consulta.Trim().Length == 0)
+                            {
+                                string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                                tablaSeleccionada = partes[partes.Length - 1];
 
-                            cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+                                cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+                            }
 
                             try
                             {
                                 conn.Open();
                                 using (SqlDataReader reader = cmd.ExecuteReader())
                                 {
-                                    while (reader.Read())
+                                    if (consulta.Trim().Length > 0)
                                     {
-                                        var nombre = reader["Nombre"].ToString().ToUpper();
-                                        var tipo = reader["Tipo"].ToString().ToUpper();
-                                        var longitud = reader["Longitud"].ToString();
-                                        var escala = reader["Escala"].ToString();
-                                        var aceptaNulos = reader["AceptaNulos"].ToString();
+                                        DataTable schema = reader.GetSchemaTable();
 
-                                        camposTabla.Add(nombre);
-                                        ListViewItem item = new ListViewItem(nombre);
-                                        item.SubItems.Add(tipo);
-                                        item.SubItems.Add(longitud);
-                                        item.SubItems.Add(escala);
-                                        item.SubItems.Add(aceptaNulos);
-                                        LSVcampos.Items.Add(item);
+                                        foreach (DataRow row in schema.Rows)
+                                        {
+                                            var nombre = row["ColumnName"].ToString();
+                                            var tipo = (Type)row["DataType"];
+                                            var longitud = row["NumericPrecision"] != DBNull.Value ? Convert.ToInt32(row["NumericPrecision"]) : 0;
+                                            var escala = row["NumericScale"] != DBNull.Value ? Convert.ToInt32(row["NumericScale"]) : 0;
+                                            var aceptaNulos = (bool)row["AllowDBNull"];
+
+                                            string db2Type = TIPOSDB2.ContainsKey(tipo) ? TIPOSDB2[tipo] : tipo.Name;
+
+                                            ListViewItem item = new ListViewItem(nombre);
+                                            item.SubItems.Add(db2Type.ToUpper());
+                                            item.SubItems.Add(longitud.ToString());
+                                            item.SubItems.Add(escala.ToString());
+                                            item.SubItems.Add(aceptaNulos ? "SÍ" : "NO");
+                                            LSVcampos.Items.Add(item);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            var nombre = reader["Nombre"].ToString().ToUpper();
+                                            var tipo = reader["Tipo"].ToString().ToUpper();
+                                            var longitud = reader["Longitud"].ToString();
+                                            var escala = reader["Escala"].ToString();
+                                            var aceptaNulos = reader["AceptaNulos"].ToString();
+
+                                            camposTabla.Add(nombre);
+                                            ListViewItem item = new ListViewItem(nombre);
+                                            item.SubItems.Add(tipo);
+                                            item.SubItems.Add(longitud);
+                                            item.SubItems.Add(escala);
+                                            item.SubItems.Add(aceptaNulos);
+                                            LSVcampos.Items.Add(item);
+                                        } 
                                     }
                                 }
                                 conn.Close();
                             }
                             catch (Exception ex)
                             {
+                                throw ex;
                             }
                         }
 
@@ -1735,12 +1871,14 @@ namespace GeneradorDeCapas
                                 }
                                 catch (Exception ex)
                                 {
+                                    throw ex;
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
+                        throw ex;
                     }
                 }
                 ComprobarTiposDeCampos(tablaSeleccionada);
@@ -1770,6 +1908,7 @@ namespace GeneradorDeCapas
                 }
                 catch (Exception ex)
                 {
+                    throw ex;
                 }
             }
             else
@@ -1789,6 +1928,7 @@ namespace GeneradorDeCapas
                 }
                 catch (Exception ex)
                 {
+                    throw ex;
                 }
             }
 
@@ -2050,6 +2190,11 @@ namespace GeneradorDeCapas
             catch (Exception)
             {
             }
+        }
+
+        private void TXTgenerarAPartirDeConsulta_TextChanged(object sender, EventArgs e)
+        {
+            CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
         }
     }
 }

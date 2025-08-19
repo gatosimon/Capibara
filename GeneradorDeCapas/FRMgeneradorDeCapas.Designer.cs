@@ -36,10 +36,6 @@ namespace GeneradorDeCapas
             this.LBLtablas = new System.Windows.Forms.Label();
             this.CMBbases = new System.Windows.Forms.ComboBox();
             this.LBLbases = new System.Windows.Forms.Label();
-            this.SPCclase = new System.Windows.Forms.SplitContainer();
-            this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
-            this.LSVcampos = new System.Windows.Forms.ListView();
-            this.TXTclase = new System.Windows.Forms.TextBox();
             this.LBLespacioDeNombres = new System.Windows.Forms.Label();
             this.TXTespacioDeNombres = new System.Windows.Forms.TextBox();
             this.RDBsql = new System.Windows.Forms.RadioButton();
@@ -63,16 +59,28 @@ namespace GeneradorDeCapas
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
             this.BTNgenerar = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).BeginInit();
-            this.SPCclase.Panel1.SuspendLayout();
-            this.SPCclase.Panel2.SuspendLayout();
-            this.SPCclase.SuspendLayout();
+            this.SPCseparador = new System.Windows.Forms.SplitContainer();
+            this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
+            this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
+            this.SPCclase = new System.Windows.Forms.SplitContainer();
+            this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
+            this.LSVcampos = new System.Windows.Forms.ListView();
+            this.TXTclase = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).BeginInit();
             this.SPCcapas.Panel1.SuspendLayout();
             this.SPCcapas.Panel2.SuspendLayout();
             this.SPCcapas.SuspendLayout();
             this.GPBback.SuspendLayout();
             this.GPBFront.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
+            this.SPCseparador.Panel1.SuspendLayout();
+            this.SPCseparador.Panel2.SuspendLayout();
+            this.SPCseparador.SuspendLayout();
+            this.GBPaPartirDeConsulta.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).BeginInit();
+            this.SPCclase.Panel1.SuspendLayout();
+            this.SPCclase.Panel2.SuspendLayout();
+            this.SPCclase.SuspendLayout();
             this.SuspendLayout();
             // 
             // LBLservidor
@@ -156,64 +164,6 @@ namespace GeneradorDeCapas
             this.LBLbases.TabIndex = 6;
             this.LBLbases.Text = "BASE DE DATOS:";
             // 
-            // SPCclase
-            // 
-            this.SPCclase.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SPCclase.Location = new System.Drawing.Point(15, 273);
-            this.SPCclase.Name = "SPCclase";
-            // 
-            // SPCclase.Panel1
-            // 
-            this.SPCclase.Panel1.Controls.Add(this.LBLtablaSeleccionada);
-            this.SPCclase.Panel1.Controls.Add(this.LSVcampos);
-            // 
-            // SPCclase.Panel2
-            // 
-            this.SPCclase.Panel2.Controls.Add(this.TXTclase);
-            this.SPCclase.Size = new System.Drawing.Size(1159, 544);
-            this.SPCclase.SplitterDistance = 313;
-            this.SPCclase.TabIndex = 8;
-            this.SPCclase.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.SPCclase_SplitterMoved);
-            // 
-            // LBLtablaSeleccionada
-            // 
-            this.LBLtablaSeleccionada.AutoSize = true;
-            this.LBLtablaSeleccionada.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLtablaSeleccionada.Location = new System.Drawing.Point(8, 8);
-            this.LBLtablaSeleccionada.Name = "LBLtablaSeleccionada";
-            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(0, 16);
-            this.LBLtablaSeleccionada.TabIndex = 13;
-            this.LBLtablaSeleccionada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // LSVcampos
-            // 
-            this.LSVcampos.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.LSVcampos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LSVcampos.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LSVcampos.FullRowSelect = true;
-            this.LSVcampos.HideSelection = false;
-            this.LSVcampos.Location = new System.Drawing.Point(0, 27);
-            this.LSVcampos.Name = "LSVcampos";
-            this.LSVcampos.Size = new System.Drawing.Size(311, 550);
-            this.LSVcampos.TabIndex = 0;
-            this.LSVcampos.UseCompatibleStateImageBehavior = false;
-            // 
-            // TXTclase
-            // 
-            this.TXTclase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TXTclase.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TXTclase.Location = new System.Drawing.Point(0, 0);
-            this.TXTclase.Multiline = true;
-            this.TXTclase.Name = "TXTclase";
-            this.TXTclase.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TXTclase.Size = new System.Drawing.Size(842, 544);
-            this.TXTclase.TabIndex = 0;
-            this.TXTclase.TabStop = false;
-            // 
             // LBLespacioDeNombres
             // 
             this.LBLespacioDeNombres.AutoSize = true;
@@ -284,7 +234,7 @@ namespace GeneradorDeCapas
             this.BTNdirectorioCapas.Location = new System.Drawing.Point(747, 95);
             this.BTNdirectorioCapas.Name = "BTNdirectorioCapas";
             this.BTNdirectorioCapas.Size = new System.Drawing.Size(38, 25);
-            this.BTNdirectorioCapas.TabIndex = 7;
+            this.BTNdirectorioCapas.TabIndex = 9;
             this.BTNdirectorioCapas.Text = "...";
             this.BTNdirectorioCapas.UseVisualStyleBackColor = true;
             this.BTNdirectorioCapas.Click += new System.EventHandler(this.BTNdirectorioCapas_Click);
@@ -334,7 +284,7 @@ namespace GeneradorDeCapas
             this.SPCcapas.Panel2.Controls.Add(this.GPBFront);
             this.SPCcapas.Size = new System.Drawing.Size(1047, 142);
             this.SPCcapas.SplitterDistance = 69;
-            this.SPCcapas.TabIndex = 19;
+            this.SPCcapas.TabIndex = 10;
             // 
             // GPBback
             // 
@@ -347,10 +297,11 @@ namespace GeneradorDeCapas
             this.GPBback.Controls.Add(this.CHKdto);
             this.GPBback.Controls.Add(this.CHKcontrollers);
             this.GPBback.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GPBback.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GPBback.Location = new System.Drawing.Point(0, 0);
             this.GPBback.Name = "GPBback";
             this.GPBback.Size = new System.Drawing.Size(1047, 69);
-            this.GPBback.TabIndex = 8;
+            this.GPBback.TabIndex = 0;
             this.GPBback.TabStop = false;
             this.GPBback.Text = "BACK END";
             // 
@@ -361,10 +312,10 @@ namespace GeneradorDeCapas
             this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKtryOrIf.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtryOrIf.Location = new System.Drawing.Point(617, 16);
+            this.CHKtryOrIf.Location = new System.Drawing.Point(617, 19);
             this.CHKtryOrIf.Name = "CHKtryOrIf";
-            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 50);
-            this.CHKtryOrIf.TabIndex = 7;
+            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 47);
+            this.CHKtryOrIf.TabIndex = 6;
             this.CHKtryOrIf.Text = "Usar Try en DB2   ";
             this.CHKtryOrIf.UseVisualStyleBackColor = true;
             // 
@@ -375,10 +326,10 @@ namespace GeneradorDeCapas
             this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKquitarEsquema.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(472, 16);
+            this.CHKquitarEsquema.Location = new System.Drawing.Point(472, 19);
             this.CHKquitarEsquema.Name = "CHKquitarEsquema";
-            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 50);
-            this.CHKquitarEsquema.TabIndex = 6;
+            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 47);
+            this.CHKquitarEsquema.TabIndex = 5;
             this.CHKquitarEsquema.Text = "Quitar esquema   ";
             this.CHKquitarEsquema.UseVisualStyleBackColor = true;
             this.CHKquitarEsquema.Visible = false;
@@ -390,9 +341,9 @@ namespace GeneradorDeCapas
             this.CHKservice.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKservice.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKservice.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKservice.Location = new System.Drawing.Point(381, 16);
+            this.CHKservice.Location = new System.Drawing.Point(381, 19);
             this.CHKservice.Name = "CHKservice";
-            this.CHKservice.Size = new System.Drawing.Size(91, 50);
+            this.CHKservice.Size = new System.Drawing.Size(91, 47);
             this.CHKservice.TabIndex = 4;
             this.CHKservice.Text = "Service   ";
             this.CHKservice.UseVisualStyleBackColor = true;
@@ -404,9 +355,9 @@ namespace GeneradorDeCapas
             this.CHKrepositories.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKrepositories.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKrepositories.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKrepositories.Location = new System.Drawing.Point(260, 16);
+            this.CHKrepositories.Location = new System.Drawing.Point(260, 19);
             this.CHKrepositories.Name = "CHKrepositories";
-            this.CHKrepositories.Size = new System.Drawing.Size(121, 50);
+            this.CHKrepositories.Size = new System.Drawing.Size(121, 47);
             this.CHKrepositories.TabIndex = 3;
             this.CHKrepositories.Text = "Repositories   ";
             this.CHKrepositories.UseVisualStyleBackColor = true;
@@ -418,9 +369,9 @@ namespace GeneradorDeCapas
             this.CHKmodel.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKmodel.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKmodel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKmodel.Location = new System.Drawing.Point(180, 16);
+            this.CHKmodel.Location = new System.Drawing.Point(180, 19);
             this.CHKmodel.Name = "CHKmodel";
-            this.CHKmodel.Size = new System.Drawing.Size(80, 50);
+            this.CHKmodel.Size = new System.Drawing.Size(80, 47);
             this.CHKmodel.TabIndex = 2;
             this.CHKmodel.Text = "Model   ";
             this.CHKmodel.UseVisualStyleBackColor = true;
@@ -432,9 +383,9 @@ namespace GeneradorDeCapas
             this.CHKdto.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKdto.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKdto.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKdto.Location = new System.Drawing.Point(115, 16);
+            this.CHKdto.Location = new System.Drawing.Point(115, 19);
             this.CHKdto.Name = "CHKdto";
-            this.CHKdto.Size = new System.Drawing.Size(65, 50);
+            this.CHKdto.Size = new System.Drawing.Size(65, 47);
             this.CHKdto.TabIndex = 1;
             this.CHKdto.Text = "Dto   ";
             this.CHKdto.UseVisualStyleBackColor = true;
@@ -446,9 +397,9 @@ namespace GeneradorDeCapas
             this.CHKcontrollers.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKcontrollers.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKcontrollers.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKcontrollers.Location = new System.Drawing.Point(3, 16);
+            this.CHKcontrollers.Location = new System.Drawing.Point(3, 19);
             this.CHKcontrollers.Name = "CHKcontrollers";
-            this.CHKcontrollers.Size = new System.Drawing.Size(112, 50);
+            this.CHKcontrollers.Size = new System.Drawing.Size(112, 47);
             this.CHKcontrollers.TabIndex = 0;
             this.CHKcontrollers.Text = "Controllers   ";
             this.CHKcontrollers.UseVisualStyleBackColor = true;
@@ -458,10 +409,11 @@ namespace GeneradorDeCapas
             this.GPBFront.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GPBFront.Controls.Add(this.CHKtypeScript);
             this.GPBFront.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GPBFront.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GPBFront.Location = new System.Drawing.Point(0, 0);
             this.GPBFront.Name = "GPBFront";
             this.GPBFront.Size = new System.Drawing.Size(1047, 69);
-            this.GPBFront.TabIndex = 9;
+            this.GPBFront.TabIndex = 0;
             this.GPBFront.TabStop = false;
             this.GPBFront.Text = "FRONT END";
             // 
@@ -472,10 +424,10 @@ namespace GeneradorDeCapas
             this.CHKtypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKtypeScript.Dock = System.Windows.Forms.DockStyle.Left;
             this.CHKtypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtypeScript.Location = new System.Drawing.Point(3, 16);
+            this.CHKtypeScript.Location = new System.Drawing.Point(3, 19);
             this.CHKtypeScript.Name = "CHKtypeScript";
-            this.CHKtypeScript.Size = new System.Drawing.Size(98, 50);
-            this.CHKtypeScript.TabIndex = 5;
+            this.CHKtypeScript.Size = new System.Drawing.Size(98, 47);
+            this.CHKtypeScript.TabIndex = 0;
             this.CHKtypeScript.Text = "TypeScript";
             this.CHKtypeScript.UseVisualStyleBackColor = true;
             // 
@@ -486,14 +438,113 @@ namespace GeneradorDeCapas
             this.BTNgenerar.Location = new System.Drawing.Point(1065, 128);
             this.BTNgenerar.Name = "BTNgenerar";
             this.BTNgenerar.Size = new System.Drawing.Size(103, 139);
-            this.BTNgenerar.TabIndex = 21;
+            this.BTNgenerar.TabIndex = 12;
             this.BTNgenerar.Text = "&Generar";
             this.BTNgenerar.UseVisualStyleBackColor = true;
             this.BTNgenerar.Click += new System.EventHandler(this.BTNgenerar_Click);
             // 
+            // SPCseparador
+            // 
+            this.SPCseparador.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SPCseparador.Location = new System.Drawing.Point(12, 273);
+            this.SPCseparador.Name = "SPCseparador";
+            this.SPCseparador.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // SPCseparador.Panel1
+            // 
+            this.SPCseparador.Panel1.Controls.Add(this.GBPaPartirDeConsulta);
+            // 
+            // SPCseparador.Panel2
+            // 
+            this.SPCseparador.Panel2.Controls.Add(this.SPCclase);
+            this.SPCseparador.Size = new System.Drawing.Size(1156, 544);
+            this.SPCseparador.SplitterDistance = 159;
+            this.SPCseparador.TabIndex = 11;
+            // 
+            // GBPaPartirDeConsulta
+            // 
+            this.GBPaPartirDeConsulta.Controls.Add(this.TXTgenerarAPartirDeConsulta);
+            this.GBPaPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GBPaPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GBPaPartirDeConsulta.Location = new System.Drawing.Point(0, 0);
+            this.GBPaPartirDeConsulta.Name = "GBPaPartirDeConsulta";
+            this.GBPaPartirDeConsulta.Size = new System.Drawing.Size(1156, 159);
+            this.GBPaPartirDeConsulta.TabIndex = 12;
+            this.GBPaPartirDeConsulta.TabStop = false;
+            this.GBPaPartirDeConsulta.Text = "Generar a partir de consulta";
+            // 
+            // TXTgenerarAPartirDeConsulta
+            // 
+            this.TXTgenerarAPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TXTgenerarAPartirDeConsulta.Location = new System.Drawing.Point(3, 19);
+            this.TXTgenerarAPartirDeConsulta.Multiline = true;
+            this.TXTgenerarAPartirDeConsulta.Name = "TXTgenerarAPartirDeConsulta";
+            this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(1150, 137);
+            this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
+            this.TXTgenerarAPartirDeConsulta.TextChanged += new System.EventHandler(this.TXTgenerarAPartirDeConsulta_TextChanged);
+            // 
+            // SPCclase
+            // 
+            this.SPCclase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SPCclase.Location = new System.Drawing.Point(0, 0);
+            this.SPCclase.Name = "SPCclase";
+            // 
+            // SPCclase.Panel1
+            // 
+            this.SPCclase.Panel1.Controls.Add(this.LBLtablaSeleccionada);
+            this.SPCclase.Panel1.Controls.Add(this.LSVcampos);
+            // 
+            // SPCclase.Panel2
+            // 
+            this.SPCclase.Panel2.Controls.Add(this.TXTclase);
+            this.SPCclase.Size = new System.Drawing.Size(1156, 381);
+            this.SPCclase.SplitterDistance = 312;
+            this.SPCclase.TabIndex = 13;
+            this.SPCclase.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.SPCclase_SplitterMoved);
+            // 
+            // LBLtablaSeleccionada
+            // 
+            this.LBLtablaSeleccionada.AutoSize = true;
+            this.LBLtablaSeleccionada.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLtablaSeleccionada.Location = new System.Drawing.Point(8, 8);
+            this.LBLtablaSeleccionada.Name = "LBLtablaSeleccionada";
+            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(0, 16);
+            this.LBLtablaSeleccionada.TabIndex = 13;
+            this.LBLtablaSeleccionada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // LSVcampos
+            // 
+            this.LSVcampos.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.LSVcampos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LSVcampos.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LSVcampos.FullRowSelect = true;
+            this.LSVcampos.HideSelection = false;
+            this.LSVcampos.Location = new System.Drawing.Point(0, 27);
+            this.LSVcampos.Name = "LSVcampos";
+            this.LSVcampos.Size = new System.Drawing.Size(311, 354);
+            this.LSVcampos.TabIndex = 0;
+            this.LSVcampos.UseCompatibleStateImageBehavior = false;
+            // 
+            // TXTclase
+            // 
+            this.TXTclase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TXTclase.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TXTclase.Location = new System.Drawing.Point(0, 0);
+            this.TXTclase.Multiline = true;
+            this.TXTclase.Name = "TXTclase";
+            this.TXTclase.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.TXTclase.Size = new System.Drawing.Size(840, 381);
+            this.TXTclase.TabIndex = 0;
+            this.TXTclase.TabStop = false;
+            // 
             // FRMgeneradorDeCapas
             // 
             this.ClientSize = new System.Drawing.Size(1186, 829);
+            this.Controls.Add(this.SPCseparador);
             this.Controls.Add(this.BTNgenerar);
             this.Controls.Add(this.SPCcapas);
             this.Controls.Add(this.CMBnamespaces);
@@ -505,7 +556,6 @@ namespace GeneradorDeCapas
             this.Controls.Add(this.RDBsql);
             this.Controls.Add(this.TXTespacioDeNombres);
             this.Controls.Add(this.LBLespacioDeNombres);
-            this.Controls.Add(this.SPCclase);
             this.Controls.Add(this.CMBbases);
             this.Controls.Add(this.LBLbases);
             this.Controls.Add(this.CMBtablas);
@@ -515,15 +565,10 @@ namespace GeneradorDeCapas
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FRMgeneradorDeCapas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Capificator";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FRMgeneradorDeCapas_Load);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
-            this.SPCclase.Panel1.ResumeLayout(false);
-            this.SPCclase.Panel1.PerformLayout();
-            this.SPCclase.Panel2.ResumeLayout(false);
-            this.SPCclase.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).EndInit();
-            this.SPCclase.ResumeLayout(false);
             this.SPCcapas.Panel1.ResumeLayout(false);
             this.SPCcapas.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).EndInit();
@@ -532,6 +577,18 @@ namespace GeneradorDeCapas
             this.GPBback.PerformLayout();
             this.GPBFront.ResumeLayout(false);
             this.GPBFront.PerformLayout();
+            this.SPCseparador.Panel1.ResumeLayout(false);
+            this.SPCseparador.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).EndInit();
+            this.SPCseparador.ResumeLayout(false);
+            this.GBPaPartirDeConsulta.ResumeLayout(false);
+            this.GBPaPartirDeConsulta.PerformLayout();
+            this.SPCclase.Panel1.ResumeLayout(false);
+            this.SPCclase.Panel1.PerformLayout();
+            this.SPCclase.Panel2.ResumeLayout(false);
+            this.SPCclase.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).EndInit();
+            this.SPCclase.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -545,10 +602,6 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Label LBLtablas;
         private System.Windows.Forms.ComboBox CMBbases;
         private System.Windows.Forms.Label LBLbases;
-        private System.Windows.Forms.SplitContainer SPCclase;
-        private System.Windows.Forms.Label LBLtablaSeleccionada;
-        private System.Windows.Forms.ListView LSVcampos;
-        private System.Windows.Forms.TextBox TXTclase;
         private System.Windows.Forms.Label LBLespacioDeNombres;
         private System.Windows.Forms.TextBox TXTespacioDeNombres;
         private System.Windows.Forms.RadioButton RDBsql;
@@ -572,6 +625,13 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Button BTNgenerar;
         private System.Windows.Forms.GroupBox GPBFront;
         private System.Windows.Forms.CheckBox CHKtypeScript;
+        private System.Windows.Forms.SplitContainer SPCseparador;
+        private System.Windows.Forms.GroupBox GBPaPartirDeConsulta;
+        private System.Windows.Forms.TextBox TXTgenerarAPartirDeConsulta;
+        private System.Windows.Forms.SplitContainer SPCclase;
+        private System.Windows.Forms.Label LBLtablaSeleccionada;
+        private System.Windows.Forms.ListView LSVcampos;
+        private System.Windows.Forms.TextBox TXTclase;
     }
 }
 
