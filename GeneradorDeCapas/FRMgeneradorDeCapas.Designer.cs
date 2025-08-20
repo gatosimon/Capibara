@@ -66,6 +66,7 @@ namespace GeneradorDeCapas
             this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
             this.LSVcampos = new System.Windows.Forms.ListView();
             this.TXTclase = new System.Windows.Forms.TextBox();
+            this.BNTejecutar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).BeginInit();
             this.SPCcapas.Panel1.SuspendLayout();
             this.SPCcapas.Panel2.SuspendLayout();
@@ -437,7 +438,7 @@ namespace GeneradorDeCapas
             this.BTNgenerar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BTNgenerar.Location = new System.Drawing.Point(1065, 128);
             this.BTNgenerar.Name = "BTNgenerar";
-            this.BTNgenerar.Size = new System.Drawing.Size(103, 139);
+            this.BTNgenerar.Size = new System.Drawing.Size(97, 139);
             this.BTNgenerar.TabIndex = 12;
             this.BTNgenerar.Text = "&Generar";
             this.BTNgenerar.UseVisualStyleBackColor = true;
@@ -465,6 +466,7 @@ namespace GeneradorDeCapas
             // 
             // GBPaPartirDeConsulta
             // 
+            this.GBPaPartirDeConsulta.Controls.Add(this.BNTejecutar);
             this.GBPaPartirDeConsulta.Controls.Add(this.TXTgenerarAPartirDeConsulta);
             this.GBPaPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GBPaPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -477,13 +479,14 @@ namespace GeneradorDeCapas
             // 
             // TXTgenerarAPartirDeConsulta
             // 
-            this.TXTgenerarAPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TXTgenerarAPartirDeConsulta.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TXTgenerarAPartirDeConsulta.Location = new System.Drawing.Point(3, 19);
             this.TXTgenerarAPartirDeConsulta.Multiline = true;
             this.TXTgenerarAPartirDeConsulta.Name = "TXTgenerarAPartirDeConsulta";
-            this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(1150, 137);
+            this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(1044, 137);
             this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
-            this.TXTgenerarAPartirDeConsulta.TextChanged += new System.EventHandler(this.TXTgenerarAPartirDeConsulta_TextChanged);
             // 
             // SPCclase
             // 
@@ -540,6 +543,18 @@ namespace GeneradorDeCapas
             this.TXTclase.Size = new System.Drawing.Size(840, 381);
             this.TXTclase.TabIndex = 0;
             this.TXTclase.TabStop = false;
+            // 
+            // BNTejecutar
+            // 
+            this.BNTejecutar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BNTejecutar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BNTejecutar.Location = new System.Drawing.Point(1053, 19);
+            this.BNTejecutar.Name = "BNTejecutar";
+            this.BNTejecutar.Size = new System.Drawing.Size(97, 44);
+            this.BNTejecutar.TabIndex = 1;
+            this.BNTejecutar.Text = "&Ejecutar";
+            this.BNTejecutar.UseVisualStyleBackColor = true;
+            this.BNTejecutar.Click += new System.EventHandler(this.BNTejecutar_Click);
             // 
             // FRMgeneradorDeCapas
             // 
@@ -632,6 +647,7 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Label LBLtablaSeleccionada;
         private System.Windows.Forms.ListView LSVcampos;
         private System.Windows.Forms.TextBox TXTclase;
+        private System.Windows.Forms.Button BNTejecutar;
     }
 }
 

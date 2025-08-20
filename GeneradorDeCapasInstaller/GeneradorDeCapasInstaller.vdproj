@@ -544,6 +544,18 @@
         "Entry"
         {
         "MsmKey" = "8:_9E60A3762251378B173CC35FA5EF248E"
+        "OwnerKey" = "8:_213CBB1C017CF65FA996D51118F9A89D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9E60A3762251378B173CC35FA5EF248E"
+        "OwnerKey" = "8:_17321DA7C38094AF12384DE3B5E5AB87"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9E60A3762251378B173CC35FA5EF248E"
         "OwnerKey" = "8:_480FD696C9E961D3FF51573AD2554DF3"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3951,9 +3963,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Generador de Capas"
+        "ProductName" = "8:Capificator"
         "ProductCode" = "8:{BE88D6FB-D7D3-4437-A437-15163030FF1F}"
-        "PackageCode" = "8:{0FF01708-8BD2-46B5-894E-D62A771FDBE4}"
+        "PackageCode" = "8:{9B23FEAF-4CEA-4057-B4FF-B6BEC869953F}"
         "UpgradeCode" = "8:{222D8F49-3D1F-4391-85CF-ABF3ABB8830C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3964,11 +3976,11 @@
         "Manufacturer" = "8:Default Company Name"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Generador de Capas"
+        "Title" = "8:Capificator"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Default Company Name"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
+        "ARPCOMMENTS" = "8:Generador de capas a partir de bases DB2 o MS SQL"
         "ARPURLINFOABOUT" = "8:"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
