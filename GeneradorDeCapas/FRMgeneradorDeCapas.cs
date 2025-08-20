@@ -565,13 +565,14 @@ namespace GeneradorDeCapas
 			Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
+            Dto.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
             Dto.AppendLine("");
-			Dto.AppendLine("namespace " + espacioDeNombres + "." + DTO);
-			Dto.AppendLine("{");
+            Dto.AppendLine("namespace " + espacioDeNombres + "." + DTO);
+            Dto.AppendLine("{");
 			Dto.AppendLine("\tpublic class " + nombreDeClase + DTO);
 			Dto.AppendLine("\t{");
 
-			newDto.AppendLine("\t\tpublic " + nombreDeClase + DTO + " new" + nombreDeClase + DTO + "(" + nombreDeClase + " modelo)");
+			newDto.AppendLine("\t\tpublic " + nombreDeClase + DTO + " new" + nombreDeClase + DTO + "(" + nombreDeClase + MODEL + " modelo)");
 			newDto.AppendLine("\t\t{");
 
 			int i = 0;
@@ -1493,18 +1494,32 @@ namespace GeneradorDeCapas
             }
         }
 
-        private void BTNgenerar_Click(object sender, EventArgs e)
+        private void BTNgenerarDesdeTabla_Click(object sender, EventArgs e)
         {
             try
             {
-                if (TXTgenerarAPartirDeConsulta.Text.Length > 0)
-                {
-                    TXTclase.Text += Clase(string.Empty, TXTgenerarAPartirDeConsulta.Text);
-                }
-                else
-                {
-                    TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
-                }
+                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+
+                configuracion.SQL = RDBsql.Checked;
+                configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+                configuracion.Base = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                configuracion.Tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
+                configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
+                configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
+                configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
+                configuracion.Guardar();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void BTNgenerarDesdeConsulta_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TXTclase.Text += Clase(string.Empty, TXTgenerarAPartirDeConsulta.Text);
 
                 configuracion.SQL = RDBsql.Checked;
                 configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
@@ -1977,11 +1992,11 @@ namespace GeneradorDeCapas
             {
                 string columnas = string.Join("\r\n", columnasError);
                 MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                BTNgenerar.Enabled = false;
+                BTNgenerarDesdeTabla.Enabled = false;
             }
             else
             {
-                BTNgenerar.Enabled = true;
+                BTNgenerarDesdeTabla.Enabled = true;
             }
         }
 
@@ -2216,7 +2231,7 @@ namespace GeneradorDeCapas
             }
         }
 
-        private void BNTejecutar_Click(object sender, EventArgs e)
+        private void BNTobtenerEstructura_Click(object sender, EventArgs e)
         {
             CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
         }

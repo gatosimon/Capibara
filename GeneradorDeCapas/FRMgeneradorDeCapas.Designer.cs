@@ -58,15 +58,16 @@ namespace GeneradorDeCapas
             this.CHKcontrollers = new System.Windows.Forms.CheckBox();
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
-            this.BTNgenerar = new System.Windows.Forms.Button();
+            this.BTNgenerarDesdeTabla = new System.Windows.Forms.Button();
             this.SPCseparador = new System.Windows.Forms.SplitContainer();
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
+            this.BTNgenerarDesdeConsulta = new System.Windows.Forms.Button();
+            this.BNTobtenerEstructura = new System.Windows.Forms.Button();
             this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
             this.SPCclase = new System.Windows.Forms.SplitContainer();
             this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
             this.LSVcampos = new System.Windows.Forms.ListView();
             this.TXTclase = new System.Windows.Forms.TextBox();
-            this.BNTejecutar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).BeginInit();
             this.SPCcapas.Panel1.SuspendLayout();
             this.SPCcapas.Panel2.SuspendLayout();
@@ -432,17 +433,17 @@ namespace GeneradorDeCapas
             this.CHKtypeScript.Text = "TypeScript";
             this.CHKtypeScript.UseVisualStyleBackColor = true;
             // 
-            // BTNgenerar
+            // BTNgenerarDesdeTabla
             // 
-            this.BTNgenerar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerar.Location = new System.Drawing.Point(1065, 128);
-            this.BTNgenerar.Name = "BTNgenerar";
-            this.BTNgenerar.Size = new System.Drawing.Size(97, 139);
-            this.BTNgenerar.TabIndex = 12;
-            this.BTNgenerar.Text = "&Generar";
-            this.BTNgenerar.UseVisualStyleBackColor = true;
-            this.BTNgenerar.Click += new System.EventHandler(this.BTNgenerar_Click);
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 128);
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 139);
+            this.BTNgenerarDesdeTabla.TabIndex = 12;
+            this.BTNgenerarDesdeTabla.Text = "&Generar";
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
+            this.BTNgenerarDesdeTabla.Click += new System.EventHandler(this.BTNgenerarDesdeTabla_Click);
             // 
             // SPCseparador
             // 
@@ -466,7 +467,8 @@ namespace GeneradorDeCapas
             // 
             // GBPaPartirDeConsulta
             // 
-            this.GBPaPartirDeConsulta.Controls.Add(this.BNTejecutar);
+            this.GBPaPartirDeConsulta.Controls.Add(this.BTNgenerarDesdeConsulta);
+            this.GBPaPartirDeConsulta.Controls.Add(this.BNTobtenerEstructura);
             this.GBPaPartirDeConsulta.Controls.Add(this.TXTgenerarAPartirDeConsulta);
             this.GBPaPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GBPaPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -476,6 +478,30 @@ namespace GeneradorDeCapas
             this.GBPaPartirDeConsulta.TabIndex = 12;
             this.GBPaPartirDeConsulta.TabStop = false;
             this.GBPaPartirDeConsulta.Text = "Generar a partir de consulta";
+            // 
+            // BTNgenerarDesdeConsulta
+            // 
+            this.BTNgenerarDesdeConsulta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeConsulta.Location = new System.Drawing.Point(1053, 69);
+            this.BTNgenerarDesdeConsulta.Name = "BTNgenerarDesdeConsulta";
+            this.BTNgenerarDesdeConsulta.Size = new System.Drawing.Size(97, 88);
+            this.BTNgenerarDesdeConsulta.TabIndex = 2;
+            this.BTNgenerarDesdeConsulta.Text = "Ge&nerar";
+            this.BTNgenerarDesdeConsulta.UseVisualStyleBackColor = true;
+            this.BTNgenerarDesdeConsulta.Click += new System.EventHandler(this.BTNgenerarDesdeConsulta_Click);
+            // 
+            // BNTobtenerEstructura
+            // 
+            this.BNTobtenerEstructura.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BNTobtenerEstructura.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BNTobtenerEstructura.Location = new System.Drawing.Point(1053, 19);
+            this.BNTobtenerEstructura.Name = "BNTobtenerEstructura";
+            this.BNTobtenerEstructura.Size = new System.Drawing.Size(97, 44);
+            this.BNTobtenerEstructura.TabIndex = 1;
+            this.BNTobtenerEstructura.Text = "&Obtener estructura";
+            this.BNTobtenerEstructura.UseVisualStyleBackColor = true;
+            this.BNTobtenerEstructura.Click += new System.EventHandler(this.BNTobtenerEstructura_Click);
             // 
             // TXTgenerarAPartirDeConsulta
             // 
@@ -544,23 +570,11 @@ namespace GeneradorDeCapas
             this.TXTclase.TabIndex = 0;
             this.TXTclase.TabStop = false;
             // 
-            // BNTejecutar
-            // 
-            this.BNTejecutar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BNTejecutar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BNTejecutar.Location = new System.Drawing.Point(1053, 19);
-            this.BNTejecutar.Name = "BNTejecutar";
-            this.BNTejecutar.Size = new System.Drawing.Size(97, 44);
-            this.BNTejecutar.TabIndex = 1;
-            this.BNTejecutar.Text = "&Ejecutar";
-            this.BNTejecutar.UseVisualStyleBackColor = true;
-            this.BNTejecutar.Click += new System.EventHandler(this.BNTejecutar_Click);
-            // 
             // FRMgeneradorDeCapas
             // 
             this.ClientSize = new System.Drawing.Size(1186, 829);
             this.Controls.Add(this.SPCseparador);
-            this.Controls.Add(this.BTNgenerar);
+            this.Controls.Add(this.BTNgenerarDesdeTabla);
             this.Controls.Add(this.SPCcapas);
             this.Controls.Add(this.CMBnamespaces);
             this.Controls.Add(this.BTNbuscarSolucion);
@@ -637,7 +651,7 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.CheckBox CHKmodel;
         private System.Windows.Forms.CheckBox CHKdto;
         private System.Windows.Forms.CheckBox CHKcontrollers;
-        private System.Windows.Forms.Button BTNgenerar;
+        private System.Windows.Forms.Button BTNgenerarDesdeTabla;
         private System.Windows.Forms.GroupBox GPBFront;
         private System.Windows.Forms.CheckBox CHKtypeScript;
         private System.Windows.Forms.SplitContainer SPCseparador;
@@ -647,7 +661,8 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Label LBLtablaSeleccionada;
         private System.Windows.Forms.ListView LSVcampos;
         private System.Windows.Forms.TextBox TXTclase;
-        private System.Windows.Forms.Button BNTejecutar;
+        private System.Windows.Forms.Button BNTobtenerEstructura;
+        private System.Windows.Forms.Button BTNgenerarDesdeConsulta;
     }
 }
 
