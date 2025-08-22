@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -11,6 +12,9 @@ public class Configuracion
     public string Base { get; set; }
     public string Tabla { get; set; }
     public string Consulta { get; set; }
+    public List<string[]> camposBaja { get; set; }
+    public List<string[]> camposModificacion { get; set; }
+    public List<string[]> camposRecuperacion { get; set; }
     public string UltimoNamespaceSeleccionado { get; set; }
     public string RutaPorDefectoResultados { get; set; }
     public Configuracion()
@@ -21,6 +25,9 @@ public class Configuracion
         Base = string.Empty;
         Tabla = string.Empty;
         Consulta = string.Empty;
+        camposBaja = new List<string[]>();
+        camposModificacion = new List<string[]>();
+        camposRecuperacion = new List<string[]>();
         UltimoNamespaceSeleccionado = string.Empty;
         RutaPorDefectoResultados = string.Empty;
     }

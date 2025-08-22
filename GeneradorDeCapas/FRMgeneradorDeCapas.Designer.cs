@@ -29,6 +29,8 @@ namespace GeneradorDeCapas
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMgeneradorDeCapas));
             this.LBLservidor = new System.Windows.Forms.Label();
             this.CMBservidor = new System.Windows.Forms.ComboBox();
@@ -47,33 +49,54 @@ namespace GeneradorDeCapas
             this.BTNbuscarSolucion = new System.Windows.Forms.Button();
             this.CMBnamespaces = new System.Windows.Forms.ComboBox();
             this.OFDlistarDeSolucion = new System.Windows.Forms.OpenFileDialog();
-            this.SPCcapas = new System.Windows.Forms.SplitContainer();
-            this.GPBback = new System.Windows.Forms.GroupBox();
-            this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
-            this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
-            this.CHKservice = new System.Windows.Forms.CheckBox();
-            this.CHKrepositories = new System.Windows.Forms.CheckBox();
-            this.CHKmodel = new System.Windows.Forms.CheckBox();
-            this.CHKdto = new System.Windows.Forms.CheckBox();
-            this.CHKcontrollers = new System.Windows.Forms.CheckBox();
-            this.GPBFront = new System.Windows.Forms.GroupBox();
-            this.CHKtypeScript = new System.Windows.Forms.CheckBox();
-            this.BTNgenerarDesdeTabla = new System.Windows.Forms.Button();
             this.SPCseparador = new System.Windows.Forms.SplitContainer();
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
-            this.BTNgenerarDesdeConsulta = new System.Windows.Forms.Button();
             this.BNTobtenerEstructura = new System.Windows.Forms.Button();
             this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
             this.SPCclase = new System.Windows.Forms.SplitContainer();
             this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
             this.LSVcampos = new System.Windows.Forms.ListView();
+            this.SPCparametros = new System.Windows.Forms.SplitContainer();
+            this.BTNquitarCampo = new System.Windows.Forms.Button();
+            this.BTNagregarCampo = new System.Windows.Forms.Button();
+            this.LBLcamposABM = new System.Windows.Forms.Label();
+            this.TBCcamposABM = new System.Windows.Forms.TabControl();
+            this.TBPbaja = new System.Windows.Forms.TabPage();
+            this.DGVbaja = new System.Windows.Forms.DataGridView();
+            this.CampoBaja = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VinculoBaja = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.TBPmodificacion = new System.Windows.Forms.TabPage();
+            this.DGVmodificacion = new System.Windows.Forms.DataGridView();
+            this.CampoModificacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VinculoModificacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.TBPrecuperacion = new System.Windows.Forms.TabPage();
+            this.DGVrecuperacion = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewComboBoxColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.LBLclasesGeneradas = new System.Windows.Forms.Label();
             this.TXTclase = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).BeginInit();
-            this.SPCcapas.Panel1.SuspendLayout();
-            this.SPCcapas.Panel2.SuspendLayout();
-            this.SPCcapas.SuspendLayout();
-            this.GPBback.SuspendLayout();
-            this.GPBFront.SuspendLayout();
+            this.TBCbackFront = new System.Windows.Forms.TabControl();
+            this.TBPback = new System.Windows.Forms.TabPage();
+            this.GPBmetodos = new System.Windows.Forms.GroupBox();
+            this.CHKrecuperacion = new System.Windows.Forms.CheckBox();
+            this.CHKtodos = new System.Windows.Forms.CheckBox();
+            this.CHKobtenerPorId = new System.Windows.Forms.CheckBox();
+            this.CHKmodificacion = new System.Windows.Forms.CheckBox();
+            this.CHKbaja = new System.Windows.Forms.CheckBox();
+            this.CHKalta = new System.Windows.Forms.CheckBox();
+            this.GPBajustes = new System.Windows.Forms.GroupBox();
+            this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
+            this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
+            this.GPBback = new System.Windows.Forms.GroupBox();
+            this.CHKservice = new System.Windows.Forms.CheckBox();
+            this.CHKrepositories = new System.Windows.Forms.CheckBox();
+            this.CHKmodel = new System.Windows.Forms.CheckBox();
+            this.CHKdto = new System.Windows.Forms.CheckBox();
+            this.CHKcontrollers = new System.Windows.Forms.CheckBox();
+            this.TBPfront = new System.Windows.Forms.TabPage();
+            this.GPBFront = new System.Windows.Forms.GroupBox();
+            this.CHKtypeScript = new System.Windows.Forms.CheckBox();
+            this.BTNgenerarDesdeTabla = new GeneradorDeCapas.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -83,6 +106,24 @@ namespace GeneradorDeCapas
             this.SPCclase.Panel1.SuspendLayout();
             this.SPCclase.Panel2.SuspendLayout();
             this.SPCclase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SPCparametros)).BeginInit();
+            this.SPCparametros.Panel1.SuspendLayout();
+            this.SPCparametros.Panel2.SuspendLayout();
+            this.SPCparametros.SuspendLayout();
+            this.TBCcamposABM.SuspendLayout();
+            this.TBPbaja.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DGVbaja)).BeginInit();
+            this.TBPmodificacion.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DGVmodificacion)).BeginInit();
+            this.TBPrecuperacion.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DGVrecuperacion)).BeginInit();
+            this.TBCbackFront.SuspendLayout();
+            this.TBPback.SuspendLayout();
+            this.GPBmetodos.SuspendLayout();
+            this.GPBajustes.SuspendLayout();
+            this.GPBback.SuspendLayout();
+            this.TBPfront.SuspendLayout();
+            this.GPBFront.SuspendLayout();
             this.SuspendLayout();
             // 
             // LBLservidor
@@ -268,183 +309,6 @@ namespace GeneradorDeCapas
             // 
             this.OFDlistarDeSolucion.Filter = "Solución .Net|*.sln";
             // 
-            // SPCcapas
-            // 
-            this.SPCcapas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SPCcapas.IsSplitterFixed = true;
-            this.SPCcapas.Location = new System.Drawing.Point(12, 125);
-            this.SPCcapas.Name = "SPCcapas";
-            this.SPCcapas.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // SPCcapas.Panel1
-            // 
-            this.SPCcapas.Panel1.Controls.Add(this.GPBback);
-            // 
-            // SPCcapas.Panel2
-            // 
-            this.SPCcapas.Panel2.Controls.Add(this.GPBFront);
-            this.SPCcapas.Size = new System.Drawing.Size(1047, 142);
-            this.SPCcapas.SplitterDistance = 69;
-            this.SPCcapas.TabIndex = 10;
-            // 
-            // GPBback
-            // 
-            this.GPBback.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.GPBback.Controls.Add(this.CHKtryOrIf);
-            this.GPBback.Controls.Add(this.CHKquitarEsquema);
-            this.GPBback.Controls.Add(this.CHKservice);
-            this.GPBback.Controls.Add(this.CHKrepositories);
-            this.GPBback.Controls.Add(this.CHKmodel);
-            this.GPBback.Controls.Add(this.CHKdto);
-            this.GPBback.Controls.Add(this.CHKcontrollers);
-            this.GPBback.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GPBback.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GPBback.Location = new System.Drawing.Point(0, 0);
-            this.GPBback.Name = "GPBback";
-            this.GPBback.Size = new System.Drawing.Size(1047, 69);
-            this.GPBback.TabIndex = 0;
-            this.GPBback.TabStop = false;
-            this.GPBback.Text = "BACK END";
-            // 
-            // CHKtryOrIf
-            // 
-            this.CHKtryOrIf.AutoSize = true;
-            this.CHKtryOrIf.Checked = true;
-            this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKtryOrIf.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtryOrIf.Location = new System.Drawing.Point(617, 19);
-            this.CHKtryOrIf.Name = "CHKtryOrIf";
-            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 47);
-            this.CHKtryOrIf.TabIndex = 6;
-            this.CHKtryOrIf.Text = "Usar Try en DB2   ";
-            this.CHKtryOrIf.UseVisualStyleBackColor = true;
-            // 
-            // CHKquitarEsquema
-            // 
-            this.CHKquitarEsquema.AutoSize = true;
-            this.CHKquitarEsquema.Checked = true;
-            this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKquitarEsquema.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(472, 19);
-            this.CHKquitarEsquema.Name = "CHKquitarEsquema";
-            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 47);
-            this.CHKquitarEsquema.TabIndex = 5;
-            this.CHKquitarEsquema.Text = "Quitar esquema   ";
-            this.CHKquitarEsquema.UseVisualStyleBackColor = true;
-            this.CHKquitarEsquema.Visible = false;
-            // 
-            // CHKservice
-            // 
-            this.CHKservice.AutoSize = true;
-            this.CHKservice.Checked = true;
-            this.CHKservice.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKservice.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKservice.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKservice.Location = new System.Drawing.Point(381, 19);
-            this.CHKservice.Name = "CHKservice";
-            this.CHKservice.Size = new System.Drawing.Size(91, 47);
-            this.CHKservice.TabIndex = 4;
-            this.CHKservice.Text = "Service   ";
-            this.CHKservice.UseVisualStyleBackColor = true;
-            // 
-            // CHKrepositories
-            // 
-            this.CHKrepositories.AutoSize = true;
-            this.CHKrepositories.Checked = true;
-            this.CHKrepositories.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKrepositories.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKrepositories.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKrepositories.Location = new System.Drawing.Point(260, 19);
-            this.CHKrepositories.Name = "CHKrepositories";
-            this.CHKrepositories.Size = new System.Drawing.Size(121, 47);
-            this.CHKrepositories.TabIndex = 3;
-            this.CHKrepositories.Text = "Repositories   ";
-            this.CHKrepositories.UseVisualStyleBackColor = true;
-            // 
-            // CHKmodel
-            // 
-            this.CHKmodel.AutoSize = true;
-            this.CHKmodel.Checked = true;
-            this.CHKmodel.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKmodel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKmodel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKmodel.Location = new System.Drawing.Point(180, 19);
-            this.CHKmodel.Name = "CHKmodel";
-            this.CHKmodel.Size = new System.Drawing.Size(80, 47);
-            this.CHKmodel.TabIndex = 2;
-            this.CHKmodel.Text = "Model   ";
-            this.CHKmodel.UseVisualStyleBackColor = true;
-            // 
-            // CHKdto
-            // 
-            this.CHKdto.AutoSize = true;
-            this.CHKdto.Checked = true;
-            this.CHKdto.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKdto.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKdto.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKdto.Location = new System.Drawing.Point(115, 19);
-            this.CHKdto.Name = "CHKdto";
-            this.CHKdto.Size = new System.Drawing.Size(65, 47);
-            this.CHKdto.TabIndex = 1;
-            this.CHKdto.Text = "Dto   ";
-            this.CHKdto.UseVisualStyleBackColor = true;
-            // 
-            // CHKcontrollers
-            // 
-            this.CHKcontrollers.AutoSize = true;
-            this.CHKcontrollers.Checked = true;
-            this.CHKcontrollers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKcontrollers.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKcontrollers.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKcontrollers.Location = new System.Drawing.Point(3, 19);
-            this.CHKcontrollers.Name = "CHKcontrollers";
-            this.CHKcontrollers.Size = new System.Drawing.Size(112, 47);
-            this.CHKcontrollers.TabIndex = 0;
-            this.CHKcontrollers.Text = "Controllers   ";
-            this.CHKcontrollers.UseVisualStyleBackColor = true;
-            // 
-            // GPBFront
-            // 
-            this.GPBFront.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.GPBFront.Controls.Add(this.CHKtypeScript);
-            this.GPBFront.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GPBFront.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GPBFront.Location = new System.Drawing.Point(0, 0);
-            this.GPBFront.Name = "GPBFront";
-            this.GPBFront.Size = new System.Drawing.Size(1047, 69);
-            this.GPBFront.TabIndex = 0;
-            this.GPBFront.TabStop = false;
-            this.GPBFront.Text = "FRONT END";
-            // 
-            // CHKtypeScript
-            // 
-            this.CHKtypeScript.AutoSize = true;
-            this.CHKtypeScript.Checked = true;
-            this.CHKtypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKtypeScript.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKtypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtypeScript.Location = new System.Drawing.Point(3, 19);
-            this.CHKtypeScript.Name = "CHKtypeScript";
-            this.CHKtypeScript.Size = new System.Drawing.Size(98, 47);
-            this.CHKtypeScript.TabIndex = 0;
-            this.CHKtypeScript.Text = "TypeScript";
-            this.CHKtypeScript.UseVisualStyleBackColor = true;
-            // 
-            // BTNgenerarDesdeTabla
-            // 
-            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 128);
-            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
-            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 139);
-            this.BTNgenerarDesdeTabla.TabIndex = 12;
-            this.BTNgenerarDesdeTabla.Text = "&Generar";
-            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
-            this.BTNgenerarDesdeTabla.Click += new System.EventHandler(this.BTNgenerarDesdeTabla_Click);
-            // 
             // SPCseparador
             // 
             this.SPCseparador.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -464,32 +328,20 @@ namespace GeneradorDeCapas
             this.SPCseparador.Size = new System.Drawing.Size(1156, 544);
             this.SPCseparador.SplitterDistance = 159;
             this.SPCseparador.TabIndex = 11;
+            this.SPCseparador.TabStop = false;
             // 
             // GBPaPartirDeConsulta
             // 
-            this.GBPaPartirDeConsulta.Controls.Add(this.BTNgenerarDesdeConsulta);
             this.GBPaPartirDeConsulta.Controls.Add(this.BNTobtenerEstructura);
             this.GBPaPartirDeConsulta.Controls.Add(this.TXTgenerarAPartirDeConsulta);
             this.GBPaPartirDeConsulta.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GBPaPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GBPaPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GBPaPartirDeConsulta.Location = new System.Drawing.Point(0, 0);
             this.GBPaPartirDeConsulta.Name = "GBPaPartirDeConsulta";
             this.GBPaPartirDeConsulta.Size = new System.Drawing.Size(1156, 159);
-            this.GBPaPartirDeConsulta.TabIndex = 12;
+            this.GBPaPartirDeConsulta.TabIndex = 0;
             this.GBPaPartirDeConsulta.TabStop = false;
-            this.GBPaPartirDeConsulta.Text = "Generar a partir de consulta";
-            // 
-            // BTNgenerarDesdeConsulta
-            // 
-            this.BTNgenerarDesdeConsulta.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeConsulta.Location = new System.Drawing.Point(1053, 69);
-            this.BTNgenerarDesdeConsulta.Name = "BTNgenerarDesdeConsulta";
-            this.BTNgenerarDesdeConsulta.Size = new System.Drawing.Size(97, 88);
-            this.BTNgenerarDesdeConsulta.TabIndex = 2;
-            this.BTNgenerarDesdeConsulta.Text = "Ge&nerar";
-            this.BTNgenerarDesdeConsulta.UseVisualStyleBackColor = true;
-            this.BTNgenerarDesdeConsulta.Click += new System.EventHandler(this.BTNgenerarDesdeConsulta_Click);
+            this.GBPaPartirDeConsulta.Text = "GENERAR A PARITR DE CONSULTA";
             // 
             // BNTobtenerEstructura
             // 
@@ -508,6 +360,7 @@ namespace GeneradorDeCapas
             this.TXTgenerarAPartirDeConsulta.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.TXTgenerarAPartirDeConsulta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TXTgenerarAPartirDeConsulta.Location = new System.Drawing.Point(3, 19);
             this.TXTgenerarAPartirDeConsulta.Multiline = true;
             this.TXTgenerarAPartirDeConsulta.Name = "TXTgenerarAPartirDeConsulta";
@@ -527,20 +380,21 @@ namespace GeneradorDeCapas
             // 
             // SPCclase.Panel2
             // 
-            this.SPCclase.Panel2.Controls.Add(this.TXTclase);
+            this.SPCclase.Panel2.Controls.Add(this.SPCparametros);
             this.SPCclase.Size = new System.Drawing.Size(1156, 381);
             this.SPCclase.SplitterDistance = 312;
             this.SPCclase.TabIndex = 13;
+            this.SPCclase.TabStop = false;
             this.SPCclase.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.SPCclase_SplitterMoved);
             // 
             // LBLtablaSeleccionada
             // 
-            this.LBLtablaSeleccionada.AutoSize = true;
+            this.LBLtablaSeleccionada.Dock = System.Windows.Forms.DockStyle.Top;
             this.LBLtablaSeleccionada.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLtablaSeleccionada.Location = new System.Drawing.Point(8, 8);
+            this.LBLtablaSeleccionada.Location = new System.Drawing.Point(0, 0);
             this.LBLtablaSeleccionada.Name = "LBLtablaSeleccionada";
-            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(0, 16);
-            this.LBLtablaSeleccionada.TabIndex = 13;
+            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(312, 20);
+            this.LBLtablaSeleccionada.TabIndex = 0;
             this.LBLtablaSeleccionada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LSVcampos
@@ -555,27 +409,536 @@ namespace GeneradorDeCapas
             this.LSVcampos.Location = new System.Drawing.Point(0, 27);
             this.LSVcampos.Name = "LSVcampos";
             this.LSVcampos.Size = new System.Drawing.Size(311, 354);
-            this.LSVcampos.TabIndex = 0;
+            this.LSVcampos.TabIndex = 1;
             this.LSVcampos.UseCompatibleStateImageBehavior = false;
+            // 
+            // SPCparametros
+            // 
+            this.SPCparametros.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SPCparametros.Location = new System.Drawing.Point(0, 0);
+            this.SPCparametros.Name = "SPCparametros";
+            // 
+            // SPCparametros.Panel1
+            // 
+            this.SPCparametros.Panel1.Controls.Add(this.BTNquitarCampo);
+            this.SPCparametros.Panel1.Controls.Add(this.BTNagregarCampo);
+            this.SPCparametros.Panel1.Controls.Add(this.LBLcamposABM);
+            this.SPCparametros.Panel1.Controls.Add(this.TBCcamposABM);
+            // 
+            // SPCparametros.Panel2
+            // 
+            this.SPCparametros.Panel2.Controls.Add(this.LBLclasesGeneradas);
+            this.SPCparametros.Panel2.Controls.Add(this.TXTclase);
+            this.SPCparametros.Size = new System.Drawing.Size(840, 381);
+            this.SPCparametros.SplitterDistance = 374;
+            this.SPCparametros.TabIndex = 1;
+            this.SPCparametros.TabStop = false;
+            // 
+            // BTNquitarCampo
+            // 
+            this.BTNquitarCampo.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNquitarCampo.Location = new System.Drawing.Point(6, 215);
+            this.BTNquitarCampo.Name = "BTNquitarCampo";
+            this.BTNquitarCampo.Size = new System.Drawing.Size(55, 55);
+            this.BTNquitarCampo.TabIndex = 2;
+            this.BTNquitarCampo.Text = "-";
+            this.BTNquitarCampo.UseVisualStyleBackColor = true;
+            this.BTNquitarCampo.Click += new System.EventHandler(this.BTNquitarCampo_Click);
+            // 
+            // BTNagregarCampo
+            // 
+            this.BTNagregarCampo.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNagregarCampo.Location = new System.Drawing.Point(8, 144);
+            this.BTNagregarCampo.Name = "BTNagregarCampo";
+            this.BTNagregarCampo.Size = new System.Drawing.Size(55, 55);
+            this.BTNagregarCampo.TabIndex = 1;
+            this.BTNagregarCampo.Text = "+";
+            this.BTNagregarCampo.UseVisualStyleBackColor = true;
+            this.BTNagregarCampo.Click += new System.EventHandler(this.BTNagregarCampo_Click);
+            // 
+            // LBLcamposABM
+            // 
+            this.LBLcamposABM.Dock = System.Windows.Forms.DockStyle.Top;
+            this.LBLcamposABM.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLcamposABM.Location = new System.Drawing.Point(0, 0);
+            this.LBLcamposABM.Name = "LBLcamposABM";
+            this.LBLcamposABM.Size = new System.Drawing.Size(374, 20);
+            this.LBLcamposABM.TabIndex = 0;
+            this.LBLcamposABM.Text = "CAMPOS ABM";
+            this.LBLcamposABM.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TBCcamposABM
+            // 
+            this.TBCcamposABM.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TBCcamposABM.Controls.Add(this.TBPbaja);
+            this.TBCcamposABM.Controls.Add(this.TBPmodificacion);
+            this.TBCcamposABM.Controls.Add(this.TBPrecuperacion);
+            this.TBCcamposABM.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TBCcamposABM.Location = new System.Drawing.Point(65, 27);
+            this.TBCcamposABM.Name = "TBCcamposABM";
+            this.TBCcamposABM.SelectedIndex = 0;
+            this.TBCcamposABM.Size = new System.Drawing.Size(306, 354);
+            this.TBCcamposABM.TabIndex = 3;
+            // 
+            // TBPbaja
+            // 
+            this.TBPbaja.Controls.Add(this.DGVbaja);
+            this.TBPbaja.Location = new System.Drawing.Point(4, 25);
+            this.TBPbaja.Name = "TBPbaja";
+            this.TBPbaja.Padding = new System.Windows.Forms.Padding(3);
+            this.TBPbaja.Size = new System.Drawing.Size(298, 325);
+            this.TBPbaja.TabIndex = 1;
+            this.TBPbaja.Text = "  BAJA  ";
+            this.TBPbaja.UseVisualStyleBackColor = true;
+            // 
+            // DGVbaja
+            // 
+            this.DGVbaja.AllowUserToAddRows = false;
+            this.DGVbaja.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DGVbaja.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CampoBaja,
+            this.VinculoBaja});
+            this.DGVbaja.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DGVbaja.Location = new System.Drawing.Point(3, 3);
+            this.DGVbaja.Name = "DGVbaja";
+            this.DGVbaja.RowHeadersVisible = false;
+            this.DGVbaja.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DGVbaja.Size = new System.Drawing.Size(292, 319);
+            this.DGVbaja.TabIndex = 0;
+            // 
+            // CampoBaja
+            // 
+            this.CampoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.CampoBaja.DefaultCellStyle = dataGridViewCellStyle1;
+            this.CampoBaja.HeaderText = "CAMPO";
+            this.CampoBaja.Name = "CampoBaja";
+            // 
+            // VinculoBaja
+            // 
+            this.VinculoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.VinculoBaja.DefaultCellStyle = dataGridViewCellStyle2;
+            this.VinculoBaja.HeaderText = "VINCULAR";
+            this.VinculoBaja.Name = "VinculoBaja";
+            // 
+            // TBPmodificacion
+            // 
+            this.TBPmodificacion.Controls.Add(this.DGVmodificacion);
+            this.TBPmodificacion.Location = new System.Drawing.Point(4, 25);
+            this.TBPmodificacion.Name = "TBPmodificacion";
+            this.TBPmodificacion.Padding = new System.Windows.Forms.Padding(3);
+            this.TBPmodificacion.Size = new System.Drawing.Size(298, 325);
+            this.TBPmodificacion.TabIndex = 2;
+            this.TBPmodificacion.Text = "  MODIFICACION  ";
+            this.TBPmodificacion.UseVisualStyleBackColor = true;
+            // 
+            // DGVmodificacion
+            // 
+            this.DGVmodificacion.AllowUserToAddRows = false;
+            this.DGVmodificacion.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DGVmodificacion.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CampoModificacion,
+            this.VinculoModificacion});
+            this.DGVmodificacion.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DGVmodificacion.Location = new System.Drawing.Point(3, 3);
+            this.DGVmodificacion.Name = "DGVmodificacion";
+            this.DGVmodificacion.RowHeadersVisible = false;
+            this.DGVmodificacion.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DGVmodificacion.Size = new System.Drawing.Size(292, 319);
+            this.DGVmodificacion.TabIndex = 1;
+            // 
+            // CampoModificacion
+            // 
+            this.CampoModificacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.CampoModificacion.HeaderText = "CAMPO";
+            this.CampoModificacion.Name = "CampoModificacion";
+            // 
+            // VinculoModificacion
+            // 
+            this.VinculoModificacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.VinculoModificacion.HeaderText = "VINCULAR";
+            this.VinculoModificacion.Name = "VinculoModificacion";
+            // 
+            // TBPrecuperacion
+            // 
+            this.TBPrecuperacion.Controls.Add(this.DGVrecuperacion);
+            this.TBPrecuperacion.Location = new System.Drawing.Point(4, 25);
+            this.TBPrecuperacion.Name = "TBPrecuperacion";
+            this.TBPrecuperacion.Padding = new System.Windows.Forms.Padding(3);
+            this.TBPrecuperacion.Size = new System.Drawing.Size(298, 325);
+            this.TBPrecuperacion.TabIndex = 3;
+            this.TBPrecuperacion.Text = "  RECUPERACION  ";
+            this.TBPrecuperacion.UseVisualStyleBackColor = true;
+            // 
+            // DGVrecuperacion
+            // 
+            this.DGVrecuperacion.AllowUserToAddRows = false;
+            this.DGVrecuperacion.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DGVrecuperacion.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewComboBoxColumn1});
+            this.DGVrecuperacion.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DGVrecuperacion.Location = new System.Drawing.Point(3, 3);
+            this.DGVrecuperacion.Name = "DGVrecuperacion";
+            this.DGVrecuperacion.RowHeadersVisible = false;
+            this.DGVrecuperacion.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DGVrecuperacion.Size = new System.Drawing.Size(292, 319);
+            this.DGVrecuperacion.TabIndex = 1;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.HeaderText = "CAMPO";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewComboBoxColumn1
+            // 
+            this.dataGridViewComboBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewComboBoxColumn1.HeaderText = "VINCULAR";
+            this.dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
+            // 
+            // LBLclasesGeneradas
+            // 
+            this.LBLclasesGeneradas.Dock = System.Windows.Forms.DockStyle.Top;
+            this.LBLclasesGeneradas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLclasesGeneradas.Location = new System.Drawing.Point(0, 0);
+            this.LBLclasesGeneradas.Margin = new System.Windows.Forms.Padding(3, 0, 3, 5);
+            this.LBLclasesGeneradas.Name = "LBLclasesGeneradas";
+            this.LBLclasesGeneradas.Size = new System.Drawing.Size(462, 20);
+            this.LBLclasesGeneradas.TabIndex = 0;
+            this.LBLclasesGeneradas.Text = "CLASES GENERADAS";
+            this.LBLclasesGeneradas.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // TXTclase
             // 
-            this.TXTclase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TXTclase.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TXTclase.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TXTclase.Location = new System.Drawing.Point(0, 0);
+            this.TXTclase.Location = new System.Drawing.Point(0, 27);
             this.TXTclase.Multiline = true;
             this.TXTclase.Name = "TXTclase";
             this.TXTclase.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TXTclase.Size = new System.Drawing.Size(840, 381);
-            this.TXTclase.TabIndex = 0;
-            this.TXTclase.TabStop = false;
+            this.TXTclase.Size = new System.Drawing.Size(462, 361);
+            this.TXTclase.TabIndex = 1;
+            // 
+            // TBCbackFront
+            // 
+            this.TBCbackFront.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TBCbackFront.Controls.Add(this.TBPback);
+            this.TBCbackFront.Controls.Add(this.TBPfront);
+            this.TBCbackFront.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TBCbackFront.Location = new System.Drawing.Point(12, 125);
+            this.TBCbackFront.Name = "TBCbackFront";
+            this.TBCbackFront.SelectedIndex = 0;
+            this.TBCbackFront.Size = new System.Drawing.Size(1047, 142);
+            this.TBCbackFront.TabIndex = 10;
+            // 
+            // TBPback
+            // 
+            this.TBPback.Controls.Add(this.GPBmetodos);
+            this.TBPback.Controls.Add(this.GPBajustes);
+            this.TBPback.Controls.Add(this.GPBback);
+            this.TBPback.Location = new System.Drawing.Point(4, 25);
+            this.TBPback.Name = "TBPback";
+            this.TBPback.Padding = new System.Windows.Forms.Padding(3);
+            this.TBPback.Size = new System.Drawing.Size(1039, 113);
+            this.TBPback.TabIndex = 0;
+            this.TBPback.Text = "  BACK  ";
+            this.TBPback.UseVisualStyleBackColor = true;
+            // 
+            // GPBmetodos
+            // 
+            this.GPBmetodos.Controls.Add(this.CHKrecuperacion);
+            this.GPBmetodos.Controls.Add(this.CHKtodos);
+            this.GPBmetodos.Controls.Add(this.CHKobtenerPorId);
+            this.GPBmetodos.Controls.Add(this.CHKmodificacion);
+            this.GPBmetodos.Controls.Add(this.CHKbaja);
+            this.GPBmetodos.Controls.Add(this.CHKalta);
+            this.GPBmetodos.Dock = System.Windows.Forms.DockStyle.Left;
+            this.GPBmetodos.Location = new System.Drawing.Point(476, 3);
+            this.GPBmetodos.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.GPBmetodos.Name = "GPBmetodos";
+            this.GPBmetodos.Size = new System.Drawing.Size(315, 107);
+            this.GPBmetodos.TabIndex = 2;
+            this.GPBmetodos.TabStop = false;
+            this.GPBmetodos.Text = "METODOS";
+            // 
+            // CHKrecuperacion
+            // 
+            this.CHKrecuperacion.AutoSize = true;
+            this.CHKrecuperacion.Checked = true;
+            this.CHKrecuperacion.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKrecuperacion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKrecuperacion.Location = new System.Drawing.Point(147, 79);
+            this.CHKrecuperacion.Name = "CHKrecuperacion";
+            this.CHKrecuperacion.Size = new System.Drawing.Size(115, 20);
+            this.CHKrecuperacion.TabIndex = 5;
+            this.CHKrecuperacion.Text = "Recuperación";
+            this.CHKrecuperacion.UseVisualStyleBackColor = true;
+            this.CHKrecuperacion.CheckedChanged += new System.EventHandler(this.CHKrecuperacion_CheckedChanged);
+            // 
+            // CHKtodos
+            // 
+            this.CHKtodos.AutoSize = true;
+            this.CHKtodos.Checked = true;
+            this.CHKtodos.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKtodos.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKtodos.Location = new System.Drawing.Point(147, 51);
+            this.CHKtodos.Name = "CHKtodos";
+            this.CHKtodos.Size = new System.Drawing.Size(122, 20);
+            this.CHKtodos.TabIndex = 4;
+            this.CHKtodos.Text = "Obtener todos";
+            this.CHKtodos.UseVisualStyleBackColor = true;
+            // 
+            // CHKobtenerPorId
+            // 
+            this.CHKobtenerPorId.AutoSize = true;
+            this.CHKobtenerPorId.Checked = true;
+            this.CHKobtenerPorId.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKobtenerPorId.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKobtenerPorId.Location = new System.Drawing.Point(147, 23);
+            this.CHKobtenerPorId.Name = "CHKobtenerPorId";
+            this.CHKobtenerPorId.Size = new System.Drawing.Size(125, 20);
+            this.CHKobtenerPorId.TabIndex = 3;
+            this.CHKobtenerPorId.Text = "Obtener por ID";
+            this.CHKobtenerPorId.UseVisualStyleBackColor = true;
+            // 
+            // CHKmodificacion
+            // 
+            this.CHKmodificacion.AutoSize = true;
+            this.CHKmodificacion.Checked = true;
+            this.CHKmodificacion.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKmodificacion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKmodificacion.Location = new System.Drawing.Point(8, 79);
+            this.CHKmodificacion.Name = "CHKmodificacion";
+            this.CHKmodificacion.Size = new System.Drawing.Size(108, 20);
+            this.CHKmodificacion.TabIndex = 2;
+            this.CHKmodificacion.Text = "Modificación";
+            this.CHKmodificacion.UseVisualStyleBackColor = true;
+            this.CHKmodificacion.CheckedChanged += new System.EventHandler(this.CHKmodificacion_CheckedChanged);
+            // 
+            // CHKbaja
+            // 
+            this.CHKbaja.AutoSize = true;
+            this.CHKbaja.Checked = true;
+            this.CHKbaja.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKbaja.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKbaja.Location = new System.Drawing.Point(8, 51);
+            this.CHKbaja.Name = "CHKbaja";
+            this.CHKbaja.Size = new System.Drawing.Size(55, 20);
+            this.CHKbaja.TabIndex = 1;
+            this.CHKbaja.Text = "Baja";
+            this.CHKbaja.UseVisualStyleBackColor = true;
+            this.CHKbaja.CheckedChanged += new System.EventHandler(this.CHKbaja_CheckedChanged);
+            // 
+            // CHKalta
+            // 
+            this.CHKalta.AutoSize = true;
+            this.CHKalta.Checked = true;
+            this.CHKalta.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKalta.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKalta.Location = new System.Drawing.Point(8, 23);
+            this.CHKalta.Name = "CHKalta";
+            this.CHKalta.Size = new System.Drawing.Size(53, 20);
+            this.CHKalta.TabIndex = 0;
+            this.CHKalta.Text = "Alta";
+            this.CHKalta.UseVisualStyleBackColor = true;
+            // 
+            // GPBajustes
+            // 
+            this.GPBajustes.Controls.Add(this.CHKtryOrIf);
+            this.GPBajustes.Controls.Add(this.CHKquitarEsquema);
+            this.GPBajustes.Dock = System.Windows.Forms.DockStyle.Left;
+            this.GPBajustes.Location = new System.Drawing.Point(276, 3);
+            this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.GPBajustes.Name = "GPBajustes";
+            this.GPBajustes.Size = new System.Drawing.Size(200, 107);
+            this.GPBajustes.TabIndex = 1;
+            this.GPBajustes.TabStop = false;
+            this.GPBajustes.Text = "AJUSTES";
+            // 
+            // CHKtryOrIf
+            // 
+            this.CHKtryOrIf.AutoSize = true;
+            this.CHKtryOrIf.Checked = true;
+            this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKtryOrIf.Location = new System.Drawing.Point(8, 51);
+            this.CHKtryOrIf.Name = "CHKtryOrIf";
+            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 20);
+            this.CHKtryOrIf.TabIndex = 1;
+            this.CHKtryOrIf.Text = "Usar Try en DB2   ";
+            this.CHKtryOrIf.UseVisualStyleBackColor = true;
+            // 
+            // CHKquitarEsquema
+            // 
+            this.CHKquitarEsquema.AutoSize = true;
+            this.CHKquitarEsquema.Checked = true;
+            this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 23);
+            this.CHKquitarEsquema.Name = "CHKquitarEsquema";
+            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 20);
+            this.CHKquitarEsquema.TabIndex = 0;
+            this.CHKquitarEsquema.Text = "Quitar esquema   ";
+            this.CHKquitarEsquema.UseVisualStyleBackColor = true;
+            this.CHKquitarEsquema.Visible = false;
+            // 
+            // GPBback
+            // 
+            this.GPBback.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.GPBback.Controls.Add(this.CHKservice);
+            this.GPBback.Controls.Add(this.CHKrepositories);
+            this.GPBback.Controls.Add(this.CHKmodel);
+            this.GPBback.Controls.Add(this.CHKdto);
+            this.GPBback.Controls.Add(this.CHKcontrollers);
+            this.GPBback.Dock = System.Windows.Forms.DockStyle.Left;
+            this.GPBback.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GPBback.Location = new System.Drawing.Point(3, 3);
+            this.GPBback.Name = "GPBback";
+            this.GPBback.Size = new System.Drawing.Size(273, 107);
+            this.GPBback.TabIndex = 0;
+            this.GPBback.TabStop = false;
+            this.GPBback.Text = "CAPAS A GENERAR";
+            // 
+            // CHKservice
+            // 
+            this.CHKservice.AutoSize = true;
+            this.CHKservice.Checked = true;
+            this.CHKservice.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKservice.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKservice.Location = new System.Drawing.Point(132, 51);
+            this.CHKservice.Name = "CHKservice";
+            this.CHKservice.Size = new System.Drawing.Size(91, 20);
+            this.CHKservice.TabIndex = 4;
+            this.CHKservice.Text = "Service   ";
+            this.CHKservice.UseVisualStyleBackColor = true;
+            // 
+            // CHKrepositories
+            // 
+            this.CHKrepositories.AutoSize = true;
+            this.CHKrepositories.Checked = true;
+            this.CHKrepositories.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKrepositories.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKrepositories.Location = new System.Drawing.Point(132, 23);
+            this.CHKrepositories.Name = "CHKrepositories";
+            this.CHKrepositories.Size = new System.Drawing.Size(121, 20);
+            this.CHKrepositories.TabIndex = 3;
+            this.CHKrepositories.Text = "Repositories   ";
+            this.CHKrepositories.UseVisualStyleBackColor = true;
+            // 
+            // CHKmodel
+            // 
+            this.CHKmodel.AutoSize = true;
+            this.CHKmodel.Checked = true;
+            this.CHKmodel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKmodel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKmodel.Location = new System.Drawing.Point(3, 79);
+            this.CHKmodel.Name = "CHKmodel";
+            this.CHKmodel.Size = new System.Drawing.Size(80, 20);
+            this.CHKmodel.TabIndex = 2;
+            this.CHKmodel.Text = "Model   ";
+            this.CHKmodel.UseVisualStyleBackColor = true;
+            // 
+            // CHKdto
+            // 
+            this.CHKdto.AutoSize = true;
+            this.CHKdto.Checked = true;
+            this.CHKdto.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKdto.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKdto.Location = new System.Drawing.Point(3, 51);
+            this.CHKdto.Name = "CHKdto";
+            this.CHKdto.Size = new System.Drawing.Size(65, 20);
+            this.CHKdto.TabIndex = 1;
+            this.CHKdto.Text = "Dto   ";
+            this.CHKdto.UseVisualStyleBackColor = true;
+            // 
+            // CHKcontrollers
+            // 
+            this.CHKcontrollers.AutoSize = true;
+            this.CHKcontrollers.Checked = true;
+            this.CHKcontrollers.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKcontrollers.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKcontrollers.Location = new System.Drawing.Point(3, 23);
+            this.CHKcontrollers.Name = "CHKcontrollers";
+            this.CHKcontrollers.Size = new System.Drawing.Size(112, 20);
+            this.CHKcontrollers.TabIndex = 0;
+            this.CHKcontrollers.Text = "Controllers   ";
+            this.CHKcontrollers.UseVisualStyleBackColor = true;
+            // 
+            // TBPfront
+            // 
+            this.TBPfront.Controls.Add(this.GPBFront);
+            this.TBPfront.Location = new System.Drawing.Point(4, 25);
+            this.TBPfront.Name = "TBPfront";
+            this.TBPfront.Padding = new System.Windows.Forms.Padding(3);
+            this.TBPfront.Size = new System.Drawing.Size(1039, 113);
+            this.TBPfront.TabIndex = 1;
+            this.TBPfront.Text = "  FRONT  ";
+            this.TBPfront.UseVisualStyleBackColor = true;
+            // 
+            // GPBFront
+            // 
+            this.GPBFront.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.GPBFront.Controls.Add(this.CHKtypeScript);
+            this.GPBFront.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GPBFront.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GPBFront.Location = new System.Drawing.Point(3, 3);
+            this.GPBFront.Name = "GPBFront";
+            this.GPBFront.Size = new System.Drawing.Size(1033, 107);
+            this.GPBFront.TabIndex = 1;
+            this.GPBFront.TabStop = false;
+            // 
+            // CHKtypeScript
+            // 
+            this.CHKtypeScript.AutoSize = true;
+            this.CHKtypeScript.Checked = true;
+            this.CHKtypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKtypeScript.Dock = System.Windows.Forms.DockStyle.Left;
+            this.CHKtypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKtypeScript.Location = new System.Drawing.Point(3, 19);
+            this.CHKtypeScript.Name = "CHKtypeScript";
+            this.CHKtypeScript.Size = new System.Drawing.Size(98, 85);
+            this.CHKtypeScript.TabIndex = 0;
+            this.CHKtypeScript.Text = "TypeScript";
+            this.CHKtypeScript.UseVisualStyleBackColor = true;
+            // 
+            // BTNgenerarDesdeTabla
+            // 
+            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Image = global::ConsultasDB2.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 150);
+            this.BTNgenerarDesdeTabla.Menu = null;
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
+            this.BTNgenerarDesdeTabla.TabIndex = 12;
+            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
+            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
             // FRMgeneradorDeCapas
             // 
             this.ClientSize = new System.Drawing.Size(1186, 829);
+            this.Controls.Add(this.TBCbackFront);
             this.Controls.Add(this.SPCseparador);
             this.Controls.Add(this.BTNgenerarDesdeTabla);
-            this.Controls.Add(this.SPCcapas);
             this.Controls.Add(this.CMBnamespaces);
             this.Controls.Add(this.BTNbuscarSolucion);
             this.Controls.Add(this.BTNdirectorioCapas);
@@ -594,18 +957,10 @@ namespace GeneradorDeCapas
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FRMgeneradorDeCapas";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Capificator";
+            this.Text = "CAPIBARA";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FRMgeneradorDeCapas_Load);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
-            this.SPCcapas.Panel1.ResumeLayout(false);
-            this.SPCcapas.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SPCcapas)).EndInit();
-            this.SPCcapas.ResumeLayout(false);
-            this.GPBback.ResumeLayout(false);
-            this.GPBback.PerformLayout();
-            this.GPBFront.ResumeLayout(false);
-            this.GPBFront.PerformLayout();
             this.SPCseparador.Panel1.ResumeLayout(false);
             this.SPCseparador.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).EndInit();
@@ -613,11 +968,32 @@ namespace GeneradorDeCapas
             this.GBPaPartirDeConsulta.ResumeLayout(false);
             this.GBPaPartirDeConsulta.PerformLayout();
             this.SPCclase.Panel1.ResumeLayout(false);
-            this.SPCclase.Panel1.PerformLayout();
             this.SPCclase.Panel2.ResumeLayout(false);
-            this.SPCclase.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).EndInit();
             this.SPCclase.ResumeLayout(false);
+            this.SPCparametros.Panel1.ResumeLayout(false);
+            this.SPCparametros.Panel2.ResumeLayout(false);
+            this.SPCparametros.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SPCparametros)).EndInit();
+            this.SPCparametros.ResumeLayout(false);
+            this.TBCcamposABM.ResumeLayout(false);
+            this.TBPbaja.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DGVbaja)).EndInit();
+            this.TBPmodificacion.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DGVmodificacion)).EndInit();
+            this.TBPrecuperacion.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DGVrecuperacion)).EndInit();
+            this.TBCbackFront.ResumeLayout(false);
+            this.TBPback.ResumeLayout(false);
+            this.GPBmetodos.ResumeLayout(false);
+            this.GPBmetodos.PerformLayout();
+            this.GPBajustes.ResumeLayout(false);
+            this.GPBajustes.PerformLayout();
+            this.GPBback.ResumeLayout(false);
+            this.GPBback.PerformLayout();
+            this.TBPfront.ResumeLayout(false);
+            this.GPBFront.ResumeLayout(false);
+            this.GPBFront.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -642,27 +1018,54 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Button BTNbuscarSolucion;
         private System.Windows.Forms.ComboBox CMBnamespaces;
         private System.Windows.Forms.OpenFileDialog OFDlistarDeSolucion;
-        private System.Windows.Forms.SplitContainer SPCcapas;
-        private System.Windows.Forms.GroupBox GPBback;
-        private System.Windows.Forms.CheckBox CHKtryOrIf;
-        private System.Windows.Forms.CheckBox CHKquitarEsquema;
-        private System.Windows.Forms.CheckBox CHKservice;
-        private System.Windows.Forms.CheckBox CHKrepositories;
-        private System.Windows.Forms.CheckBox CHKmodel;
-        private System.Windows.Forms.CheckBox CHKdto;
-        private System.Windows.Forms.CheckBox CHKcontrollers;
-        private System.Windows.Forms.Button BTNgenerarDesdeTabla;
-        private System.Windows.Forms.GroupBox GPBFront;
-        private System.Windows.Forms.CheckBox CHKtypeScript;
+        private GeneradorDeCapas.SplitButton BTNgenerarDesdeTabla;
         private System.Windows.Forms.SplitContainer SPCseparador;
         private System.Windows.Forms.GroupBox GBPaPartirDeConsulta;
         private System.Windows.Forms.TextBox TXTgenerarAPartirDeConsulta;
         private System.Windows.Forms.SplitContainer SPCclase;
         private System.Windows.Forms.Label LBLtablaSeleccionada;
         private System.Windows.Forms.ListView LSVcampos;
-        private System.Windows.Forms.TextBox TXTclase;
         private System.Windows.Forms.Button BNTobtenerEstructura;
-        private System.Windows.Forms.Button BTNgenerarDesdeConsulta;
+        private System.Windows.Forms.SplitContainer SPCparametros;
+        private System.Windows.Forms.TextBox TXTclase;
+        private System.Windows.Forms.Label LBLclasesGeneradas;
+        private System.Windows.Forms.Button BTNquitarCampo;
+        private System.Windows.Forms.Button BTNagregarCampo;
+        private System.Windows.Forms.Label LBLcamposABM;
+        private System.Windows.Forms.TabControl TBCcamposABM;
+        private System.Windows.Forms.TabPage TBPmodificacion;
+        private System.Windows.Forms.TabPage TBPbaja;
+        private System.Windows.Forms.DataGridView DGVbaja;
+        private System.Windows.Forms.DataGridView DGVmodificacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CampoModificacion;
+        private System.Windows.Forms.DataGridViewComboBoxColumn VinculoModificacion;
+        private System.Windows.Forms.TabPage TBPrecuperacion;
+        private System.Windows.Forms.DataGridView DGVrecuperacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
+        private System.Windows.Forms.TabControl TBCbackFront;
+        private System.Windows.Forms.TabPage TBPback;
+        private System.Windows.Forms.GroupBox GPBajustes;
+        private System.Windows.Forms.CheckBox CHKtryOrIf;
+        private System.Windows.Forms.CheckBox CHKquitarEsquema;
+        private System.Windows.Forms.GroupBox GPBback;
+        private System.Windows.Forms.CheckBox CHKservice;
+        private System.Windows.Forms.CheckBox CHKrepositories;
+        private System.Windows.Forms.CheckBox CHKmodel;
+        private System.Windows.Forms.CheckBox CHKdto;
+        private System.Windows.Forms.CheckBox CHKcontrollers;
+        private System.Windows.Forms.TabPage TBPfront;
+        private System.Windows.Forms.GroupBox GPBFront;
+        private System.Windows.Forms.CheckBox CHKtypeScript;
+        private System.Windows.Forms.GroupBox GPBmetodos;
+        private System.Windows.Forms.CheckBox CHKrecuperacion;
+        private System.Windows.Forms.CheckBox CHKtodos;
+        private System.Windows.Forms.CheckBox CHKobtenerPorId;
+        private System.Windows.Forms.CheckBox CHKmodificacion;
+        private System.Windows.Forms.CheckBox CHKbaja;
+        private System.Windows.Forms.CheckBox CHKalta;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CampoBaja;
+        private System.Windows.Forms.DataGridViewComboBoxColumn VinculoBaja;
     }
 }
 

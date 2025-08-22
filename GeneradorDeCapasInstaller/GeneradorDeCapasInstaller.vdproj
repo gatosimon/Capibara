@@ -705,6 +705,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D77D5AE7018E4376861BEDD694AC5D1F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D8614809D9544CBAF58733F24BCCFA68"
         "OwnerKey" = "8:_D3051AE0A92A4B1FA73ECA2A23B257DA"
         "MsmSig" = "8:_UNDEFINED"
@@ -815,6 +821,12 @@
         {
         "MsmKey" = "8:_F1C45B5608B2093AF2BCF48B55AE587B"
         "OwnerKey" = "8:_480FD696C9E961D3FF51573AD2554DF3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3485,6 +3497,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D77D5AE7018E4376861BEDD694AC5D1F"
+            {
+            "SourcePath" = "8:..\\Capibara64x64.ico"
+            "TargetName" = "8:Capibara64x64.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D8614809D9544CBAF58733F24BCCFA68"
             {
             "AssemblyRegister" = "3:1"
@@ -3764,6 +3796,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F7A3A9B5680243F5A3DCBF4957D71D4E"
+            {
+            "SourcePath" = "8:..\\bannerCapibara.jpg"
+            "TargetName" = "8:bannerCapibara.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F99CC70130C546AE898DCB3B15A6C9BE"
             {
             "SourcePath" = "8:..\\banner.jpg"
@@ -3963,9 +4015,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Capificator"
+        "ProductName" = "8:Capibara"
         "ProductCode" = "8:{BE88D6FB-D7D3-4437-A437-15163030FF1F}"
-        "PackageCode" = "8:{9B23FEAF-4CEA-4057-B4FF-B6BEC869953F}"
+        "PackageCode" = "8:{25BAE34D-1485-41EB-A992-C29BAC49BA18}"
         "UpgradeCode" = "8:{222D8F49-3D1F-4391-85CF-ABF3ABB8830C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3976,7 +4028,7 @@
         "Manufacturer" = "8:Default Company Name"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Capificator"
+        "Title" = "8:Capibara"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Default Company Name"
         "Keywords" = "8:"
@@ -4085,23 +4137,9 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3D7AA649466D464BB283D7C7F27AB708"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_497EF0A75AB241D0966D90D2E1A70D9D"
             {
-            "Name" = "8:Generador de Capas"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_D3051AE0A92A4B1FA73ECA2A23B257DA"
-            "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
-            "WorkingFolder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
-            "Icon" = "8:_8D3117BF4F3B4078AB8AA058377DB8B3"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_4BE81E11115441998B59FEDA8A4F0E7B"
-            {
-            "Name" = "8:Capificator"
+            "Name" = "8:Capibara"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -4110,7 +4148,21 @@
             "Target" = "8:_D3051AE0A92A4B1FA73ECA2A23B257DA"
             "Folder" = "8:_C912CDEAC22641339C27250F8A9D0D81"
             "WorkingFolder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
-            "Icon" = "8:_8D3117BF4F3B4078AB8AA058377DB8B3"
+            "Icon" = "8:_D77D5AE7018E4376861BEDD694AC5D1F"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_98269F20DD784FC1B644A119EA99A6FF"
+            {
+            "Name" = "8:Capibara"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_D3051AE0A92A4B1FA73ECA2A23B257DA"
+            "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
+            "WorkingFolder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
+            "Icon" = "8:_D77D5AE7018E4376861BEDD694AC5D1F"
             "Feature" = "8:"
             }
         }
@@ -4141,7 +4193,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -4192,7 +4244,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "UpdateText"
@@ -4237,7 +4289,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -4282,7 +4334,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4305,7 +4357,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -4354,7 +4406,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "InstallAllUsersVisible"
@@ -4399,7 +4451,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4422,7 +4474,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4445,7 +4497,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -4503,7 +4555,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_F99CC70130C546AE898DCB3B15A6C9BE"
+                            "Value" = "8:_F7A3A9B5680243F5A3DCBF4957D71D4E"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
