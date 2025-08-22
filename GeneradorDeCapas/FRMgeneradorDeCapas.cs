@@ -227,11 +227,11 @@ namespace GeneradorDeCapas
                 DGVrecuperacion.Rows[indiceFila].Cells[1].Value = CamposABM[item[1]];
             }
         }
-        private void GuardarConfiguracion()
+        private void GuardarConfiguracion(string consulta = "")
         {
             try
             {
-                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString(), consulta);
 
                 configuracion.SQL = RDBsql.Checked;
                 configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
@@ -332,6 +332,9 @@ namespace GeneradorDeCapas
             List<DataColumn> claves = new List<DataColumn>();
             List<DataColumn> camposConsulta = new List<DataColumn>();
             List<string> columnasError = new List<string>();
+
+            bool consultaOk = true;
+
             if (RDBdb2.Checked)
             {
                 try
@@ -382,6 +385,7 @@ namespace GeneradorDeCapas
                 catch (Exception ex)
                 {
                     resultado = ex.Message;
+                    consultaOk = false;
                 }
             }
             else
@@ -439,88 +443,97 @@ namespace GeneradorDeCapas
                 catch (Exception ex)
                 {
                     resultado = ex.Message;
+                    consultaOk = false;
                 }
             }
 
-            if (columnasError.Count > 0)
+            if (consultaOk)
             {
-                string columnas = string.Join("\r\n", columnasError);
-                MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                if (columnasError.Count > 0)
+                {
+                    string columnas = string.Join("\r\n", columnasError);
+                    MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                }
+                else
+                {
+
+                    if (CHKquitarEsquema.Checked)
+                    {
+                        string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                        tabla = partes[partes.Length - 1];
+                    }
+                    TABLA = tabla;
+
+                    if (CHKcontrollers.Checked)
+                    {
+                        resultado = ArmarControllers(claves);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarControllers(claves);
+                    }
+                    if (CHKdto.Checked)
+                    {
+                        resultado += ArmarDto(camposConsulta);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarDto(camposConsulta);
+                    }
+                    if (CHKmodel.Checked)
+                    {
+                        resultado += ArmarModel(camposConsulta, claves);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarModel(camposConsulta, claves);
+                    }
+                    if (CHKrepositories.Checked)
+                    {
+                        resultado += ArmarRepositories(camposConsulta, claves);
+                        resultado += "\r\n";
+                        resultado += ArmarRepositoriesInterface(claves);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarRepositories(camposConsulta, claves);
+                        ArmarRepositoriesInterface(claves);
+                    }
+                    if (CHKservice.Checked)
+                    {
+                        resultado += ArmarService(camposConsulta, claves);
+                        resultado += "\r\n";
+                        resultado += ArmarServiceInterface(claves);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarService(camposConsulta, claves);
+                        ArmarServiceInterface(claves);
+                    }
+                    if (CHKtypeScript.Checked)
+                    {
+                        resultado += ArmarTypeScript(camposConsulta);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarTypeScript(camposConsulta);
+                    }
+
+                    if (System.IO.Directory.Exists(TXTpathCapas.Text))
+                    {
+                        Process.Start("explorer.exe", TXTpathCapas.Text);
+                    }
+                }
             }
             else
             {
-                if (CHKquitarEsquema.Checked)
-                {
-                    string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    tabla = partes[partes.Length - 1];
-                }
-                TABLA = tabla;
-
-                if (CHKcontrollers.Checked)
-                {
-                    resultado = ArmarControllers(claves);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarControllers(claves);
-                }
-                if (CHKdto.Checked)
-                {
-                    resultado += ArmarDto(camposConsulta);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarDto(camposConsulta);
-                }
-                if (CHKmodel.Checked)
-                {
-                    resultado += ArmarModel(camposConsulta, claves);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarModel(camposConsulta, claves);
-                }
-                if (CHKrepositories.Checked)
-                {
-                    resultado += ArmarRepositories(camposConsulta, claves);
-                    resultado += "\r\n";
-                    resultado += ArmarRepositoriesInterface(claves);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarRepositories(camposConsulta, claves);
-                    ArmarRepositoriesInterface(claves);
-                }
-                if (CHKservice.Checked)
-                {
-                    resultado += ArmarService(camposConsulta, claves);
-                    resultado += "\r\n";
-                    resultado += ArmarServiceInterface(claves);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarService(camposConsulta, claves);
-                    ArmarServiceInterface(claves);
-                }
-                if (CHKtypeScript.Checked)
-                {
-                    resultado += ArmarTypeScript(camposConsulta);
-                    resultado += "\r\n";
-                }
-                else
-                {
-                    ArmarTypeScript(camposConsulta);
-                }
-
-                if (System.IO.Directory.Exists(TXTpathCapas.Text))
-                {
-                    Process.Start("explorer.exe", TXTpathCapas.Text);
-                } 
+                MessageBox.Show("Ocurrió un error al intentar acceder a la" + (consulta.Trim().Length > 0 ? " consulta. " : " tabla. ") + resultado, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return resultado;
@@ -1740,7 +1753,7 @@ namespace GeneradorDeCapas
 
         private void GenerarDesdeConsulta()
         {
-            GuardarConfiguracion();
+            GuardarConfiguracion(TXTgenerarAPartirDeConsulta.Text);
         }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)

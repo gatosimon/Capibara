@@ -43,7 +43,7 @@ namespace GeneradorDeCapas
             g.DrawLine(Pens.Gray, 4, yLine, this.Width - 4, yLine);
 
             int spacing = 15;
-            int currentY = 15;
+            int currentY = 10;
 
             // --- Imagen arriba ---
             if (this.Image != null)
@@ -107,6 +107,7 @@ namespace GeneradorDeCapas
                 }
             }
         }
+
         protected override bool IsInputKey(Keys keyData)
         {
             // Permite que se procesen las teclas con Alt
