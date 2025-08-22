@@ -170,6 +170,8 @@ namespace GeneradorDeCapas
         string pathClaseService { get { return pathService + TABLA + SERVICE + ".cs"; }}
         string pathClaseServiceInterface { get { return pathService + TABLA + SERVICE_INTERFACE + ".cs";}}
 
+        private bool generarDesdeConsulta = false;
+
         Configuracion configuracion;
 
         public FRMgeneradorDeCapas()
@@ -187,7 +189,6 @@ namespace GeneradorDeCapas
 
             ListarNameSpaces();
         }
-
         private void CargarConfiguracion()
         {
             configuracion = Configuracion.Cargar();
@@ -227,11 +228,11 @@ namespace GeneradorDeCapas
                 DGVrecuperacion.Rows[indiceFila].Cells[1].Value = CamposABM[item[1]];
             }
         }
-        private void GuardarConfiguracion(string consulta = "")
+        private void GuardarConfiguracion()
         {
             try
             {
-                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString(), consulta);
+                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString(), generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : string.Empty);
 
                 configuracion.SQL = RDBsql.Checked;
                 configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
@@ -1024,7 +1025,7 @@ namespace GeneradorDeCapas
                 {
                     if (DB2)
                     {
-                        bool where = clavesConsulta.Count > 0;
+                        bool where = clavesConsulta.Count > 0 || generarDesdeConsulta;
                         if (where)
                         {
                             //Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + columnasClave + ", " + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
@@ -1175,16 +1176,6 @@ namespace GeneradorDeCapas
                         Repositories.AppendLine("\t\t\t{");
                         Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(\"\", \"DB2_Tributos\");");
                         Repositories.AppendLine();
-
-                        //bool where = clavesConsulta.Count > 0;
-                        //Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + TABLA + "\" +");
-                        //Repositories.AppendLine("\t\t\t\t\t\"" + (where ? (" WHERE " + string.Join(" AND ", (from c in clavesConsulta select c[0] + " = ?").ToArray())) : string.Empty) + "\";");
-                        //Repositories.AppendLine();
-
-                        //foreach (string[] clave in clavesConsulta)
-                        //{
-                        // Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + clave[0] + "\", " + Mapeo[clave[1]] + ", " + clave[0] + ");");
-                        //}
 
                         Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + TABLA + "\";");
 
@@ -1748,12 +1739,15 @@ namespace GeneradorDeCapas
 
         private void GenerarDesdeTabla()
         {
+            generarDesdeConsulta = false;
             GuardarConfiguracion();
         }
 
         private void GenerarDesdeConsulta()
         {
-            GuardarConfiguracion(TXTgenerarAPartirDeConsulta.Text);
+            generarDesdeConsulta = true;
+            CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
+            GuardarConfiguracion();
         }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
