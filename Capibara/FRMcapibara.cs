@@ -183,19 +183,6 @@ namespace Capibara
         public FRMcapibara()
         {
             InitializeComponent();
-
-            ContextMenuStrip menu = new ContextMenuStrip();
-            menu.ShowImageMargin = false;
-            menu.Items.Add("DESDE TABLA", null, (s, ev) => GenerarDesdeTabla());
-            menu.Items.Add("DESDE CONSULTA", null, (s, ev) => GenerarDesdeConsulta());
-
-            // Asignar menú al SplitButton
-            BTNgenerarDesdeTabla.Menu = menu;
-
-            CargarConfiguracion();
-
-            ListarNameSpaces();
-            InicializarIndices();
         }
 
         private void CargarConfiguracion()
@@ -293,11 +280,6 @@ namespace Capibara
         }
 
         private const int PANEL1_MIN = 510; // ancho/alto mínimo que querés para Panel1
-
-        private void FRMgeneradorDeCapas_Load(object sender, EventArgs e)
-        {
-            //InicializarIndices();
-        }
 
         private void InicializarIndices()
         {
@@ -2795,6 +2777,45 @@ namespace Capibara
         private void FRMcapibara_Validated(object sender, EventArgs e)
         {
             desplegarCombo = true;
+        }
+
+        private void FRMcapibara_Shown(object sender, EventArgs e)
+        {
+            string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Capibara.mp3");
+            if (!File.Exists(pathMp3))
+            {
+                File.WriteAllBytes(pathMp3, Properties.Resources.Capibara1);
+            }
+            player = new WindowsMediaPlayer();
+            player.URL = pathMp3;
+            player.settings.setMode("loop", true);
+            player.controls.play();
+            this.UseWaitCursor = true;
+            Application.DoEvents();
+            Task.Run(() =>
+            {
+                Thread.Sleep(9500);
+                player.controls.stop();
+
+            });
+
+            Task.Run(() =>
+            {
+                // 🔹 Parte pesada (cargar desde disco, DB, etc.)
+                var config = Configuracion.Cargar();
+
+                // 🔹 Actualizar controles de UI SIEMPRE con Invoke
+                this.Invoke((Action)(() =>
+                {
+                    configuracion = config;
+                    CargarConfiguracion();   // ahora seguro en UI
+                    ListarNameSpaces();
+                    InicializarIndices();
+
+                    this.UseWaitCursor = false;
+                    Application.DoEvents();
+                }));
+            });
         }
     }
 }

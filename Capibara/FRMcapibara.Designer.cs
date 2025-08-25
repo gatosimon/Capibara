@@ -1017,7 +1017,7 @@ namespace Capibara
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CAPIBARA";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.FRMgeneradorDeCapas_Load);
+            this.Shown += new System.EventHandler(this.FRMcapibara_Shown);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
             this.Validated += new System.EventHandler(this.FRMcapibara_Validated);
             this.SPCseparador.Panel1.ResumeLayout(false);
