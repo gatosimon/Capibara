@@ -92,11 +92,11 @@
     <Compile Include="ComandoDB2.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Configuracion.cs" />
-    <Compile Include="FRMCapibara.cs">
+    <Compile Include="FRMcapibara.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRMCapibara.Designer.cs">
-      <DependentUpon>FRMCapibara.cs</DependentUpon>
+    <Compile Include="FRMcapibara.Designer.cs">
+      <DependentUpon>FRMcapibara.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,8 +107,8 @@
     <EmbeddedResource Include="CustomMessageBox.resx">
       <DependentUpon>CustomMessageBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FRMCapibara.resx">
-      <DependentUpon>FRMCapibara.cs</DependentUpon>
+    <EmbeddedResource Include="FRMcapibara.resx">
+      <DependentUpon>FRMcapibara.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

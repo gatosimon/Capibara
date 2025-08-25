@@ -86,9 +86,6 @@ namespace Capibara
             this.CHKdto = new System.Windows.Forms.CheckBox();
             this.CHKcontrollers = new System.Windows.Forms.CheckBox();
             this.SPCbak2 = new System.Windows.Forms.SplitContainer();
-            this.GPBajustes = new System.Windows.Forms.GroupBox();
-            this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
-            this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
             this.GPBmetodos = new System.Windows.Forms.GroupBox();
             this.CHKrecuperacion = new System.Windows.Forms.CheckBox();
             this.CHKtodos = new System.Windows.Forms.CheckBox();
@@ -96,6 +93,9 @@ namespace Capibara
             this.CHKmodificacion = new System.Windows.Forms.CheckBox();
             this.CHKbaja = new System.Windows.Forms.CheckBox();
             this.CHKalta = new System.Windows.Forms.CheckBox();
+            this.GPBajustes = new System.Windows.Forms.GroupBox();
+            this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
+            this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
             this.TBPfront = new System.Windows.Forms.TabPage();
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
@@ -132,8 +132,8 @@ namespace Capibara
             this.SPCbak2.Panel1.SuspendLayout();
             this.SPCbak2.Panel2.SuspendLayout();
             this.SPCbak2.SuspendLayout();
-            this.GPBajustes.SuspendLayout();
             this.GPBmetodos.SuspendLayout();
+            this.GPBajustes.SuspendLayout();
             this.TBPfront.SuspendLayout();
             this.GPBFront.SuspendLayout();
             this.SuspendLayout();
@@ -674,7 +674,7 @@ namespace Capibara
             // 
             // SPCback1
             // 
-            this.SPCback1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SPCback1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.SPCback1.IsSplitterFixed = true;
             this.SPCback1.Location = new System.Drawing.Point(3, 3);
             this.SPCback1.Name = "SPCback1";
@@ -686,12 +686,13 @@ namespace Capibara
             // SPCback1.Panel2
             // 
             this.SPCback1.Panel2.Controls.Add(this.SPCbak2);
-            this.SPCback1.Size = new System.Drawing.Size(1033, 107);
-            this.SPCback1.SplitterDistance = 259;
+            this.SPCback1.Size = new System.Drawing.Size(722, 107);
+            this.SPCback1.SplitterDistance = 250;
             this.SPCback1.TabIndex = 4;
             // 
             // GPBback
             // 
+            this.GPBback.AutoSize = true;
             this.GPBback.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GPBback.Controls.Add(this.CHKservice);
             this.GPBback.Controls.Add(this.CHKrepositories);
@@ -702,7 +703,7 @@ namespace Capibara
             this.GPBback.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GPBback.Location = new System.Drawing.Point(0, 0);
             this.GPBback.Name = "GPBback";
-            this.GPBback.Size = new System.Drawing.Size(259, 107);
+            this.GPBback.Size = new System.Drawing.Size(250, 107);
             this.GPBback.TabIndex = 1;
             this.GPBback.TabStop = false;
             this.GPBback.Text = "CAPAS A GENERAR";
@@ -782,60 +783,19 @@ namespace Capibara
             // 
             // SPCbak2.Panel1
             // 
-            this.SPCbak2.Panel1.Controls.Add(this.GPBajustes);
+            this.SPCbak2.Panel1.Controls.Add(this.GPBmetodos);
             // 
             // SPCbak2.Panel2
             // 
-            this.SPCbak2.Panel2.Controls.Add(this.GPBmetodos);
-            this.SPCbak2.Size = new System.Drawing.Size(770, 107);
-            this.SPCbak2.SplitterDistance = 170;
+            this.SPCbak2.Panel2.Controls.Add(this.GPBajustes);
+            this.SPCbak2.Size = new System.Drawing.Size(468, 107);
+            this.SPCbak2.SplitterDistance = 289;
             this.SPCbak2.TabIndex = 4;
-            // 
-            // GPBajustes
-            // 
-            this.GPBajustes.Controls.Add(this.CHKtryOrIf);
-            this.GPBajustes.Controls.Add(this.CHKquitarEsquema);
-            this.GPBajustes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GPBajustes.Location = new System.Drawing.Point(0, 0);
-            this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
-            this.GPBajustes.Name = "GPBajustes";
-            this.GPBajustes.Size = new System.Drawing.Size(170, 107);
-            this.GPBajustes.TabIndex = 2;
-            this.GPBajustes.TabStop = false;
-            this.GPBajustes.Text = "AJUSTES";
-            // 
-            // CHKtryOrIf
-            // 
-            this.CHKtryOrIf.AutoSize = true;
-            this.CHKtryOrIf.Checked = true;
-            this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtryOrIf.Location = new System.Drawing.Point(8, 23);
-            this.CHKtryOrIf.Name = "CHKtryOrIf";
-            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 20);
-            this.CHKtryOrIf.TabIndex = 1;
-            this.CHKtryOrIf.Text = "Usar Try en DB2   ";
-            this.TTPusarTryOrIf.SetToolTip(this.CHKtryOrIf, "TRY/CATCH para usar la capa de datos actual de SistemaMunicipalGeneral. IF para u" +
-        "sar una capa futura con correcciones y mejoras sobre las consultas a la base de " +
-        "datos");
-            this.CHKtryOrIf.UseVisualStyleBackColor = true;
-            // 
-            // CHKquitarEsquema
-            // 
-            this.CHKquitarEsquema.AutoSize = true;
-            this.CHKquitarEsquema.Checked = true;
-            this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 51);
-            this.CHKquitarEsquema.Name = "CHKquitarEsquema";
-            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 20);
-            this.CHKquitarEsquema.TabIndex = 0;
-            this.CHKquitarEsquema.Text = "Quitar esquema   ";
-            this.CHKquitarEsquema.UseVisualStyleBackColor = true;
-            this.CHKquitarEsquema.Visible = false;
             // 
             // GPBmetodos
             // 
+            this.GPBmetodos.AutoSize = true;
+            this.GPBmetodos.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GPBmetodos.Controls.Add(this.CHKrecuperacion);
             this.GPBmetodos.Controls.Add(this.CHKtodos);
             this.GPBmetodos.Controls.Add(this.CHKobtenerPorId);
@@ -846,8 +806,8 @@ namespace Capibara
             this.GPBmetodos.Location = new System.Drawing.Point(0, 0);
             this.GPBmetodos.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
             this.GPBmetodos.Name = "GPBmetodos";
-            this.GPBmetodos.Size = new System.Drawing.Size(596, 107);
-            this.GPBmetodos.TabIndex = 3;
+            this.GPBmetodos.Size = new System.Drawing.Size(289, 107);
+            this.GPBmetodos.TabIndex = 4;
             this.GPBmetodos.TabStop = false;
             this.GPBmetodos.Text = "METODOS";
             // 
@@ -929,6 +889,51 @@ namespace Capibara
             this.CHKalta.Text = "Alta";
             this.CHKalta.UseVisualStyleBackColor = true;
             // 
+            // GPBajustes
+            // 
+            this.GPBajustes.AutoSize = true;
+            this.GPBajustes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.GPBajustes.Controls.Add(this.CHKtryOrIf);
+            this.GPBajustes.Controls.Add(this.CHKquitarEsquema);
+            this.GPBajustes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GPBajustes.Location = new System.Drawing.Point(0, 0);
+            this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
+            this.GPBajustes.Name = "GPBajustes";
+            this.GPBajustes.Size = new System.Drawing.Size(175, 107);
+            this.GPBajustes.TabIndex = 20;
+            this.GPBajustes.TabStop = false;
+            this.GPBajustes.Text = "AJUSTES";
+            // 
+            // CHKtryOrIf
+            // 
+            this.CHKtryOrIf.AutoSize = true;
+            this.CHKtryOrIf.Checked = true;
+            this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKtryOrIf.Location = new System.Drawing.Point(8, 23);
+            this.CHKtryOrIf.Name = "CHKtryOrIf";
+            this.CHKtryOrIf.Size = new System.Drawing.Size(148, 20);
+            this.CHKtryOrIf.TabIndex = 1;
+            this.CHKtryOrIf.Text = "Usar Try en DB2   ";
+            this.TTPusarTryOrIf.SetToolTip(this.CHKtryOrIf, "TRY/CATCH para usar la capa de datos actual de SistemaMunicipalGeneral. IF para u" +
+        "sar una capa futura con correcciones y mejoras sobre las consultas a la base de " +
+        "datos");
+            this.CHKtryOrIf.UseVisualStyleBackColor = true;
+            // 
+            // CHKquitarEsquema
+            // 
+            this.CHKquitarEsquema.AutoSize = true;
+            this.CHKquitarEsquema.Checked = true;
+            this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 51);
+            this.CHKquitarEsquema.Name = "CHKquitarEsquema";
+            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 20);
+            this.CHKquitarEsquema.TabIndex = 0;
+            this.CHKquitarEsquema.Text = "Quitar esquema   ";
+            this.CHKquitarEsquema.UseVisualStyleBackColor = true;
+            this.CHKquitarEsquema.Visible = false;
+            // 
             // TBPfront
             // 
             this.TBPfront.Controls.Add(this.GPBFront);
@@ -986,7 +991,7 @@ namespace Capibara
             this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
-            // FRMgeneradorDeCapas
+            // FRMcapibara
             // 
             this.ClientSize = new System.Drawing.Size(1186, 749);
             this.Controls.Add(this.TBCbackFront);
@@ -1008,7 +1013,7 @@ namespace Capibara
             this.Controls.Add(this.CMBservidor);
             this.Controls.Add(this.LBLservidor);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "FRMgeneradorDeCapas";
+            this.Name = "FRMcapibara";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CAPIBARA";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -1039,19 +1044,22 @@ namespace Capibara
             this.TBCbackFront.ResumeLayout(false);
             this.TBPback.ResumeLayout(false);
             this.SPCback1.Panel1.ResumeLayout(false);
+            this.SPCback1.Panel1.PerformLayout();
             this.SPCback1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCback1)).EndInit();
             this.SPCback1.ResumeLayout(false);
             this.GPBback.ResumeLayout(false);
             this.GPBback.PerformLayout();
             this.SPCbak2.Panel1.ResumeLayout(false);
+            this.SPCbak2.Panel1.PerformLayout();
             this.SPCbak2.Panel2.ResumeLayout(false);
+            this.SPCbak2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SPCbak2)).EndInit();
             this.SPCbak2.ResumeLayout(false);
-            this.GPBajustes.ResumeLayout(false);
-            this.GPBajustes.PerformLayout();
             this.GPBmetodos.ResumeLayout(false);
             this.GPBmetodos.PerformLayout();
+            this.GPBajustes.ResumeLayout(false);
+            this.GPBajustes.PerformLayout();
             this.TBPfront.ResumeLayout(false);
             this.GPBFront.ResumeLayout(false);
             this.GPBFront.PerformLayout();
@@ -1120,9 +1128,6 @@ namespace Capibara
         private System.Windows.Forms.CheckBox CHKdto;
         private System.Windows.Forms.CheckBox CHKcontrollers;
         private System.Windows.Forms.SplitContainer SPCbak2;
-        private System.Windows.Forms.GroupBox GPBajustes;
-        private System.Windows.Forms.CheckBox CHKtryOrIf;
-        private System.Windows.Forms.CheckBox CHKquitarEsquema;
         private System.Windows.Forms.GroupBox GPBmetodos;
         private System.Windows.Forms.CheckBox CHKrecuperacion;
         private System.Windows.Forms.CheckBox CHKtodos;
@@ -1130,6 +1135,9 @@ namespace Capibara
         private System.Windows.Forms.CheckBox CHKmodificacion;
         private System.Windows.Forms.CheckBox CHKbaja;
         private System.Windows.Forms.CheckBox CHKalta;
+        private System.Windows.Forms.GroupBox GPBajustes;
+        private System.Windows.Forms.CheckBox CHKtryOrIf;
+        private System.Windows.Forms.CheckBox CHKquitarEsquema;
     }
 }
 

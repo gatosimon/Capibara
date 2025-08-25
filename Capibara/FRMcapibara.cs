@@ -2306,7 +2306,7 @@ namespace Capibara
         {
             try
             {
-                SPCbak2.Panel1Collapsed = !RDBdb2.Checked;
+                SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
                     //CHKquitarEsquema.Visible = !RDBdb2.Checked;
