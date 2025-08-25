@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Capibara.Utilidades;
+using System.Threading.Tasks;
+using WMPLib;
+using System.Threading;
 
 namespace Capibara
 {
@@ -173,11 +176,14 @@ namespace Capibara
 
         private bool generarDesdeConsulta = false;
 
-        Configuracion configuracion;
+        private bool desplegarCombo = false;
 
+        Configuracion configuracion;
+        private WindowsMediaPlayer player;
         public FRMcapibara()
         {
             InitializeComponent();
+
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ShowImageMargin = false;
             menu.Items.Add("DESDE TABLA", null, (s, ev) => GenerarDesdeTabla());
@@ -189,7 +195,9 @@ namespace Capibara
             CargarConfiguracion();
 
             ListarNameSpaces();
+            InicializarIndices();
         }
+
         private void CargarConfiguracion()
         {
             configuracion = Configuracion.Cargar();
@@ -288,6 +296,11 @@ namespace Capibara
 
         private void FRMgeneradorDeCapas_Load(object sender, EventArgs e)
         {
+            //InicializarIndices();
+        }
+
+        private void InicializarIndices()
+        {
             SPCclase.Panel1MinSize = PANEL1_MIN;
 
             int indice = CMBservidor.FindStringExact(configuracion.Servidor);
@@ -300,14 +313,14 @@ namespace Capibara
             if (indice > -1 && CMBbases.Items.Count > 0)
             {
                 CMBbases.SelectedIndex = indice > -1 ? indice : 0;
-                CMBbases.Text = CMBbases.Items[CMBbases.SelectedIndex].ToString(); 
+                CMBbases.Text = CMBbases.Items[CMBbases.SelectedIndex].ToString();
             }
 
             indice = CMBtablas.FindStringExact(configuracion.Tabla);
             if (indice > -1 && CMBtablas.Items.Count > 0)
             {
                 CMBtablas.SelectedIndex = indice > -1 ? indice : 0;
-                CMBtablas.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString(); 
+                CMBtablas.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
             }
 
             TXTgenerarAPartirDeConsulta.Text = configuracion.Consulta;
@@ -2488,12 +2501,12 @@ namespace Capibara
             }
 
             // 3) Mostrar en el combo
-            CMBnamespaces.Items.Clear();
+            CMBnamespaces.Items.Clear(); 
             foreach (string item in namespaces)
             {
                 CMBnamespaces.Items.Add(item);
             }
-            CMBnamespaces.DroppedDown = true;
+            CMBnamespaces.DroppedDown = desplegarCombo;
         }
 
         private List<string> ObtenerCarpetasDesdeProyectos(string solucionPath)
@@ -2777,6 +2790,11 @@ namespace Capibara
                     TBCcamposABM.TabPages.Remove(TBPrecuperacion);
                 }
             }
+        }
+
+        private void FRMcapibara_Validated(object sender, EventArgs e)
+        {
+            desplegarCombo = true;
         }
     }
 }

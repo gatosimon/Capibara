@@ -1019,6 +1019,7 @@ namespace Capibara
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FRMgeneradorDeCapas_Load);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
+            this.Validated += new System.EventHandler(this.FRMcapibara_Validated);
             this.SPCseparador.Panel1.ResumeLayout(false);
             this.SPCseparador.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).EndInit();
