@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.35826.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneradorDeCapas", "GeneradorDeCapas\GeneradorDeCapas.csproj", "{C2192651-B19E-473B-817D-9A5CBB8CD466}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara", "Capibara\Capibara.csproj", "{C2192651-B19E-473B-817D-9A5CBB8CD466}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GeneradorDeCapasInstaller", "GeneradorDeCapasInstaller\GeneradorDeCapasInstaller.vdproj", "{622CA4A9-C455-4E38-82CA-5D1EC0CED800}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CapibaraInstaller", "CapibaraInstaller\CapibaraInstaller.vdproj", "{622CA4A9-C455-4E38-82CA-5D1EC0CED800}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

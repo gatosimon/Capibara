@@ -1,7 +1,7 @@
 ﻿
 using System.Windows.Forms;
 
-namespace GeneradorDeCapas.Utilidades
+namespace Capibara.Utilidades
 {
     partial class CustomMessageBox
     {

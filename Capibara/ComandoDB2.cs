@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using SistemaMunicipalGeneral.Modelos;
 
-namespace GeneradorDeCapas
+namespace Capibara
 {
 	/// <summary>
 	///

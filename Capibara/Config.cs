@@ -4,7 +4,7 @@ using System.Threading;
 using System.Web;
 using System.Web.SessionState;
 
-namespace GeneradorDeCapas
+namespace Capibara
 {
 	// Token: 0x02000011 RID: 17
 	public class Config : IRequiresSessionState

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C2192651-B19E-473B-817D-9A5CBB8CD466}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>GeneradorDeCapas</RootNamespace>
-    <AssemblyName>GeneradorDeCapas</AssemblyName>
+    <RootNamespace>Capibara</RootNamespace>
+    <AssemblyName>Capibara</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -92,11 +92,11 @@
     <Compile Include="ComandoDB2.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Configuracion.cs" />
-    <Compile Include="FRMgeneradorDeCapas.cs">
+    <Compile Include="FRMCapibara.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRMgeneradorDeCapas.Designer.cs">
-      <DependentUpon>FRMgeneradorDeCapas.cs</DependentUpon>
+    <Compile Include="FRMCapibara.Designer.cs">
+      <DependentUpon>FRMCapibara.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,8 +107,8 @@
     <EmbeddedResource Include="CustomMessageBox.resx">
       <DependentUpon>CustomMessageBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FRMgeneradorDeCapas.resx">
-      <DependentUpon>FRMgeneradorDeCapas.cs</DependentUpon>
+    <EmbeddedResource Include="FRMCapibara.resx">
+      <DependentUpon>FRMCapibara.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -1,7 +1,7 @@
 ﻿
-namespace GeneradorDeCapas
+namespace Capibara
 {
-    partial class FRMgeneradorDeCapas
+    partial class FRMcapibara
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -32,7 +32,7 @@ namespace GeneradorDeCapas
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMgeneradorDeCapas));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMcapibara));
             this.LBLservidor = new System.Windows.Forms.Label();
             this.CMBservidor = new System.Windows.Forms.ComboBox();
             this.CMBtablas = new System.Windows.Forms.ComboBox();
@@ -100,7 +100,7 @@ namespace GeneradorDeCapas
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
             this.TTPusarTryOrIf = new System.Windows.Forms.ToolTip(this.components);
-            this.BTNgenerarDesdeTabla = new GeneradorDeCapas.SplitButton();
+            this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -976,7 +976,7 @@ namespace GeneradorDeCapas
             this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
             this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Image = global::GeneradorDeCapas.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
             this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 150);
             this.BTNgenerarDesdeTabla.Menu = null;
             this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
@@ -1079,7 +1079,7 @@ namespace GeneradorDeCapas
         private System.Windows.Forms.Button BTNbuscarSolucion;
         private System.Windows.Forms.ComboBox CMBnamespaces;
         private System.Windows.Forms.OpenFileDialog OFDlistarDeSolucion;
-        private GeneradorDeCapas.SplitButton BTNgenerarDesdeTabla;
+        private Capibara.SplitButton BTNgenerarDesdeTabla;
         private System.Windows.Forms.SplitContainer SPCseparador;
         private System.Windows.Forms.GroupBox GBPaPartirDeConsulta;
         private System.Windows.Forms.TextBox TXTgenerarAPartirDeConsulta;

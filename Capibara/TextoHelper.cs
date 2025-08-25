@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace GeneradorDeCapas.Utilidades
+namespace Capibara.Utilidades
 {
 
     public static class TextoHelper

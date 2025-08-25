@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GeneradorDeCapas
+namespace Capibara
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace GeneradorDeCapas
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FRMgeneradorDeCapas());
+            Application.Run(new FRMcapibara());
         }
     }
 }

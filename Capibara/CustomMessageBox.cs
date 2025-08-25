@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GeneradorDeCapas.Utilidades
+namespace Capibara.Utilidades
 {
     public partial class CustomMessageBox : Form
     {
@@ -92,11 +92,11 @@ namespace GeneradorDeCapas.Utilidades
         {
             switch (icon)
             {
-                case MessageBoxIcon.Error: return GeneradorDeCapas.Properties.Resources.Error;
-                case MessageBoxIcon.Warning: return GeneradorDeCapas.Properties.Resources.Advertencia;
-                case MessageBoxIcon.Information: return GeneradorDeCapas.Properties.Resources.Info;
-                case MessageBoxIcon.Question: return GeneradorDeCapas.Properties.Resources.Pregunta;
-                default: return GeneradorDeCapas.Properties.Resources.Capibara;
+                case MessageBoxIcon.Error: return Capibara.Properties.Resources.Error;
+                case MessageBoxIcon.Warning: return Capibara.Properties.Resources.Advertencia;
+                case MessageBoxIcon.Information: return Capibara.Properties.Resources.Info;
+                case MessageBoxIcon.Question: return Capibara.Properties.Resources.Pregunta;
+                default: return Capibara.Properties.Resources.Capibara;
             }
         }
 
@@ -104,11 +104,11 @@ namespace GeneradorDeCapas.Utilidades
         {
             switch (icon)
             {
-                case MessageBoxIcon.Error: return GeneradorDeCapas.Properties.Resources.CapiError;
-                case MessageBoxIcon.Warning: return GeneradorDeCapas.Properties.Resources.CapiAdvertencia;
-                case MessageBoxIcon.Information: return GeneradorDeCapas.Properties.Resources.CapiInfo;
-                case MessageBoxIcon.Question: return GeneradorDeCapas.Properties.Resources.CapiPregunta;
-                default: return GeneradorDeCapas.Properties.Resources.Capibara64x64;
+                case MessageBoxIcon.Error: return Capibara.Properties.Resources.CapiError;
+                case MessageBoxIcon.Warning: return Capibara.Properties.Resources.CapiAdvertencia;
+                case MessageBoxIcon.Information: return Capibara.Properties.Resources.CapiInfo;
+                case MessageBoxIcon.Question: return Capibara.Properties.Resources.CapiPregunta;
+                default: return Capibara.Properties.Resources.Capibara64x64;
             }
         }
 

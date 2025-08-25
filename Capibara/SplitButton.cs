@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace GeneradorDeCapas
+namespace Capibara
 {
     public class SplitButton : Button
     {

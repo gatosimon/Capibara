@@ -10,11 +10,11 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using GeneradorDeCapas.Utilidades;
+using Capibara.Utilidades;
 
-namespace GeneradorDeCapas
+namespace Capibara
 {
-    public partial class FRMgeneradorDeCapas : Form
+    public partial class FRMcapibara : Form
     {
         Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
         {
@@ -175,7 +175,7 @@ namespace GeneradorDeCapas
 
         Configuracion configuracion;
 
-        public FRMgeneradorDeCapas()
+        public FRMcapibara()
         {
             InitializeComponent();
             ContextMenuStrip menu = new ContextMenuStrip();
