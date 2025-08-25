@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using GeneradorDeCapas.Utilidades;
 
 namespace GeneradorDeCapas
 {
@@ -453,7 +454,7 @@ namespace GeneradorDeCapas
                 if (columnasError.Count > 0)
                 {
                     string columnas = string.Join("\r\n", columnasError);
-                    MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                    CustomMessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
                 else
                 {
@@ -534,7 +535,7 @@ namespace GeneradorDeCapas
             }
             else
             {
-                MessageBox.Show("Ocurrió un error al intentar acceder a la" + (consulta.Trim().Length > 0 ? " consulta. " : " tabla. ") + resultado, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CustomMessageBox.Show("Ocurrió un error al intentar acceder a la" + (consulta.Trim().Length > 0 ? " consulta. " : " tabla. ") + resultado, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return resultado;
@@ -672,9 +673,9 @@ namespace GeneradorDeCapas
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
-                Controller.AppendLine("\t}");
-                Controller.AppendLine("}"); 
             }
+            Controller.AppendLine("\t}");
+            Controller.AppendLine("}"); 
 
             if (CHKcontrollers.Checked)
             {
@@ -1523,7 +1524,7 @@ namespace GeneradorDeCapas
                         Service.AppendLine("\t\t\t{");
                         if (DB2)
                         {
-                            Service.AppendLine("\t\t\treturn listado;");
+                            Service.AppendLine("\t\t\t\treturn listado;");
                         }
                         else
                         {
@@ -1739,15 +1740,79 @@ namespace GeneradorDeCapas
 
         private void GenerarDesdeTabla()
         {
-            generarDesdeConsulta = false;
-            GuardarConfiguracion();
+            if (TXTpathCapas.Text.Trim().Length > 0)
+            {
+                generarDesdeConsulta = false;
+                GuardarConfiguracion();
+            }
+            else
+            {
+                CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                DefinirDirectorioCapas();
+            }
         }
 
         private void GenerarDesdeConsulta()
         {
-            generarDesdeConsulta = true;
-            CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
-            GuardarConfiguracion();
+            if (TXTpathCapas.Text.Trim().Length > 0)
+            {
+                generarDesdeConsulta = true;
+                List<CheckBox> capasNecesarias = new List<CheckBox>();
+                if (CHKalta.Checked)
+                {
+                    capasNecesarias.Add(CHKalta);
+                }
+                if (CHKbaja.Checked)
+                {
+                    capasNecesarias.Add(CHKbaja);
+                }
+                if (CHKmodificacion.Checked)
+                {
+                    capasNecesarias.Add(CHKmodificacion);
+                }
+                if (CHKobtenerPorId.Checked)
+                {
+                    capasNecesarias.Add(CHKobtenerPorId);
+                }
+                if (CHKrecuperacion.Checked)
+                {
+                    capasNecesarias.Add(CHKrecuperacion);
+                }
+                string mensaje = string.Empty;
+                if (capasNecesarias.Count > 0)
+                {
+                    if (capasNecesarias.Count == 1)
+                    {
+                        mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
+                            $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
+                            $"Generar en estos 3 últimos el método de:\r\n   • {TextoHelper.FormatearTitulo(capasNecesarias[0].Name.Replace("CHK", string.Empty))}\r\npuede generar inconsistencias.\r\n" +
+                            $"¿Desea generarlo de todos modos?";
+                    }
+                    else
+                    {
+                        string metodos = string.Join("\r\n   • ", (from c in capasNecesarias select TextoHelper.FormatearTitulo(c.Name.Replace("CHK", string.Empty))).ToArray());
+                        mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
+                            $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
+                            $"Generar en estos 3 últimos los métodos de:\r\n   • {metodos}\r\npueden generar inconsistencias.\r\n" +
+                            $"¿Desea generarlos de todos modos?";
+                    }
+                    if (CustomMessageBox.Show(mensaje, CustomMessageBox.ATENCION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                    {
+                        foreach (CheckBox item in capasNecesarias)
+                        {
+                            item.Checked = false;
+                        }
+                    }
+                }
+
+                CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
+                GuardarConfiguracion(); 
+            }
+            else
+            {
+                CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                DefinirDirectorioCapas();
+            }
         }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
@@ -2205,7 +2270,7 @@ namespace GeneradorDeCapas
             if (columnasError.Count > 0)
             {
                 string columnas = string.Join("\r\n", columnasError);
-                MessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, "ATENCIÓN!!!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                CustomMessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 BTNgenerarDesdeTabla.Enabled = false;
             }
             else
@@ -2218,8 +2283,9 @@ namespace GeneradorDeCapas
         {
             try
             {
-                CHKquitarEsquema.Visible = RDBsql.Checked;
-                CHKquitarEsquema.Refresh();
+                //CHKquitarEsquema.Visible = RDBsql.Checked;
+                CHKtryOrIf.Visible = !RDBsql.Checked;
+                //CHKquitarEsquema.Refresh();
                 if (RDBsql.Checked)
                 {
                     CMBservidor.Items.Clear();
@@ -2240,10 +2306,12 @@ namespace GeneradorDeCapas
         {
             try
             {
+                SPCbak2.Panel1Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
-                    CHKquitarEsquema.Visible = false;
-                    CHKquitarEsquema.Refresh();
+                    //CHKquitarEsquema.Visible = !RDBdb2.Checked;
+                    CHKtryOrIf.Visible = RDBdb2.Checked;
+                    //CHKquitarEsquema.Refresh();
                     CMBservidor.Items.Clear();
                     CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
                     if (CMBservidor.Items.Count > 0)
@@ -2260,6 +2328,11 @@ namespace GeneradorDeCapas
 
         private void BTNdirectorioCapas_Click(object sender, EventArgs e)
         {
+            DefinirDirectorioCapas();
+        }
+
+        private void DefinirDirectorioCapas()
+        {
             FBDdirectorioCapas.ShowDialog();
             TXTpathCapas.Text = FBDdirectorioCapas.SelectedPath;
         }
@@ -2267,21 +2340,58 @@ namespace GeneradorDeCapas
         private void CMBtablas_TextUpdate(object sender, EventArgs e)
         {
             string texto = CMBtablas.Text;
+
+            // ✅ 1. Filtrar caracteres no válidos (solo letras, números y _ $ # @)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(texto, @"^[a-zA-Z0-9_@$#]*$"))
+            {
+                return; // ignorar si el texto tiene caracteres inválidos
+            }
+
+            // ✅ 2. Filtrar lista
             List<string> filtrados = tablasBase
                 .Where(item => item.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
             CMBtablas.BeginUpdate();
             CMBtablas.Items.Clear();
-            CMBtablas.Items.AddRange(filtrados.ToArray());
 
-            // restaurar texto
-            CMBtablas.DroppedDown = true;
-            CMBtablas.Text = texto;
+            if (filtrados.Count > 0)
+            {
+                CMBtablas.Items.AddRange(filtrados.ToArray());
+                CMBtablas.DroppedDown = true;
+                // ✅ 3. Restaurar texto 
+                CMBtablas.Text = texto;
+            }
+            else
+            {
+                // Si no hay resultados, no explota: opcionalmente podrías cerrar el desplegable
+                CMBtablas.SelectedIndex = -1; // evita el error
+                CMBtablas.Text = texto;
+                try
+                {
+                    CMBtablas.DroppedDown = false; 
+                }
+                catch (Exception err)
+                {
+                }
+            }
             CMBtablas.SelectionStart = texto.Length;
             CMBtablas.SelectionLength = 0;
 
             CMBtablas.EndUpdate();
+        }
+
+        private void CMBtablas_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                CMBtablas.BeginUpdate();
+                CMBtablas.Items.Clear();
+                CMBtablas.Items.AddRange(tablasBase.ToArray());
+                CMBtablas.Text = string.Empty;
+                CMBtablas.DroppedDown = true;
+                CMBtablas.EndUpdate();
+            }
         }
 
         private void SPCclase_ClientSizeChanged(object sender, EventArgs e)
@@ -2356,6 +2466,7 @@ namespace GeneradorDeCapas
         {
             OFDlistarDeSolucion.ShowDialog();
             ListarNameSpaces();
+            CMBnamespaces.DroppedDown = true;
         }
 
         private void ListarNameSpaces()
@@ -2363,7 +2474,8 @@ namespace GeneradorDeCapas
             HashSet<string> namespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             // 1) Namespaces reales
-            foreach (var ns in ObtenerNamespacesDesdeSolucion(OFDlistarDeSolucion.FileName))
+            List<string> nameSpacesDesdeSolucion = ObtenerNamespacesDesdeSolucion(OFDlistarDeSolucion.FileName);
+            foreach (var ns in nameSpacesDesdeSolucion)
             {
                 namespaces.Add(ns);
             }
@@ -2377,7 +2489,7 @@ namespace GeneradorDeCapas
 
             // 3) Mostrar en el combo
             CMBnamespaces.Items.Clear();
-            foreach (string item in namespaces.OrderBy(x => x))
+            foreach (string item in namespaces)
             {
                 CMBnamespaces.Items.Add(item);
             }
@@ -2417,7 +2529,7 @@ namespace GeneradorDeCapas
             }
 
             // Devolvemos solo carpetas únicas
-            return resultado.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            return resultado.Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
         }
 
         private List<string> ObtenerNamespacesDesdeSolucion(string slnPath)

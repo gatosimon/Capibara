@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Advertencia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Advertencia.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CapiAdvertencia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CapiAdvertencia.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Capibara" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Capibara.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Capibara50x50" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Capibara50x50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Capibara64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Capibara64x64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CapiError" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CapiError.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CapiInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CapiInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CapiPregunta" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CapiPregunta.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Error" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Error.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Info.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Pregunta" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Pregunta.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>

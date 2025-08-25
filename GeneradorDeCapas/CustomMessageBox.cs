@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace GeneradorDeCapas.Utilidades
+{
+    public partial class CustomMessageBox : Form
+    {
+        public const string ATENCION = "ATENCIÓN!!!";
+        public const string ERROR = "ERROR!!!";
+        public const string INFORMACION = "INFORMACIÓN";
+        public const string GUATEFAK = "GUATEFAK?!?!";
+        // Constructor privado, solo usado por Show
+        private CustomMessageBox(string text, string caption,
+                                MessageBoxButtons buttons,
+                                MessageBoxIcon icon,
+                                MessageBoxDefaultButton defaultButton,
+                                Font customFont)
+        {
+            InitializeComponent();
+
+            // Configuración inicial
+            this.Text = caption;
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+
+            // Texto
+            LBLmensage.Text = text;
+            LBLmensage.Font = customFont ?? new Font("Verdana", 10);
+
+            // Icono
+            PCBicono.Image = GetIconBitmap(icon);
+            this.Icon = GetIcon(icon);
+
+            // Botones
+            AddButtons(buttons, defaultButton);
+        }
+
+        private void AddButtons(MessageBoxButtons buttons, MessageBoxDefaultButton defaultButton)
+        {
+            void add(string text, DialogResult result, bool isDefault = false)
+            {
+                var btn = new Button();
+                btn.Text = text;
+                btn.DialogResult = result;
+                btn.AutoSize = true;
+                btn.Anchor = AnchorStyles.None;
+                btn.Height = 35;
+                btn.Margin = new Padding(5);
+                FLPbotones.Controls.Add(btn);
+
+                if (isDefault)
+                    this.AcceptButton = btn;
+            }
+
+            switch (buttons)
+            {
+                case MessageBoxButtons.OK:
+                    add("OK", DialogResult.OK, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+                case MessageBoxButtons.OKCancel:
+                    add("Cancelar", DialogResult.Cancel, defaultButton == MessageBoxDefaultButton.Button2);
+                    add("OK", DialogResult.OK, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+                case MessageBoxButtons.YesNo:
+                    add("No", DialogResult.No, defaultButton == MessageBoxDefaultButton.Button2);
+                    add("Sí", DialogResult.Yes, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+                case MessageBoxButtons.YesNoCancel:
+                    add("Cancelar", DialogResult.Cancel, defaultButton == MessageBoxDefaultButton.Button3);
+                    add("No", DialogResult.No, defaultButton == MessageBoxDefaultButton.Button2);
+                    add("Sí", DialogResult.Yes, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+                case MessageBoxButtons.RetryCancel:
+                    add("Cancelar", DialogResult.Cancel, defaultButton == MessageBoxDefaultButton.Button2);
+                    add("Reintentar", DialogResult.Retry, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+                case MessageBoxButtons.AbortRetryIgnore:
+                    add("Ignorar", DialogResult.Ignore, defaultButton == MessageBoxDefaultButton.Button3);
+                    add("Reintentar", DialogResult.Retry, defaultButton == MessageBoxDefaultButton.Button2);
+                    add("Abortar", DialogResult.Abort, defaultButton == MessageBoxDefaultButton.Button1);
+                    break;
+            }
+        }
+        private static Icon GetIcon(MessageBoxIcon icon)
+        {
+            switch (icon)
+            {
+                case MessageBoxIcon.Error: return GeneradorDeCapas.Properties.Resources.Error;
+                case MessageBoxIcon.Warning: return GeneradorDeCapas.Properties.Resources.Advertencia;
+                case MessageBoxIcon.Information: return GeneradorDeCapas.Properties.Resources.Info;
+                case MessageBoxIcon.Question: return GeneradorDeCapas.Properties.Resources.Pregunta;
+                default: return GeneradorDeCapas.Properties.Resources.Capibara;
+            }
+        }
+
+        private static Bitmap GetIconBitmap(MessageBoxIcon icon)
+        {
+            switch (icon)
+            {
+                case MessageBoxIcon.Error: return GeneradorDeCapas.Properties.Resources.CapiError;
+                case MessageBoxIcon.Warning: return GeneradorDeCapas.Properties.Resources.CapiAdvertencia;
+                case MessageBoxIcon.Information: return GeneradorDeCapas.Properties.Resources.CapiInfo;
+                case MessageBoxIcon.Question: return GeneradorDeCapas.Properties.Resources.CapiPregunta;
+                default: return GeneradorDeCapas.Properties.Resources.Capibara64x64;
+            }
+        }
+
+        // 🔥 Sobrecargas de Show igual que MessageBox 🔥
+        public static DialogResult Show(string text) =>
+            Show(text, "", MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, null);
+
+        public static DialogResult Show(string text, string caption) =>
+            Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, null);
+
+        public static DialogResult Show(string text, string caption, MessageBoxButtons buttons) =>
+            Show(text, caption, buttons, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, null);
+
+        public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon) =>
+            Show(text, caption, buttons, icon, MessageBoxDefaultButton.Button1, null);
+
+        public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton) =>
+            Show(text, caption, buttons, icon, defaultButton, null);
+
+        public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton, Font customFont)
+        {
+            using (var box = new CustomMessageBox(text, caption, buttons, icon, defaultButton, customFont))
+            {
+                return box.ShowDialog();
+            }
+        }
+    }
+}
