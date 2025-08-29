@@ -1812,6 +1812,9 @@ namespace Capibara
 
         private void GenerarDesdeTabla()
         {
+            this.UseWaitCursor = true;
+            Application.DoEvents();
+
             Task.Run(() =>
             {
                 this.Invoke((Action)(() =>
@@ -1829,10 +1832,14 @@ namespace Capibara
                 CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 DefinirDirectorioCapas();
             }
+            this.UseWaitCursor = false;
+            Application.DoEvents();
         }
 
         private void GenerarDesdeConsulta()
         {
+            this.UseWaitCursor = true;
+            Application.DoEvents();
             Task.Run(() =>
             {
                 this.Invoke((Action)(() =>
@@ -1899,6 +1906,8 @@ namespace Capibara
                 CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 DefinirDirectorioCapas();
             }
+            this.UseWaitCursor = false;
+            Application.DoEvents();
         }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
@@ -2551,7 +2560,12 @@ namespace Capibara
         private void BTNbuscarSolucion_Click(object sender, EventArgs e)
         {
             OFDlistarDeSolucion.ShowDialog();
+            this.UseWaitCursor = true;
+            Application.DoEvents();
+
             ListarNameSpaces();
+            this.UseWaitCursor = false;
+            Application.DoEvents();
             CMBnamespaces.DroppedDown = true;
         }
 
