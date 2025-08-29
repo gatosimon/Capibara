@@ -1814,7 +1814,6 @@ namespace Capibara
         {
             Task.Run(() =>
             {
-                // 🔹 Volvemos a la UI para actualizar controles
                 this.Invoke((Action)(() =>
                 {
                     ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
@@ -1836,7 +1835,6 @@ namespace Capibara
         {
             Task.Run(() =>
             {
-                // 🔹 Volvemos a la UI para actualizar controles
                 this.Invoke((Action)(() =>
                 {
                     ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);

@@ -141,13 +141,13 @@ namespace Capibara.Utilidades
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
+            ReproducirMusica("Capibarar", Properties.Resources.Capibarar);
         }
 
         private void ReproducirMusica(string nombreMP3, byte[] recurso)
         {
             Task.Run(() =>
             {
-                // 🔹 Volvemos a la UI para actualizar controles
                 this.Invoke((Action)(() =>
                 {
                     string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");

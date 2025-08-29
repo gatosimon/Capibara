@@ -29,7 +29,7 @@ public class Configuracion
         camposModificacion = new List<string[]>();
         camposRecuperacion = new List<string[]>();
         UltimoNamespaceSeleccionado = string.Empty;
-        RutaPorDefectoResultados = string.Empty;
+        RutaPorDefectoResultados = @"C:\Temp\";
     }
 
     public static string ArchivoConfigPorDefecto
