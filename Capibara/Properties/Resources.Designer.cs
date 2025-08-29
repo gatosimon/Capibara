@@ -91,12 +91,52 @@ namespace Capibara.Properties {
         }
         
         /// <summary>
-        ///   Busca un recurso adaptado de tipo System.Byte[].
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] Capibara1 {
+        internal static System.Drawing.Bitmap Capibara00 {
             get {
-                object obj = ResourceManager.GetObject("Capibara1", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("Capibara00", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Capibara01 {
+            get {
+                object obj = ResourceManager.GetObject("Capibara01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Capibara02 {
+            get {
+                object obj = ResourceManager.GetObject("Capibara02", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Capibara03 {
+            get {
+                object obj = ResourceManager.GetObject("Capibara03", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Capibara04 {
+            get {
+                object obj = ResourceManager.GetObject("Capibara04", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -117,6 +157,26 @@ namespace Capibara.Properties {
             get {
                 object obj = ResourceManager.GetObject("Capibara64x64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Byte[].
+        /// </summary>
+        internal static byte[] CapibaraCorto {
+            get {
+                object obj = ResourceManager.GetObject("CapibaraCorto", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Byte[].
+        /// </summary>
+        internal static byte[] Capibarar {
+            get {
+                object obj = ResourceManager.GetObject("Capibarar", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WMPLib;
 
 namespace Capibara.Utilidades
 {
@@ -135,5 +137,32 @@ namespace Capibara.Utilidades
                 return box.ShowDialog();
             }
         }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+        }
+
+        private void ReproducirMusica(string nombreMP3, byte[] recurso)
+        {
+            Task.Run(() =>
+            {
+                // 🔹 Volvemos a la UI para actualizar controles
+                this.Invoke((Action)(() =>
+                {
+                    string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
+                    if (!File.Exists(pathMp3))
+                    {
+                        File.WriteAllBytes(pathMp3, recurso);
+                    }
+                    WindowsMediaPlayer player = new WindowsMediaPlayer();
+                    player.settings.volume = 15;
+                    player.URL = pathMp3;
+                    player.settings.autoStart = true;
+                    player.controls.play();
+                }));
+            });
+        }
+
     }
 }
