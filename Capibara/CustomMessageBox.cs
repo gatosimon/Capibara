@@ -9,8 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WMPLib;
+using System.Runtime.InteropServices;
 
-namespace Capibara.Utilidades
+namespace Capibara.Controles
 {
     public partial class CustomMessageBox : Form
     {
@@ -18,6 +19,8 @@ namespace Capibara.Utilidades
         public const string ERROR = "ERROR!!!";
         public const string INFORMACION = "INFORMACIÓN";
         public const string GUATEFAK = "GUATEFAK?!?!";
+
+        WindowsMediaPlayer player;
         // Constructor privado, solo usado por Show
         private CustomMessageBox(string text, string caption,
                                 MessageBoxButtons buttons,
@@ -146,23 +149,35 @@ namespace Capibara.Utilidades
 
         private void ReproducirMusica(string nombreMP3, byte[] recurso)
         {
-            Task.Run(() =>
+            if (player == null)
             {
-                this.Invoke((Action)(() =>
-                {
-                    string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
-                    if (!File.Exists(pathMp3))
-                    {
-                        File.WriteAllBytes(pathMp3, recurso);
-                    }
-                    WindowsMediaPlayer player = new WindowsMediaPlayer();
-                    player.settings.volume = 15;
-                    player.URL = pathMp3;
-                    player.settings.autoStart = true;
-                    player.controls.play();
-                }));
-            });
+                player = new WindowsMediaPlayer();
+            }
+            string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
+            if (!File.Exists(pathMp3))
+            {
+                File.WriteAllBytes(pathMp3, recurso);
+            }
+            player.settings.volume = 15;
+            player.URL = pathMp3;
+            player.settings.autoStart = true;
+            player.PlayStateChange += Player_PlayStateChange;
+            player.controls.play();
         }
-
+        private void Player_PlayStateChange(int NewState)
+        {
+            // 8 = MediaEnded
+            if ((WMPPlayState)NewState == WMPPlayState.wmppsMediaEnded)
+            {
+                if (player != null)
+                {
+                    player.controls.stop();              // detiene el audio/video
+                    Marshal.ReleaseComObject(player);    // libera la referencia COM
+                    player = null;                       // limpia la referencia
+                    GC.Collect();                        // fuerza GC (opcional)
+                    GC.WaitForPendingFinalizers();       // espera finalizadores
+                }
+            }
+        }
     }
 }

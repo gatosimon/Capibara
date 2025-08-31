@@ -72,8 +72,6 @@ namespace Capibara
             this.VinculoModificacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.TBPrecuperacion = new System.Windows.Forms.TabPage();
             this.DGVrecuperacion = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewComboBoxColumn1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.LBLclasesGeneradas = new System.Windows.Forms.Label();
             this.TXTclase = new System.Windows.Forms.TextBox();
             this.TBCbackFront = new System.Windows.Forms.TabControl();
@@ -101,6 +99,11 @@ namespace Capibara
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
             this.TTPusarTryOrIf = new System.Windows.Forms.ToolTip(this.components);
             this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
+            this.CMScapibarar = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
+            this.CampoRecuperacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VinculoRecuperacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -136,6 +139,7 @@ namespace Capibara
             this.GPBajustes.SuspendLayout();
             this.TBPfront.SuspendLayout();
             this.GPBFront.SuspendLayout();
+            this.CMScapibarar.SuspendLayout();
             this.SuspendLayout();
             // 
             // LBLservidor
@@ -377,6 +381,7 @@ namespace Capibara
             this.TXTgenerarAPartirDeConsulta.Location = new System.Drawing.Point(3, 19);
             this.TXTgenerarAPartirDeConsulta.Multiline = true;
             this.TXTgenerarAPartirDeConsulta.Name = "TXTgenerarAPartirDeConsulta";
+            this.TXTgenerarAPartirDeConsulta.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(1044, 113);
             this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
             // 
@@ -601,8 +606,8 @@ namespace Capibara
             this.DGVrecuperacion.AllowUserToAddRows = false;
             this.DGVrecuperacion.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DGVrecuperacion.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewComboBoxColumn1});
+            this.CampoRecuperacion,
+            this.VinculoRecuperacion});
             this.DGVrecuperacion.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DGVrecuperacion.Location = new System.Drawing.Point(3, 3);
             this.DGVrecuperacion.Name = "DGVrecuperacion";
@@ -610,18 +615,6 @@ namespace Capibara
             this.DGVrecuperacion.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DGVrecuperacion.Size = new System.Drawing.Size(292, 263);
             this.DGVrecuperacion.TabIndex = 1;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.HeaderText = "CAMPO";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewComboBoxColumn1
-            // 
-            this.dataGridViewComboBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewComboBoxColumn1.HeaderText = "VINCULAR";
-            this.dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
             // 
             // LBLclasesGeneradas
             // 
@@ -983,13 +976,49 @@ namespace Capibara
             this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
             this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 150);
-            this.BTNgenerarDesdeTabla.Menu = null;
+            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
             this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
             this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
             this.BTNgenerarDesdeTabla.TabIndex = 12;
             this.BTNgenerarDesdeTabla.Text = "&Capibarar";
             this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
+            // 
+            // CMScapibarar
+            // 
+            this.CMScapibarar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CMScapibarar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TSMdesdeTabla,
+            this.TSMdesdeConsulta});
+            this.CMScapibarar.Name = "CMScapibarar";
+            this.CMScapibarar.ShowImageMargin = false;
+            this.CMScapibarar.Size = new System.Drawing.Size(169, 48);
+            // 
+            // TSMdesdeTabla
+            // 
+            this.TSMdesdeTabla.Name = "TSMdesdeTabla";
+            this.TSMdesdeTabla.Size = new System.Drawing.Size(168, 22);
+            this.TSMdesdeTabla.Text = "DESDE TABLA";
+            this.TSMdesdeTabla.Click += new System.EventHandler(this.TSMdesdeTabla_Click);
+            // 
+            // TSMdesdeConsulta
+            // 
+            this.TSMdesdeConsulta.Name = "TSMdesdeConsulta";
+            this.TSMdesdeConsulta.Size = new System.Drawing.Size(168, 22);
+            this.TSMdesdeConsulta.Text = "DESDE CONSULTA";
+            this.TSMdesdeConsulta.Click += new System.EventHandler(this.TSMdesdeConsulta_Click);
+            // 
+            // CampoRecuperacion
+            // 
+            this.CampoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.CampoRecuperacion.HeaderText = "CAMPO";
+            this.CampoRecuperacion.Name = "CampoRecuperacion";
+            // 
+            // VinculoRecuperacion
+            // 
+            this.VinculoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.VinculoRecuperacion.HeaderText = "VINCULAR";
+            this.VinculoRecuperacion.Name = "VinculoRecuperacion";
             // 
             // FRMcapibara
             // 
@@ -1064,6 +1093,7 @@ namespace Capibara
             this.TBPfront.ResumeLayout(false);
             this.GPBFront.ResumeLayout(false);
             this.GPBFront.PerformLayout();
+            this.CMScapibarar.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1111,8 +1141,6 @@ namespace Capibara
         private System.Windows.Forms.DataGridViewComboBoxColumn VinculoModificacion;
         private System.Windows.Forms.TabPage TBPrecuperacion;
         private System.Windows.Forms.DataGridView DGVrecuperacion;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
         private System.Windows.Forms.TabControl TBCbackFront;
         private System.Windows.Forms.TabPage TBPback;
         private System.Windows.Forms.TabPage TBPfront;
@@ -1139,6 +1167,11 @@ namespace Capibara
         private System.Windows.Forms.GroupBox GPBajustes;
         private System.Windows.Forms.CheckBox CHKtryOrIf;
         private System.Windows.Forms.CheckBox CHKquitarEsquema;
+        private System.Windows.Forms.ContextMenuStrip CMScapibarar;
+        private System.Windows.Forms.ToolStripMenuItem TSMdesdeTabla;
+        private System.Windows.Forms.ToolStripMenuItem TSMdesdeConsulta;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CampoRecuperacion;
+        private System.Windows.Forms.DataGridViewComboBoxColumn VinculoRecuperacion;
     }
 }
 

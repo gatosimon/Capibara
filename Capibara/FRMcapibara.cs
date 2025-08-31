@@ -10,206 +10,35 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Capibara.Utilidades;
+using Capibara.Controles;
 using System.Threading.Tasks;
-using WMPLib;
-using System.Threading;
+
 
 namespace Capibara
 {
     public partial class FRMcapibara : Form
     {
-        Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
-        {
-            {typeof(bool),      "bool"},
-            {typeof(byte),      "byte"},
-            {typeof(Byte[]),    "byte[]"},
-            {typeof(char),      "char"},
-            {typeof(char[]),    ERROR},
-            {typeof(DateTime),  "DateTime"},
-            {typeof(DBNull),    ERROR},
-            {typeof(decimal),   "double"},
-            {typeof(double),    "double"},
-            {typeof(Guid),      "Guid"},
-            {typeof(int),       "int"},			// Int32
-            {typeof(Int16),     "short"},			// Int16s
-            {typeof(Int64),     "long"},			// Int64
-            {typeof(Object),    ERROR},
-            {typeof(SByte),     "double"},
-            {typeof(Single),    "double"},
-            {typeof(string),    "string"},
-            {typeof(TimeSpan),  "TimeSpan"},
-            {typeof(ushort),    "uint"},
-            {typeof(uint),      "uint"},
-            {typeof(ulong),     "uint"}
-        };
-
-        Dictionary<string, string> Mapeo = new Dictionary<string, string>
-        {
-            { "bool",       "OdbcType.Bit"},            //"OdbcType.Smallint"}, 	// DB2 no tiene BOOLEAN real en versiones antiguas
-            { "byte",       "OdbcType.TinyInt"},        // SMALLINT usado como byte en DB2
-            { "byte[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
-            { "Byte[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
-            { "char",       "OdbcType.Char"},           // CHAR(1)
-            { "char[]",     "OdbcType.VarBinary"},	    // BLOB, VARBINARY, BYTEA
-            { "DateTime",   "OdbcType.DateTime"},	    // TIMESTAMP (Date si sólo fecha)
-            { "DBNull",     ERROR},
-            { "decimal",    "OdbcType.Numeric" },       // DECIMAL(p,s), NUMERIC
-            { "double",     "OdbcType.Double"},	        // DOUBLE
-            { "float",      "OdbcType.Real" }, 	        // REAL
-            { "Guid",       "OdbcType.Char"},           // DB2 no tiene UNIQUEIDENTIFIER → usar CHAR(36)
-            { "int",        "OdbcType.Int"},            // INTEGER
-            { "Int16",      "OdbcType.SmallInt" },      // SMALLINT	
-            { "Int64",      "OdbcType.BigInt" },	    // BIGINT
-            { "long",       "OdbcType.BigInt" },	    // BIGINT
-            { "Object",     ERROR},
-            { "SByte",      "OdbcType.Double"},	        // DOUBLE
-            { "short",      "OdbcType.SmallInt" },      // SMALLINT	
-            { "Single",     "OdbcType.Double"},	        // DOUBLE
-            { "string",     "OdbcType.VarChar"},	    // VARCHAR, usar NVarChar si es Unicode	
-            { "TimeSpan",   "OdbcType.Time"},	        // TIME
-            { "uint",       "OdbcType.BigInt"},          // BIGINT
-            { "ulong",       "OdbcType.BigInt"},          // BIGINT
-            { "ushort",      "OdbcType.BigInt"}          // BIGINT
-        };
-
-        // Diccionario de mapeo de tipos .NET a tipos DB2
-        Dictionary<Type, string> TIPOSDB2 = new Dictionary<Type, string>
-        {
-            { typeof(bool), "BOOLEAN" },        // System.Boolean (DB2 11+)
-            { typeof(byte[]), "BLOB" },         // System.Byte[] (puede mapear BLOB, VARBINARY, etc.)
-            { typeof(DateTime), "DATE" },       // System.DateTime (puede mapear DATE, TIME o TIMESTAMP)
-            { typeof(decimal), "DECIMAL" },     // System.Decimal
-            { typeof(double), "DOUBLE" },       // System.Double
-            { typeof(float), "REAL" },          // System.Single
-            { typeof(int), "INTEGER" },         // System.Int32
-            { typeof(long), "BIGINT" },         // System.Int64
-            { typeof(short), "SMALLINT" },      // System.Int16
-            { typeof(string), "VARCHAR" },      // System.String (puede ser CHAR, VARCHAR, CLOB, LONGVAR)
-            { typeof(TimeSpan), "TIME" },       // System.TimeSpan 
-            { typeof(object), "ROWID" }         // System.Object (para ROWID u otros tipos especiales)
-        };
-
-        // Diccionario de mapeo de tipos .NET a tipos SQL Server
-        Dictionary<Type, string> TIPOSSQL = new Dictionary<Type, string>
-        {
-            { typeof(bool), "BIT" },              // System.Boolean → BIT
-            { typeof(byte), "TINYINT" },          // System.Byte → TINYINT
-            { typeof(byte[]), "VARBINARY(MAX)" }, // System.Byte[] → BINARY / VARBINARY / IMAGE (desaconsejado)
-            { typeof(char), "NCHAR(1)" },         // System.Char → NCHAR(1)
-            { typeof(DateTime), "DATETIME" },     // System.DateTime → DATETIME (ó DATE, DATETIME2, SMALLDATETIME según precisión)
-            { typeof(DateTimeOffset), "DATETIMEOFFSET" }, // Con zona horaria
-            { typeof(decimal), "DECIMAL" },       // System.Decimal → DECIMAL(p,s) / NUMERIC
-            { typeof(double), "FLOAT" },          // System.Double → FLOAT (8 bytes)
-            { typeof(float), "REAL" },            // System.Single → REAL (4 bytes)
-            { typeof(int), "INT" },               // System.Int32 → INT
-            { typeof(long), "BIGINT" },           // System.Int64 → BIGINT
-            { typeof(short), "SMALLINT" },        // System.Int16 → SMALLINT
-            { typeof(string), "NVARCHAR(MAX)" },  // System.String → NVARCHAR / VARCHAR / CHAR / TEXT (deprecated)
-            { typeof(TimeSpan), "TIME" },         // System.TimeSpan → TIME
-            { typeof(Guid), "UNIQUEIDENTIFIER" }, // System.Guid → UNIQUEIDENTIFIER
-            { typeof(object), "SQL_VARIANT" }     // System.Object → SQL_VARIANT
-        };
-
-        Dictionary<Type, string> PropiedadesTS = new Dictionary<Type, string>
-        {
-            {typeof(bool),      "Boolean;"},
-            {typeof(byte),      "number = 0;"},
-            {typeof(Byte[]),    "string = '';"},
-            {typeof(char),      "string = '';"},
-            {typeof(char[]),    "any;"},
-            {typeof(DateTime),  "Date;"},
-            {typeof(DBNull),    "null;"},
-            {typeof(decimal),   "number = 0;"},
-            {typeof(double),    "number = 0;"},
-            {typeof(Guid),      "any;"},
-            {typeof(int),       "number = 0;"},		// Int32
-            {typeof(Int16),     "number = 0;"},		// Int16
-            {typeof(Int64),     "number = 0;"},		// Int64
-            {typeof(Object),    "any;"},
-            {typeof(SByte),     "number = 0;"},
-            {typeof(Single),    "number = 0;"},
-            {typeof(string),    "string = '';"},
-            {typeof(TimeSpan),  "Date;"},
-            {typeof(ushort),    "number = 0;"},
-            {typeof(uint),      "number = 0;"},
-            {typeof(ulong),     "number = 0;"}
-        };
-
-        private Dictionary<string, string> CamposABM = new Dictionary<string, string>
-        {
-            { "FECHA ACTUAL", "System.DateTime.Now;"},
-            { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
-            { "USUARIO MAGIC",  "Config.UsuarioMagic;" },
-            { "CÓDIGO BAJA",  "codigoBaja;" },
-            { "MOTIVO BAJA", "motivoBaja;" },
-            { "CÓDIGO 0", "0;" },
-            { "CADENA VACÍA", "string.Empty;" },
-            { "HORA ACTUAL", "DateTime.Now.TimeOfDay;" },
-            { "HORA POR DEFECTO", "TimeSpan.Zero;"}
-        };
-
-        private const string ERROR = "ERROR";
-        private const string CONTROLLER = "Controller";
-        private const string DTO = "Dto";
-        private const string MODEL = "Model";
-        private const string REPOSITORIES = "Repositories";
-        private const string REPOSITORIES_INTERFACE = "RepositoriesInterface";
-        private const string SERVICE = "Service";
-        private const string SERVICE_INTERFACE = "ServiceInterface";
-
-        private const string CAPIBARA = "Capibara";
-        private const string CAPIBARAR = "Capibarar";
-
-        List<string> tablasBase = new List<string>();
-        List<string> camposTabla = new List<string>();
-        string TABLA = string.Empty;
-        string pathControllers { get { return this.TXTpathCapas.Text + @"\" + TABLA + @"\Controllers\"; } }
-        string pathClaseController { get { return pathControllers + TABLA + CONTROLLER + ".cs"; } }
-        string pathDto { get { return TXTpathCapas.Text + @"\" + TABLA + @"\" + DTO + @"\"; } }
-        string pathClaseDto { get { return pathDto + TABLA + DTO + ".cs"; } }
-        string pathModel { get { return TXTpathCapas.Text + @"\" + TABLA + @"\" + MODEL + @"\"; } }
-        string pathClaseModel { get { return pathModel + TABLA + MODEL + ".cs"; } }
-        string pathRepositories { get { return TXTpathCapas.Text + @"\" + TABLA + @"\" + REPOSITORIES + @"\"; } }
-        string pathClaseRepositories { get { return pathRepositories + TABLA + REPOSITORIES + ".cs"; } }
-        string pathClaseRepositoriesInterface { get { return pathRepositories + TABLA + REPOSITORIES_INTERFACE + ".cs"; } }
-        string pathService { get { return TXTpathCapas.Text + @"\" + TABLA + @"\" + SERVICE + @"\"; } }
-        string pathClaseService { get { return pathService + TABLA + SERVICE + ".cs"; } }
-        string pathClaseServiceInterface { get { return pathService + TABLA + SERVICE_INTERFACE + ".cs"; } }
+        public string PathCapas { get { return TXTpathCapas.Text; } }
 
         private bool generarDesdeConsulta = false;
 
         private bool desplegarCombo = false;
 
+        private bool refrescar = true;
+
         Configuracion configuracion;
 
-        private WindowsMediaPlayer player;
+        Capas capas = null;
 
-        private WaitOverlay overlay;
+        public  WaitOverlay overlay;
 
         public FRMcapibara()
         {
             InitializeComponent();
+            capas = new Capas(this);
             overlay = new WaitOverlay(this);
-            ReproducirMusica(CAPIBARA, Properties.Resources.CapibaraCorto);
-            this.UseWaitCursor = true;
-            Application.DoEvents();
-        }
-
-        private void ReproducirMusica(string nombreMP3, byte[] recurso)
-        {
-            string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
-            if (!File.Exists(pathMp3))
-            {
-                File.WriteAllBytes(pathMp3, recurso);
-            }
-            player = new WindowsMediaPlayer();
-            player.settings.volume = 15;
-            player.URL = pathMp3;
-            //player.settings.setMode("loop", true);
-            player.settings.autoStart = true;
-            player.PlayStateChange += Player_PlayStateChange;
-            player.controls.play();
+            Utilidades.ReproducirIntro(this);// ReproducirMusica(CAPIBARA, Properties.Resources.CapibaraCorto);
+            WaitCursor();
         }
 
         private void FRMcapibara_Shown(object sender, EventArgs e)
@@ -227,39 +56,25 @@ namespace Capibara
                 // 🔹 Volvemos a la UI para actualizar controles
                 this.Invoke((Action)(() =>
                 {
-                    // Construcción del menú
-                    ContextMenuStrip menu = new ContextMenuStrip();
-                    menu.ShowImageMargin = false;
-                    menu.Items.Add("DESDE TABLA", null, (s, ev) => GenerarDesdeTabla());
-                    menu.Items.Add("DESDE CONSULTA", null, (s, ev) => GenerarDesdeConsulta());
-                    BTNgenerarDesdeTabla.Menu = menu;
-
                     // Cargar configuraciones y refrescar UI
                     configuracion = Configuracion.Cargar();
                     ListarNameSpaces();
                     CargarConfiguracion();
                     InicializarIndices();
 
-                    this.UseWaitCursor = false;
-                    Application.DoEvents();
+                    CursorDefault();
                 }));
             });
         }
 
-        private void Player_PlayStateChange(int NewState)
+        private void FRMgeneradorDeCapas_Resize(object sender, EventArgs e)
         {
-            // 8 = MediaEnded
-            if ((WMPPlayState)NewState == WMPPlayState.wmppsMediaEnded)
-            {
-                this.Invoke((Action)(() =>
-                {
-                    // 🔹 cerrar overlay
-                    if (overlay != null && !overlay.IsDisposed)
-                    {
-                        overlay.Close();
-                    }
-                }));
-            }
+            EnforceSplitBounds();
+        }
+
+        private void FRMcapibara_Validated(object sender, EventArgs e)
+        {
+            desplegarCombo = true;
         }
 
         private void CargarConfiguracion()
@@ -275,32 +90,33 @@ namespace Capibara
             {
                 int indiceFila = DGVbaja.Rows.Add();
                 DGVbaja.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
-                DGVbaja.Rows[indiceFila].Cells[1].Value = CamposABM[item[1]];
+                DGVbaja.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
             }
 
             foreach (string[] item in configuracion.camposModificacion)
             {
                 int indiceFila = DGVmodificacion.Rows.Add();
                 DGVmodificacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
-                DGVmodificacion.Rows[indiceFila].Cells[1].Value = CamposABM[item[1]];
+                DGVmodificacion.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
             }
 
             foreach (string[] item in configuracion.camposRecuperacion)
             {
                 int indiceFila = DGVrecuperacion.Rows.Add();
                 DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
-                DGVrecuperacion.Rows[indiceFila].Cells[1].Value = CamposABM[item[1]];
+                DGVrecuperacion.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
             }
         }
+
         private void GuardarConfiguracion()
         {
             try
@@ -402,6 +218,11 @@ namespace Capibara
             {
                 tabla = "CONSULTA";
             }
+            // Obtengo los campos en caso que no se haya recargado el ListView. Se perderán las posibles claves asignadas manualmente
+            if (capas.camposTabla.Count == 0)
+            {
+                CamposTabla(tabla, consulta);
+            }
             string resultado = string.Empty;
             List<DataColumn> claves = new List<DataColumn>();
             List<DataColumn> camposConsulta = new List<DataColumn>();
@@ -414,7 +235,7 @@ namespace Capibara
                 try
                 {
                     Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    datos.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
                     ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
                     DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
 
@@ -436,7 +257,7 @@ namespace Capibara
                             }
                             camposConsulta.Add(columna);
 
-                            if (Tipo(columna) == ERROR)
+                            if (capas.Tipo(columna) == Capas.ERROR)
                             {
                                 foreach (ListViewItem item in LSVcampos.Items)
                                 {
@@ -470,7 +291,7 @@ namespace Capibara
                     string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", camposTabla) + " FROM " + tabla;
+                    string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", capas.camposTabla) + " FROM " + tabla;
 
                     DataSet DS = new DataSet();
                     using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
@@ -494,7 +315,7 @@ namespace Capibara
                             }
                             camposConsulta.Add(columna);
 
-                            if (Tipo(columna) == ERROR)
+                            if (capas.Tipo(columna) == Capas.ERROR)
                             {
                                 foreach (ListViewItem item in LSVcampos.Items)
                                 {
@@ -536,7 +357,7 @@ namespace Capibara
                         string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                         tabla = partes[partes.Length - 1];
                     }
-                    TABLA = tabla;
+                    capas.TABLA = tabla;
 
                     if (CHKcontrollers.Checked)
                     {
@@ -601,13 +422,14 @@ namespace Capibara
 
                     if (System.IO.Directory.Exists(TXTpathCapas.Text))
                     {
+                        Utilidades.ReproducirSplash(this);// ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
                         Process.Start("explorer.exe", TXTpathCapas.Text);
                     }
                 }
             }
             else
             {
-                CustomMessageBox.Show("Ocurrió un error al intentar acceder a la" + (consulta.Trim().Length > 0 ? " consulta. " : " tabla. ") + resultado, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CustomMessageBox.Show("Ocurrió un error al intentar acceder a la" + (consulta.Trim().Length > 0 ? " consulta. " : " tabla. ") + resultado, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return resultado;
@@ -616,12 +438,12 @@ namespace Capibara
         private string ArmarControllers(List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
-            string origen = DB2 ? MODEL : DTO;
-            string nombreDeClase = TABLA;
-            string tipoClase = TABLA + origen;
+            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            string nombreDeClase = capas.TABLA;
+            string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
             string espacioDeNombres = TXTespacioDeNombres.Text;
-            string camposFromUri = string.Join(", ", (from c in claves select "[FromUri] " + Tipo(c) + " " + c.ColumnName).ToList());
+            string camposFromUri = string.Join(", ", (from c in claves select "[FromUri] " + capas.Tipo(c) + " " + c.ColumnName).ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
 
@@ -633,19 +455,19 @@ namespace Capibara
             Controller.AppendLine("using System.Web.Http;");
             Controller.AppendLine("using System.Web.Http.Cors;");
             if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine("using " + espacioDeNombres + "." + origen + ";");
-            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine("using " + espacioDeNombres + "." + SERVICE + ";");
+            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine("using " + espacioDeNombres + "." + Capas.SERVICE + ";");
             Controller.AppendLine();
             Controller.AppendLine("namespace " + espacioDeNombres + ".Controllers");
             Controller.AppendLine("{");
             Controller.AppendLine("\t[RoutePrefix(\"" + nombreDeClase.ToLower() + "\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
             Controller.AppendLine();
-            Controller.AppendLine("\tpublic class " + nombreDeClase + CONTROLLER + " : ApiController");
+            Controller.AppendLine("\tpublic class " + nombreDeClase + Capas.CONTROLLER + " : ApiController");
             Controller.AppendLine("\t{");
-            Controller.AppendLine("\t\tprivate readonly " + nombreDeClase + SERVICE_INTERFACE + " _" + nombreClasePrimeraMinuscula + SERVICE + ";");
-            Controller.AppendLine("\t\tpublic " + nombreDeClase + CONTROLLER + "(" + nombreDeClase + SERVICE_INTERFACE + " " + nombreClasePrimeraMinuscula + SERVICE + ")");
+            Controller.AppendLine("\t\tprivate readonly " + nombreDeClase + Capas.SERVICE_INTERFACE + " _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ";");
+            Controller.AppendLine("\t\tpublic " + nombreDeClase + Capas.CONTROLLER + "(" + nombreDeClase + Capas.SERVICE_INTERFACE + " " + nombreClasePrimeraMinuscula + Capas.SERVICE + ")");
             Controller.AppendLine("\t\t{");
-            Controller.AppendLine("\t\t\t_" + nombreClasePrimeraMinuscula + SERVICE + " = " + nombreClasePrimeraMinuscula + SERVICE + " ?? throw new ArgumentNullException(nameof(" + nombreClasePrimeraMinuscula + SERVICE + "));");
+            Controller.AppendLine("\t\t\t_" + nombreClasePrimeraMinuscula + Capas.SERVICE + " = " + nombreClasePrimeraMinuscula + Capas.SERVICE + " ?? throw new ArgumentNullException(nameof(" + nombreClasePrimeraMinuscula + Capas.SERVICE + "));");
             Controller.AppendLine("\t\t}");
             Controller.AppendLine();
             // ALTA
@@ -656,7 +478,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + SERVICE + ".alta" + nombreDeClase + "(nuevo" + origen + ");");
+                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".alta" + nombreDeClase + "(nuevo" + origen + ");");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -670,7 +492,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + SERVICE + ".baja" + nombreDeClase + "(" + camposClave + ", codigoBaja, motivoBaja);");
+                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".baja" + nombreDeClase + "(" + camposClave + ", codigoBaja, motivoBaja);");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -684,7 +506,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + SERVICE + ".modificacion" + nombreDeClase + "(nuevo" + origen + ");");
+                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".modificacion" + nombreDeClase + "(nuevo" + origen + ");");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -697,7 +519,7 @@ namespace Capibara
                 Controller.AppendLine("\t\tpublic async Task<Respuesta> obtenerPorId(" + camposFromUri + ")");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
-                Controller.AppendLine("\t\t\t" + tipoClase + " solicitado = _" + nombreClasePrimeraMinuscula + SERVICE + ".obtenerPorId(" + camposClave + ");");
+                Controller.AppendLine("\t\t\t" + tipoClase + " solicitado = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".obtenerPorId(" + camposClave + ");");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\tif (solicitado != null)");
                 Controller.AppendLine("\t\t\t{");
@@ -719,7 +541,7 @@ namespace Capibara
                 Controller.AppendLine("\t\tpublic async Task<Respuesta> obtenerTodos()");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
-                Controller.AppendLine("\t\t\tList <" + tipoClase + "> " + nombreDeClase.ToLower() + " = _" + nombreClasePrimeraMinuscula + SERVICE + ".obtenerTodos();");
+                Controller.AppendLine("\t\t\tList <" + tipoClase + "> " + nombreDeClase.ToLower() + " = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".obtenerTodos();");
                 Controller.AppendLine("\t\t\tif (" + nombreDeClase.ToLower() + " != null)");
                 Controller.AppendLine("\t\t\t{");
                 Controller.AppendLine("\t\t\t\trta.Resultado = " + nombreDeClase.ToLower() + ";");
@@ -741,7 +563,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + SERVICE + ".recuperar" + nombreDeClase + "(" + camposClave + ");");
+                Controller.AppendLine("\t\t\trta.Resultado = _" + nombreClasePrimeraMinuscula + Capas.SERVICE + ".recuperar" + nombreDeClase + "(" + camposClave + ");");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -753,16 +575,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathControllers))
+                    if (!Directory.Exists(capas.pathControllers))
                     {
-                        Directory.CreateDirectory(pathControllers);
+                        Directory.CreateDirectory(capas.pathControllers);
                     }
-                    if (File.Exists(pathClaseController))
+                    if (File.Exists(capas.pathClaseController))
                     {
-                        File.Delete(pathClaseController);
+                        File.Delete(capas.pathClaseController);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseController);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseController);
                     clase.Write(Controller.ToString());
                     clase.Flush();
                     clase.Close();
@@ -777,7 +599,7 @@ namespace Capibara
 
         private string ArmarDto(List<DataColumn> columnas)
         {
-            string nombreDeClase = TABLA;
+            string nombreDeClase = capas.TABLA;
             string espacioDeNombres = TXTespacioDeNombres.Text;
 
             StringBuilder Dto = new StringBuilder();
@@ -789,14 +611,14 @@ namespace Capibara
             Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
-            Dto.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
+            Dto.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
             Dto.AppendLine("");
-            Dto.AppendLine("namespace " + espacioDeNombres + "." + DTO);
+            Dto.AppendLine("namespace " + espacioDeNombres + "." + Capas.DTO);
             Dto.AppendLine("{");
-            Dto.AppendLine("\tpublic class " + nombreDeClase + DTO);
+            Dto.AppendLine("\tpublic class " + nombreDeClase + Capas.DTO);
             Dto.AppendLine("\t{");
 
-            newDto.AppendLine("\t\tpublic " + nombreDeClase + DTO + " new" + nombreDeClase + DTO + "(" + nombreDeClase + (RDBsql.Checked ? string.Empty : MODEL) + " modelo)");
+            newDto.AppendLine("\t\tpublic " + nombreDeClase + Capas.DTO + " new" + nombreDeClase + Capas.DTO + "(" + nombreDeClase + (RDBsql.Checked ? string.Empty : Capas.MODEL) + " modelo)");
             newDto.AppendLine("\t\t{");
 
             int i = 0;
@@ -812,7 +634,7 @@ namespace Capibara
                 else
                 {
                     Dto.AppendLine("\t\t[Required(ErrorMessage = \"- Ingrese " + columna.ColumnName + ".\")]");
-                    Dto.AppendLine("\t\tpublic " + Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
+                    Dto.AppendLine("\t\tpublic " + capas.Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
                     newDto.AppendLine("\t\t\t" + columna.ColumnName + " = modelo." + columna.ColumnName + ";");
                 }
 
@@ -834,16 +656,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathDto))
+                    if (!Directory.Exists(capas.pathDto))
                     {
-                        Directory.CreateDirectory(pathDto);
+                        Directory.CreateDirectory(capas.pathDto);
                     }
-                    if (File.Exists(pathClaseDto))
+                    if (File.Exists(capas.pathClaseDto))
                     {
-                        File.Delete(pathClaseDto);
+                        File.Delete(capas.pathClaseDto);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseDto);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseDto);
                     clase.Write(Dto.ToString());
                     clase.Flush();
                     clase.Close();
@@ -858,7 +680,7 @@ namespace Capibara
 
         private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
         {
-            string nombreDeClase = TABLA;
+            string nombreDeClase = capas.TABLA;
             string espacioDeNombres = TXTespacioDeNombres.Text;
 
             StringBuilder Modelo = new StringBuilder();
@@ -870,9 +692,9 @@ namespace Capibara
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations.Schema;");
             Modelo.AppendLine("");
-            Modelo.AppendLine("namespace " + espacioDeNombres + "." + MODEL);
+            Modelo.AppendLine("namespace " + espacioDeNombres + "." + Capas.MODEL);
             Modelo.AppendLine("{");
-            Modelo.AppendLine("\tpublic class " + nombreDeClase + MODEL);
+            Modelo.AppendLine("\tpublic class " + nombreDeClase + Capas.MODEL);
             Modelo.AppendLine("\t{");
 
             int i = 0;
@@ -892,7 +714,7 @@ namespace Capibara
                 }
                 else
                 {
-                    Modelo.AppendLine("\t\tpublic " + Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
+                    Modelo.AppendLine("\t\tpublic " + capas.Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
                 }
 
                 i++;
@@ -910,16 +732,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathModel))
+                    if (!Directory.Exists(capas.pathModel))
                     {
-                        Directory.CreateDirectory(pathModel);
+                        Directory.CreateDirectory(capas.pathModel);
                     }
-                    if (File.Exists(pathClaseModel))
+                    if (File.Exists(capas.pathClaseModel))
                     {
-                        File.Delete(pathClaseModel);
+                        File.Delete(capas.pathClaseModel);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseModel);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseModel);
                     clase.Write(Modelo.ToString());
                     clase.Flush();
                     clase.Close();
@@ -935,14 +757,14 @@ namespace Capibara
         private string ArmarRepositories(List<DataColumn> columnas, List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
-            string origen = DB2 ? MODEL : string.Empty;
-            string nombreDeClase = TABLA;
-            string tipoClase = TABLA + origen;
-            string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + MODEL;
+            string origen = DB2 ? Capas.MODEL : string.Empty;
+            string nombreDeClase = capas.TABLA;
+            string tipoClase = capas.TABLA + origen;
+            string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
             string espacioDeNombres = TXTespacioDeNombres.Text;
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
-            string columnasClave = string.Join(", ", (from c in claves select Tipo(c) + " " + c.ColumnName).ToList());
-            List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, Tipo(c) }).ToList();
+            string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
+            List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
             string[] partes = espacioDeNombres.Trim().Length > 0 ? espacioDeNombres.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries) : new string[] { };
             string espacio = partes.Length > 0 ? partes[partes.Length - 1] : string.Empty;
 
@@ -954,11 +776,11 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
+            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
             Repositories.AppendLine();
             Repositories.AppendLine("namespace " + espacioDeNombres + ".Repositories");
             Repositories.AppendLine("{");
-            Repositories.AppendLine("\tpublic class " + nombreDeClase + "Repositories : " + nombreDeClase + REPOSITORIES_INTERFACE);
+            Repositories.AppendLine("\tpublic class " + nombreDeClase + "Repositories : " + nombreDeClase + Capas.REPOSITORIES_INTERFACE);
             Repositories.AppendLine("\t{");
             //ALTA
             if (CHKalta.Checked)
@@ -974,7 +796,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                     }
                     Repositories.AppendLine();
                     if (CHKtryOrIf.Checked)
@@ -1032,20 +854,20 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + capas.TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
                     Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t// ***** UPDATE *****");
 
                     foreach (DataColumn c in columnasUpdate)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                     }
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t// ***** WHERE *****");
                     foreach (DataColumn c in claves)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                     }
 
                     Repositories.AppendLine();
@@ -1108,20 +930,20 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                         Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + capas.TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
                         Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
                         Repositories.AppendLine();
                         Repositories.AppendLine("\t\t\t\t// ***** UPDATE *****");
 
                         foreach (DataColumn c in columnasUpdate)
                         {
-                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                         }
                         Repositories.AppendLine();
                         Repositories.AppendLine("\t\t\t\t// ***** WHERE *****");
                         foreach (DataColumn c in claves)
                         {
-                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                         }
 
                         if (CHKtryOrIf.Checked)
@@ -1186,13 +1008,13 @@ namespace Capibara
 
                     bool where = campoBaja != null;
                     if (!where) where = clavesConsulta.Count > 0;
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + TABLA + "\" +");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + capas.TABLA + "\" +");
                     Repositories.AppendLine("\t\t\t\t\t\"" + (where ? (" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty));
                     Repositories.AppendLine();
 
                     foreach (string[] clave in clavesConsulta)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + clave[0] + "\", " + Mapeo[clave[1]] + ", " + clave[0] + ");");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + clave[0] + "\", " + capas.Mapeo[clave[1]] + ", " + clave[0] + ");");
                     }
                     if (campoBaja != null)
                     {
@@ -1250,7 +1072,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(\"\", \"DB2_Tributos\");");
                     Repositories.AppendLine();
 
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + TABLA + "\";");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + capas.TABLA + "\";");
 
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\twhile (SQLconsulta.HayRegistros())");
@@ -1290,11 +1112,11 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO " + TABLA + " (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO " + capas.TABLA + " (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + Mapeo[Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                     }
                     Repositories.AppendLine();
                     if (CHKtryOrIf.Checked)
@@ -1346,16 +1168,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathRepositories))
+                    if (!Directory.Exists(capas.pathRepositories))
                     {
-                        Directory.CreateDirectory(pathRepositories);
+                        Directory.CreateDirectory(capas.pathRepositories);
                     }
-                    if (File.Exists(pathClaseRepositories))
+                    if (File.Exists(capas.pathClaseRepositories))
                     {
-                        File.Delete(pathClaseRepositories);
+                        File.Delete(capas.pathClaseRepositories);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseRepositories);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseRepositories);
                     clase.Write(Repositories.ToString());
                     clase.Flush();
                     clase.Close();
@@ -1371,37 +1193,37 @@ namespace Capibara
         private string ArmarRepositoriesInterface(List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
-            string origen = DB2 ? MODEL : string.Empty;
-            string nombreDeClase = TABLA;
-            string tipoClase = TABLA + origen;
+            string origen = DB2 ? Capas.MODEL : string.Empty;
+            string nombreDeClase = capas.TABLA;
+            string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
             string espacioDeNombres = TXTespacioDeNombres.Text;
-            string columnasClave = string.Join(", ", (from c in claves select Tipo(c) + " " + c.ColumnName).ToList());
+            string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder RepositoriesInterface = new StringBuilder();
 
             RepositoriesInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
             RepositoriesInterface.AppendLine("using System.Collections.Generic;");
             RepositoriesInterface.AppendLine("using System.Data.Odbc;");
-            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + MODEL + ";");
+            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine("namespace " + espacioDeNombres + "." + REPOSITORIES);
+            RepositoriesInterface.AppendLine("namespace " + espacioDeNombres + "." + Capas.REPOSITORIES);
             RepositoriesInterface.AppendLine("{");
-            RepositoriesInterface.AppendLine("\tpublic interface " + nombreDeClase + REPOSITORIES_INTERFACE);
+            RepositoriesInterface.AppendLine("\tpublic interface " + nombreDeClase + Capas.REPOSITORIES_INTERFACE);
             RepositoriesInterface.AppendLine("\t{");
             if (CHKalta.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + MODEL + ");");
+                RepositoriesInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKbaja.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + MODEL + ");");
+                RepositoriesInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKmodificacion.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + MODEL + ");");
+                RepositoriesInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKobtenerPorId.Checked)
@@ -1416,7 +1238,7 @@ namespace Capibara
             }
             if (CHKrecuperacion.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + MODEL + ");");
+                RepositoriesInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
             }
             RepositoriesInterface.AppendLine("\t}");
             RepositoriesInterface.AppendLine("}");
@@ -1425,16 +1247,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathRepositories))
+                    if (!Directory.Exists(capas.pathRepositories))
                     {
-                        Directory.CreateDirectory(pathRepositories);
+                        Directory.CreateDirectory(capas.pathRepositories);
                     }
-                    if (File.Exists(pathClaseRepositoriesInterface))
+                    if (File.Exists(capas.pathClaseRepositoriesInterface))
                     {
-                        File.Delete(pathClaseRepositoriesInterface);
+                        File.Delete(capas.pathClaseRepositoriesInterface);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseRepositoriesInterface);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseRepositoriesInterface);
                     clase.Write(RepositoriesInterface.ToString());
                     clase.Flush();
                     clase.Close();
@@ -1450,13 +1272,13 @@ namespace Capibara
         private string ArmarService(List<DataColumn> columnas, List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
-            string origen = DB2 ? MODEL : DTO;
-            string nombreDeClase = TABLA;
-            string tipoClase = TABLA + origen;
+            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            string nombreDeClase = capas.TABLA;
+            string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
             string espacioDeNombres = TXTespacioDeNombres.Text;
             string columnasClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
-            string columnasClaveTipo = string.Join(", ", (from c in claves select Tipo(c) + " " + c.ColumnName).ToList());
+            string columnasClaveTipo = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder Service = new StringBuilder();
 
@@ -1466,16 +1288,16 @@ namespace Capibara
             Service.AppendLine("using System.Linq;");
             Service.AppendLine("using System.Web;");
             if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + origen + ";");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + REPOSITORIES + ";");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + Capas.REPOSITORIES + ";");
             Service.AppendLine();
-            Service.AppendLine("namespace " + espacioDeNombres + "." + SERVICE);
+            Service.AppendLine("namespace " + espacioDeNombres + "." + Capas.SERVICE);
             Service.AppendLine("{");
-            Service.AppendLine("\tpublic class " + nombreDeClase + SERVICE + " : " + nombreDeClase + SERVICE_INTERFACE);
+            Service.AppendLine("\tpublic class " + nombreDeClase + Capas.SERVICE + " : " + nombreDeClase + Capas.SERVICE_INTERFACE);
             Service.AppendLine("\t{");
-            Service.AppendLine("\t\tprivate readonly " + nombreDeClase + REPOSITORIES_INTERFACE + " _repositories;");
+            Service.AppendLine("\t\tprivate readonly " + nombreDeClase + Capas.REPOSITORIES_INTERFACE + " _repositories;");
             Service.AppendLine();
 
-            Service.AppendLine("\t\tpublic " + nombreDeClase + SERVICE + "(" + nombreDeClase + REPOSITORIES_INTERFACE + " repositories)");
+            Service.AppendLine("\t\tpublic " + nombreDeClase + Capas.SERVICE + "(" + nombreDeClase + Capas.REPOSITORIES_INTERFACE + " repositories)");
             Service.AppendLine("\t\t{");
             Service.AppendLine("\t\t\t_repositories = repositories;");
             Service.AppendLine("\t\t}");
@@ -1648,16 +1470,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathService))
+                    if (!Directory.Exists(capas.pathService))
                     {
-                        Directory.CreateDirectory(pathService);
+                        Directory.CreateDirectory(capas.pathService);
                     }
-                    if (File.Exists(pathClaseService))
+                    if (File.Exists(capas.pathClaseService))
                     {
-                        File.Delete(pathClaseService);
+                        File.Delete(capas.pathClaseService);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseService);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseService);
                     clase.Write(Service.ToString());
                     clase.Flush();
                     clase.Close();
@@ -1673,12 +1495,12 @@ namespace Capibara
         private string ArmarServiceInterface(List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
-            string origen = DB2 ? MODEL : DTO;
-            string nombreDeClase = TABLA;
-            string tipoClase = TABLA + origen;
+            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            string nombreDeClase = capas.TABLA;
+            string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
             string espacioDeNombres = TXTespacioDeNombres.Text;
-            string columnasClave = string.Join(", ", (from c in claves select Tipo(c) + " " + c.ColumnName).ToList());
+            string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder ServiceInterface = new StringBuilder();
 
@@ -1688,9 +1510,9 @@ namespace Capibara
             ServiceInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine("using " + espacioDeNombres + "." + origen + ";");
             ServiceInterface.AppendLine();
-            ServiceInterface.AppendLine("namespace " + espacioDeNombres + "." + SERVICE);
+            ServiceInterface.AppendLine("namespace " + espacioDeNombres + "." + Capas.SERVICE);
             ServiceInterface.AppendLine("{");
-            ServiceInterface.AppendLine("\tpublic interface " + nombreDeClase + SERVICE_INTERFACE);
+            ServiceInterface.AppendLine("\tpublic interface " + nombreDeClase + Capas.SERVICE_INTERFACE);
             ServiceInterface.AppendLine("\t{");
             if (CHKalta.Checked)
             {
@@ -1728,16 +1550,16 @@ namespace Capibara
             {
                 try
                 {
-                    if (!Directory.Exists(pathService))
+                    if (!Directory.Exists(capas.pathService))
                     {
-                        Directory.CreateDirectory(pathService);
+                        Directory.CreateDirectory(capas.pathService);
                     }
-                    if (File.Exists(pathClaseServiceInterface))
+                    if (File.Exists(capas.pathClaseServiceInterface))
                     {
-                        File.Delete(pathClaseServiceInterface);
+                        File.Delete(capas.pathClaseServiceInterface);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseServiceInterface);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseServiceInterface);
                     clase.Write(ServiceInterface.ToString());
                     clase.Flush();
                     clase.Close();
@@ -1752,7 +1574,7 @@ namespace Capibara
 
         private string ArmarTypeScript(List<DataColumn> columnas)
         {
-            string nombreDeClase = TABLA;
+            string nombreDeClase = capas.TABLA;
             StringBuilder typeSript = new StringBuilder();
 
 
@@ -1763,7 +1585,7 @@ namespace Capibara
 
             foreach (var columna in columnas)
             {
-                typeSript.AppendLine("\tpublic " + columna.ColumnName + ": " + PropiedadesTS[columna.DataType]);
+                typeSript.AppendLine("\tpublic " + columna.ColumnName + ": " + capas.PropiedadesTS[columna.DataType]);
             }
             typeSript.AppendLine("}");
 
@@ -1771,8 +1593,8 @@ namespace Capibara
             {
                 try
                 {
-                    string pathTypeScript = TXTpathCapas.Text + @"\" + TABLA + @"\TypeScript\";
-                    string pathClaseTypeScript = pathTypeScript + TABLA + ".ts";
+                    string pathTypeScript = TXTpathCapas.Text + @"\" + capas.TABLA + @"\TypeScript\";
+                    string pathClaseTypeScript = pathTypeScript + capas.TABLA + ".ts";
                     if (!Directory.Exists(pathTypeScript))
                     {
                         Directory.CreateDirectory(pathTypeScript);
@@ -1794,34 +1616,9 @@ namespace Capibara
             return typeSript.ToString();
         }
 
-        public string Tipo(DataColumn columna)
-        {
-            if (columna == null || columna.DataType == null)
-                return string.Empty;
-
-            Type tipo = columna.DataType;
-            if (TIPOS.Keys.Contains(tipo))
-            {
-                return TIPOS[tipo];
-            }
-            else
-            {
-                return ERROR;
-            }
-        }
-
         private void GenerarDesdeTabla()
         {
-            this.UseWaitCursor = true;
-            Application.DoEvents();
-
-            Task.Run(() =>
-            {
-                this.Invoke((Action)(() =>
-                {
-                    ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
-                }));
-            });
+            WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
                 generarDesdeConsulta = false;
@@ -1832,21 +1629,12 @@ namespace Capibara
                 CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 DefinirDirectorioCapas();
             }
-            this.UseWaitCursor = false;
-            Application.DoEvents();
+            CursorDefault();
         }
 
         private void GenerarDesdeConsulta()
         {
-            this.UseWaitCursor = true;
-            Application.DoEvents();
-            Task.Run(() =>
-            {
-                this.Invoke((Action)(() =>
-                {
-                    ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
-                }));
-            });
+            WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
                 generarDesdeConsulta = true;
@@ -1878,12 +1666,12 @@ namespace Capibara
                     {
                         mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
                             $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
-                            $"Generar en estos 3 últimos el método de:\r\n   • {TextoHelper.FormatearTitulo(capasNecesarias[0].Name.Replace("CHK", string.Empty))}\r\npuede generar inconsistencias.\r\n" +
+                            $"Generar en estos 3 últimos el método de:\r\n   • {Utilidades.FormatearTitulo(capasNecesarias[0].Name.Replace("CHK", string.Empty))}\r\npuede generar inconsistencias.\r\n" +
                             $"¿Desea generarlo de todos modos?";
                     }
                     else
                     {
-                        string metodos = string.Join("\r\n   • ", (from c in capasNecesarias select TextoHelper.FormatearTitulo(c.Name.Replace("CHK", string.Empty))).ToArray());
+                        string metodos = string.Join("\r\n   • ", (from c in capasNecesarias select Utilidades.FormatearTitulo(c.Name.Replace("CHK", string.Empty))).ToArray());
                         mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
                             $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
                             $"Generar en estos 3 últimos los métodos de:\r\n   • {metodos}\r\npueden generar inconsistencias.\r\n" +
@@ -1906,8 +1694,8 @@ namespace Capibara
                 CustomMessageBox.Show("Seleccione una carpeta donde guardar las capas!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 DefinirDirectorioCapas();
             }
-            this.UseWaitCursor = false;
-            Application.DoEvents();
+
+            CursorDefault();
         }
 
         private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
@@ -1992,7 +1780,7 @@ namespace Capibara
                 CMBtablas.Text = string.Empty;
                 LBLtablaSeleccionada.Text = string.Empty;
                 LSVcampos.Items.Clear();
-                tablasBase = new List<string>();
+                capas.tablasBase = new List<string>();
                 if (RDBdb2.Checked)
                 {
                     try
@@ -2002,7 +1790,7 @@ namespace Capibara
 
                         while (Db2.HayRegistros())
                         {
-                            tablasBase.Add(Db2.CampoStr("Nombre"));
+                            capas.tablasBase.Add(Db2.CampoStr("Nombre"));
                             CMBtablas.Items.Add(Db2.CampoStr("Nombre"));
                         }
                         Db2.Cerrar();
@@ -2024,9 +1812,9 @@ namespace Capibara
                             conn.Open();
 
                             string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
-                                 FROM INFORMATION_SCHEMA.TABLES 
-                                 WHERE TABLE_TYPE = 'BASE TABLE'
-                                 ORDER BY TABLE_SCHEMA, TABLE_NAME";
+                                FROM INFORMATION_SCHEMA.TABLES 
+                                WHERE TABLE_TYPE = 'BASE TABLE'
+                                ORDER BY TABLE_SCHEMA, TABLE_NAME";
 
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -2035,7 +1823,7 @@ namespace Capibara
                                 {
                                     string schema = reader.GetString(0);
                                     string table = reader.GetString(1);
-                                    tablasBase.Add($"{schema}.{table}");
+                                    capas.tablasBase.Add($"{schema}.{table}");
                                     CMBtablas.Items.Add($"{schema}.{table}");
                                 }
                             }
@@ -2060,7 +1848,8 @@ namespace Capibara
 
         private void CamposTabla(string tabla = "", string consulta = "")
         {
-            camposTabla = new List<string>();
+            WaitCursor();
+            capas.camposTabla = new List<string>();
             try
             {
                 LBLtablaSeleccionada.Text = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString()) + ":";
@@ -2074,8 +1863,16 @@ namespace Capibara
                         Ejecutar datos = EstablecerConexion();
                         ComandoDB2 Db2 = null;
                         // GENERO DESDE UNA CONSULTA
-                        if (consulta.Trim().Length > 0)
+                        if (refrescar && consulta.Trim().Length > 0)
                         {
+                            if (!consulta.Trim().ToUpper().Contains("FETCH"))
+                            {
+                                if (CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione CANCELAR.\r\n   • Si desea agregar la clausula, presione ACEPTAR", CustomMessageBox.GUATEFAK, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                                {
+                                    consulta += " FETCH FIRST 1 ROW ONLY";
+                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+                                }
+                            }
                             Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
                             Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
                             Db2.HayRegistros();
@@ -2110,27 +1907,38 @@ namespace Capibara
                                 }
                                 Db2.Cerrar();
 
-                                int minCantidad = claves.Min(s => s.Count(c => c == '+'));
-
-                                // Paso 2: filtrar los strings con esa cantidad mínima
-                                List<string> clave = claves
-                                    .Where(s => s.Count(c => c == '+') == minCantidad)
-                                    .Select(s => s.Split('+'))
-                                    .FirstOrDefault().ToList();
-
-                                foreach (ListViewItem item in LSVcampos.Items)
+                                if (claves.Count > 0)
                                 {
-                                    if (clave.Contains(item.SubItems[0].Text))
+                                    int minCantidad = claves.Min(s => s.Count(c => c == '+'));
+
+                                    // Paso 2: filtrar los strings con esa cantidad mínima
+                                    List<string> clave = claves
+                                        .Where(s => s.Count(c => c == '+') == minCantidad)
+                                        .Select(s => s.Split('+'))
+                                        .FirstOrDefault().ToList();
+
+                                    foreach (ListViewItem item in LSVcampos.Items)
                                     {
-                                        item.Checked = true;
-                                    }
+                                        if (clave.Contains(item.SubItems[0].Text))
+                                        {
+                                            item.Checked = true;
+                                        }
+                                    } 
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        var error = ex.InnerException ?? ex;
+                        if (consulta.Trim().Length > 0)
+                        {
+                            CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 else // BASE DE DATOS MS SQL
@@ -2140,7 +1948,23 @@ namespace Capibara
                         string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
                         string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
 
-                        string query = consulta.Trim().Length > 0 ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
+                        bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
+
+                        if (refrescar && !comienzaConSelectTop)
+                        {
+                            if (CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione CANCELAR.\r\n   • Si desea agregar la clausula, presione ACEPTAR", CustomMessageBox.GUATEFAK, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                            {
+                                consulta = Regex.Replace(
+                                                consulta,
+                                                @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
+                                                "SELECT TOP 1",
+                                                RegexOptions.IgnoreCase
+                                            );
+                                TXTgenerarAPartirDeConsulta.Text = consulta;
+                            }
+                        }
+
+                        string query = (refrescar && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
                             + "FROM sys.columns c "
                             + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
                             + "JOIN sys.tables t ON c.object_id = t.object_id "
@@ -2164,7 +1988,7 @@ namespace Capibara
                                 using (SqlDataReader reader = cmd.ExecuteReader())
                                 {
                                     // GENERO DESDE UNA CONSULTA
-                                    if (consulta.Trim().Length > 0)
+                                    if (refrescar && consulta.Trim().Length > 0)
                                     {
                                         CargarListViewDesdeEsquema(reader, false);
                                     }
@@ -2180,7 +2004,15 @@ namespace Capibara
                             }
                             catch (Exception ex)
                             {
-                                throw ex;
+                                var error = ex.InnerException.Message ?? ex.Message;
+                                if (consulta.Trim().Length > 0)
+                                {
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                else
+                                {
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
                         }
 
@@ -2221,7 +2053,8 @@ namespace Capibara
                                 }
                                 catch (Exception ex)
                                 {
-                                    throw ex;
+                                    var error = ex.InnerException.Message ?? ex.Message;
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
                             }
                         }
@@ -2233,11 +2066,16 @@ namespace Capibara
                 }
                 ComprobarTiposDeCampos(tablaSeleccionada);
                 LSVcampos.Refresh();
-
             }
             catch (Exception)
             {
             }
+            finally
+            {
+                refrescar = true;
+            }
+
+            CursorDefault();
         }
 
         private void CargarListViewDesdeEsquema(IDataReader reader, bool esDB2)
@@ -2255,11 +2093,11 @@ namespace Capibara
                 var tipo = dataType.ToString().ToUpper();
                 if (esDB2)
                 {
-                    tipo = (TIPOSDB2.ContainsKey(dataType) ? TIPOSDB2[dataType] : dataType.Name).ToUpper();
+                    tipo = (capas.TIPOSDB2.ContainsKey(dataType) ? capas.TIPOSDB2[dataType] : dataType.Name).ToUpper();
                 }
                 else
                 {
-                    tipo = (TIPOSSQL.ContainsKey(dataType) ? TIPOSSQL[dataType] : dataType.Name).ToUpper();
+                    tipo = (capas.TIPOSSQL.ContainsKey(dataType) ? capas.TIPOSSQL[dataType] : dataType.Name).ToUpper();
                 }
 
                 ListViewItem item = new ListViewItem(nombre);
@@ -2279,7 +2117,7 @@ namespace Capibara
             var escala = reader["Escala"].ToString();
             var aceptaNulos = reader["AceptaNulos"].ToString();
 
-            camposTabla.Add(nombre);
+            capas.camposTabla.Add(nombre);
             ListViewItem item = new ListViewItem(nombre);
             item.SubItems.Add(tipo);
             item.SubItems.Add(longitud);
@@ -2335,7 +2173,7 @@ namespace Capibara
                 int i = 0;
                 foreach (DataColumn columna in DS.Tables[0].Columns)
                 {
-                    if (Tipo(columna) == ERROR)
+                    if (capas.Tipo(columna) == Capas.ERROR)
                     {
                         foreach (ListViewItem item in LSVcampos.Items)
                         {
@@ -2376,11 +2214,11 @@ namespace Capibara
 
         private void RDBsql_CheckedChanged(object sender, EventArgs e)
         {
+            WaitCursor();
             try
             {
-                //CHKquitarEsquema.Visible = RDBsql.Checked;
+                refrescar = false;
                 CHKtryOrIf.Visible = !RDBsql.Checked;
-                //CHKquitarEsquema.Refresh();
                 if (RDBsql.Checked)
                 {
                     CMBservidor.Items.Clear();
@@ -2395,18 +2233,19 @@ namespace Capibara
             catch (Exception)
             {
             }
+            CursorDefault();
         }
 
         private void RDBdb2_CheckedChanged(object sender, EventArgs e)
         {
+            WaitCursor();
             try
             {
+                refrescar = false;
                 SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
-                    //CHKquitarEsquema.Visible = !RDBdb2.Checked;
                     CHKtryOrIf.Visible = RDBdb2.Checked;
-                    //CHKquitarEsquema.Refresh();
                     CMBservidor.Items.Clear();
                     CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
                     if (CMBservidor.Items.Count > 0)
@@ -2419,6 +2258,7 @@ namespace Capibara
             catch (Exception)
             {
             }
+            CursorDefault();
         }
 
         private void BTNdirectorioCapas_Click(object sender, EventArgs e)
@@ -2443,7 +2283,7 @@ namespace Capibara
             }
 
             // ✅ 2. Filtrar lista
-            List<string> filtrados = tablasBase
+            List<string> filtrados = capas.tablasBase
                 .Where(item => item.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
@@ -2482,7 +2322,7 @@ namespace Capibara
             {
                 CMBtablas.BeginUpdate();
                 CMBtablas.Items.Clear();
-                CMBtablas.Items.AddRange(tablasBase.ToArray());
+                CMBtablas.Items.AddRange(capas.tablasBase.ToArray());
                 CMBtablas.Text = string.Empty;
                 CMBtablas.DroppedDown = true;
                 CMBtablas.EndUpdate();
@@ -2547,11 +2387,6 @@ namespace Capibara
             }
         }
 
-        private void FRMgeneradorDeCapas_Resize(object sender, EventArgs e)
-        {
-            EnforceSplitBounds();
-        }
-
         private void SPCclase_SplitterMoved(object sender, SplitterEventArgs e)
         {
             EnforceSplitBounds();
@@ -2560,12 +2395,10 @@ namespace Capibara
         private void BTNbuscarSolucion_Click(object sender, EventArgs e)
         {
             OFDlistarDeSolucion.ShowDialog();
-            this.UseWaitCursor = true;
-            Application.DoEvents();
+            WaitCursor();
 
             ListarNameSpaces();
-            this.UseWaitCursor = false;
-            Application.DoEvents();
+            CursorDefault();
             CMBnamespaces.DroppedDown = true;
         }
 
@@ -2720,13 +2553,13 @@ namespace Capibara
             {
                 foreach (ListViewItem item in LSVcampos.SelectedItems)
                 {
-                    var fila = buscarFila(DGVbaja, item.Text);
+                    var fila = Utilidades.BuscarFila(DGVbaja, item.Text);
                     // Buscar fila por valor exacto en la primer celda
                     if (fila == null)
                     {
                         int indiceFila = DGVbaja.Rows.Add();
                         DGVbaja.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
                     }
@@ -2736,13 +2569,13 @@ namespace Capibara
             {
                 foreach (ListViewItem item in LSVcampos.SelectedItems)
                 {
-                    var fila = buscarFila(DGVmodificacion, item.Text);
+                    var fila = Utilidades.BuscarFila(DGVmodificacion, item.Text);
                     // Buscar fila por valor exacto en la primer celda
                     if (fila == null)
                     {
                         int indiceFila = DGVmodificacion.Rows.Add();
                         DGVmodificacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
                     }
@@ -2752,13 +2585,13 @@ namespace Capibara
             {
                 foreach (ListViewItem item in LSVcampos.SelectedItems)
                 {
-                    var fila = buscarFila(DGVrecuperacion, item.Text);
+                    var fila = Utilidades.BuscarFila(DGVrecuperacion, item.Text);
                     // Buscar fila por valor exacto en la primer celda
                     if (fila == null)
                     {
                         int indiceFila = DGVrecuperacion.Rows.Add();
                         DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
                     }
@@ -2792,12 +2625,6 @@ namespace Capibara
                 }
                 DGVrecuperacion.Refresh();
             }
-        }
-
-        private DataGridViewRow buscarFila(DataGridView grilla, string valor)
-        {
-            return grilla.Rows.Cast<DataGridViewRow>().FirstOrDefault(r => r.Cells[0].Value != null &&
-                         r.Cells[0].Value.ToString() == valor);
         }
 
         private void CHKbaja_CheckedChanged(object sender, EventArgs e)
@@ -2879,64 +2706,28 @@ namespace Capibara
             }
         }
 
-        private void FRMcapibara_Validated(object sender, EventArgs e)
+        private void TSMdesdeConsulta_Click(object sender, EventArgs e)
         {
-            desplegarCombo = true;
+            GenerarDesdeConsulta();
         }
 
-        //private void FRMcapibara_Shown(object sender, EventArgs e)
-        //{
-        //    Task.Run(() =>
-        //    {
-        //        if (player != null)
-        //        {
-        //            Thread.Sleep(6000);
-        //            try
-        //            {
-        //                player.controls.stop();
-        //            }
-        //            catch (Exception)
-        //            {
-        //            }
-        //        }
-        //        if (overlay != null)
-        //        {
-        //            try
-        //            {
-        //                overlay.Close();
-        //            }
-        //            catch (Exception)
-        //            {
-        //            }
-        //        }
-        //    });
+        private void TSMdesdeTabla_Click(object sender, EventArgs e)
+        {
+            GenerarDesdeTabla();
+        }
 
-        //    Task.Run(() =>
-        //    {
-        //        // 🔹 Parte pesada (cargar desde disco, DB, etc.)
-        //        var config = Configuracion.Cargar();
+        private void WaitCursor()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            this.UseWaitCursor = true;
+            Application.DoEvents();
+        }
 
-        //        // 🔹 Actualizar controles de UI SIEMPRE con Invoke
-        //        this.Invoke((Action)(() =>
-        //        {
-        //            overlay.Show();
-        //            overlay.Refresh();
-        //            ContextMenuStrip menu = new ContextMenuStrip();
-        //            menu.ShowImageMargin = false;
-        //            menu.Items.Add("DESDE TABLA", null, (s, ev) => GenerarDesdeTabla());
-        //            menu.Items.Add("DESDE CONSULTA", null, (s, ev) => GenerarDesdeConsulta());
-
-        //            // Asignar menú al SplitButton
-        //            BTNgenerarDesdeTabla.Menu = menu;
-        //            configuracion = config;
-        //            CargarConfiguracion();   // ahora seguro en UI
-        //            ListarNameSpaces();
-        //            InicializarIndices();
-
-        //            this.UseWaitCursor = false;
-        //            Application.DoEvents();
-        //        }));
-        //    });
-        //}
+        private void CursorDefault()
+        {
+            Cursor.Current = Cursors.Default;
+            this.UseWaitCursor = false;
+            Application.DoEvents();
+        }
     }
 }
