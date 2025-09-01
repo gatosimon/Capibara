@@ -9,7 +9,7 @@ namespace Capibara
 {
     public class Capas
     {
-        FRMcapibara formulario = null;
+        #region DICCIONARIOS Y CONSTANTES
 
         public Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
         {
@@ -149,12 +149,11 @@ namespace Capibara
         public const string REPOSITORIES_INTERFACE = "RepositoriesInterface";
         public const string SERVICE = "Service";
         public const string SERVICE_INTERFACE = "ServiceInterface";
+        public const string MODELTABNAME = "MODELTABNAME";
 
-        public List<string> tablasBase = new List<string>();
+        #endregion
 
-        public List<string> camposTabla = new List<string>();
-        
-        public string TABLA = string.Empty;
+        #region PATHS
 
         public string pathControllers { get { return formulario.PathCapas + @"\" + TABLA + @"\Controllers\"; } }
         public string pathClaseController { get { return pathControllers + TABLA + Capas.CONTROLLER + ".cs"; } }
@@ -168,6 +167,18 @@ namespace Capibara
         public string pathService { get { return formulario.PathCapas + @"\" + TABLA + @"\" + Capas.SERVICE + @"\"; } }
         public string pathClaseService { get { return pathService + TABLA + Capas.SERVICE + ".cs"; } }
         public string pathClaseServiceInterface { get { return pathService + TABLA + Capas.SERVICE_INTERFACE + ".cs"; } }
+
+        #endregion
+
+        FRMcapibara formulario = null;
+
+        public List<string> tablasBase = new List<string>();
+
+        public List<string> camposTabla = new List<string>();
+        
+        public string TABLA = string.Empty;
+
+        public string NombreTabla { get { return TABLA + MODEL + "." + MODELTABNAME; } }
 
         public Capas(FRMcapibara formulario)
         {

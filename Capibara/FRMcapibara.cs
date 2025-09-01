@@ -612,7 +612,7 @@ namespace Capibara
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
             Dto.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
-            Dto.AppendLine("");
+            Dto.AppendLine();
             Dto.AppendLine("namespace " + espacioDeNombres + "." + Capas.DTO);
             Dto.AppendLine("{");
             Dto.AppendLine("\tpublic class " + nombreDeClase + Capas.DTO);
@@ -682,7 +682,7 @@ namespace Capibara
         {
             string nombreDeClase = capas.TABLA;
             string espacioDeNombres = TXTespacioDeNombres.Text;
-
+            
             StringBuilder Modelo = new StringBuilder();
 
             Modelo.AppendLine("using System;");
@@ -691,21 +691,26 @@ namespace Capibara
             Modelo.AppendLine("using System.Web;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations.Schema;");
-            Modelo.AppendLine("");
+            Modelo.AppendLine();
             Modelo.AppendLine("namespace " + espacioDeNombres + "." + Capas.MODEL);
             Modelo.AppendLine("{");
             Modelo.AppendLine("\tpublic class " + nombreDeClase + Capas.MODEL);
             Modelo.AppendLine("\t{");
+            Modelo.AppendLine("\t\t/// <summary>");
+            Modelo.AppendLine("\t\t/// NOMBRE INTERNO DE LA TABLA ASOCIADA AL MODELO");
+            Modelo.AppendLine("\t\t/// </summary>");
+            Modelo.AppendLine("\t\tinternal const string " + Capas.MODELTABNAME + " = \"" + nombreDeClase + "\";");
+            Modelo.AppendLine();
 
-            int i = 0;
-            int j = 0;
+            int nroOrdenColumna = 0;
+            int nroOrdenClave = 0;
             foreach (DataColumn columna in columnas)
             {
-                if (claves.Count > j && claves[j].ColumnName == columna.ColumnName)
+                if (claves.Count > nroOrdenClave && claves[nroOrdenClave].ColumnName == columna.ColumnName)
                 {
                     Modelo.AppendLine("\t\t[Key]");
-                    Modelo.AppendLine("\t\t[Column(Order = " + j.ToString() + ")]");
-                    j++;
+                    Modelo.AppendLine("\t\t[Column(Order = " + nroOrdenClave.ToString() + ")]");
+                    nroOrdenClave++;
                 }
                 //Si es un array de byte en realidad es un booleano.
                 if (columna.DataType.Name == "Byte[]")
@@ -717,8 +722,8 @@ namespace Capibara
                     Modelo.AppendLine("\t\tpublic " + capas.Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
                 }
 
-                i++;
-                if (i < columnas.Count)
+                nroOrdenColumna++;
+                if (nroOrdenColumna < columnas.Count)
                 {
                     Modelo.AppendLine();
                 }
@@ -782,7 +787,7 @@ namespace Capibara
             Repositories.AppendLine("{");
             Repositories.AppendLine("\tpublic class " + nombreDeClase + "Repositories : " + nombreDeClase + Capas.REPOSITORIES_INTERFACE);
             Repositories.AppendLine("\t{");
-            //ALTA
+            #region ALTA
             if (CHKalta.Checked)
             {
                 if (DB2)
@@ -792,7 +797,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO " + nombreDeClase + " (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO \" + " + capas.NombreTabla + " + \" (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
@@ -802,23 +807,23 @@ namespace Capibara
                     if (CHKtryOrIf.Checked)
                     {
                         Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\treturn (\"Alta correcta de \" + " + capas.NombreTabla + ", true);");
                     }
                     else
                     {
                         Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Alta correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Alta correcta de \" + " + capas.NombreTabla + ", true);");
                         Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t\telse");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + "\", false);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar \" + " + capas.NombreTabla + ", false);");
                         Repositories.AppendLine("\t\t\t\t}");
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar insertar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -842,7 +847,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            //BAJA
+            #endregion
+
+            #region BAJA
             if (CHKbaja.Checked)
             {
                 if (DB2)
@@ -854,7 +861,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + capas.TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE \" + " + capas.NombreTabla + " + \" SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
                     Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t// ***** UPDATE *****");
@@ -875,23 +882,23 @@ namespace Capibara
                     if (CHKtryOrIf.Checked)
                     {
                         Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\treturn (\"Eliminación correcta de \" + " + capas.NombreTabla + ", true);");
                     }
                     else
                     {
                         Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Eliminación correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Eliminación correcta de \" + " + capas.NombreTabla + ", true);");
                         Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t\telse");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + "\", false);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar \" + " + capas.NombreTabla + ", false);");
                         Repositories.AppendLine("\t\t\t\t}");
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar eliminar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -915,7 +922,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            //MODIFICAR
+            #endregion
+
+            #region MODIFICAR
             if (CHKmodificacion.Checked)
             {
                 if (DB2)
@@ -930,7 +939,7 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                         Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE " + capas.TABLA + " SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
+                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE \" + " + capas.NombreTabla + " + \" SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
                         Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
                         Repositories.AppendLine();
                         Repositories.AppendLine("\t\t\t\t// ***** UPDATE *****");
@@ -945,27 +954,27 @@ namespace Capibara
                         {
                             Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
                         }
-
+                        Repositories.AppendLine();
                         if (CHKtryOrIf.Checked)
                         {
                             Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                            Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
+                            Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de \" + " + capas.NombreTabla + ", true);");
                         }
                         else
                         {
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
+                            Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de \" + " + capas.NombreTabla + ", true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + "\", false);");
+                            Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + " + capas.NombreTabla + ", false);");
                             Repositories.AppendLine("\t\t\t\t}");
                         }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}");
                     }
@@ -990,7 +999,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            //OBTENER POR ID
+            #endregion
+
+            #region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
                 if (DB2)
@@ -1008,7 +1019,7 @@ namespace Capibara
 
                     bool where = campoBaja != null;
                     if (!where) where = clavesConsulta.Count > 0;
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + capas.TABLA + "\" +");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM \" + " + capas.NombreTabla + " + ");
                     Repositories.AppendLine("\t\t\t\t\t\"" + (where ? (" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty));
                     Repositories.AppendLine();
 
@@ -1032,7 +1043,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tthrow new Exception (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + ". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message));");
+                    Repositories.AppendLine("\t\t\t\tthrow new Exception (\"Ocurrió un error inesperado al intentar recuperar los datos por ID de la tabla \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message));");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn Resultado;");
@@ -1058,7 +1069,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            //TODOS
+            #endregion
+
+            #region TODOS
             if (CHKtodos.Checked)
             {
                 if (DB2)
@@ -1072,7 +1085,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(\"\", \"DB2_Tributos\");");
                     Repositories.AppendLine();
 
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM " + capas.TABLA + "\";");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM \" + " + capas.NombreTabla + ";");
 
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\twhile (SQLconsulta.HayRegistros())");
@@ -1086,7 +1099,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tthrow new Exception (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);");
+                    Repositories.AppendLine("\t\t\t\tthrow new Exception (\"Ocurrió un error inesperado al intentar recuperar los datos de la tabla \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message));");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn todos;");
@@ -1102,7 +1115,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            // RECUPERAR
+            #endregion
+
+            #region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
                 if (DB2)
@@ -1112,7 +1127,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO " + capas.TABLA + " (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
+                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO \" + " + capas.NombreTabla + " + \" (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
@@ -1122,23 +1137,23 @@ namespace Capibara
                     if (CHKtryOrIf.Checked)
                     {
                         Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de \" + " + capas.NombreTabla + ", true);");
                     }
                     else
                     {
                         Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de \" + " + capas.NombreTabla + ", true);");
                         Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t\telse");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + "\", false);");
+                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + " + capas.NombreTabla + ", false);");
                         Repositories.AppendLine("\t\t\t\t}");
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar " + nombreDeClase + ". \" + ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
+                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -1161,6 +1176,8 @@ namespace Capibara
                     Repositories.AppendLine("\t\t}");
                 }
             }
+            #endregion
+
             Repositories.AppendLine("\t}");
             Repositories.AppendLine("}");
 
@@ -1786,7 +1803,8 @@ namespace Capibara
                     try
                     {
                         Ejecutar datos = EstablecerConexion();
-                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLCOUNT Columnas FROM SYSIBM.SYSTABLES WHERE TYPE = 'T' AND CREATOR = 'DB2ADMIN' ORDER BY Nombre", datos.ObtenerConexion());
+                        //ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLCOUNT Columnas FROM SYSIBM.SYSTABLES WHERE TYPE = 'T' AND CREATOR = 'DB2ADMIN' ORDER BY Nombre", datos.ObtenerConexion());
+                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre", datos.ObtenerConexion());
 
                         while (Db2.HayRegistros())
                         {
