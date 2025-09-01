@@ -143,6 +143,7 @@ namespace Capibara
 
         public const string ERROR = "ERROR";
         public const string CONTROLLER = "Controller";
+        public const string CONTROLLERS = "Controllers";
         public const string DTO = "Dto";
         public const string MODEL = "Model";
         public const string REPOSITORIES = "Repositories";
@@ -167,6 +168,7 @@ namespace Capibara
         public string pathService { get { return formulario.PathCapas + @"\" + TABLA + @"\" + Capas.SERVICE + @"\"; } }
         public string pathClaseService { get { return pathService + TABLA + Capas.SERVICE + ".cs"; } }
         public string pathClaseServiceInterface { get { return pathService + TABLA + Capas.SERVICE_INTERFACE + ".cs"; } }
+        public string pathGlobal { get { return formulario.PathCapas + @"\AGREGAR AL GLOBAL.txt"; } }
 
         #endregion
 

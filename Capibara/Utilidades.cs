@@ -79,6 +79,7 @@ namespace Capibara
                     if (formularioActual.overlay != null && !formularioActual.overlay.IsDisposed)
                     {
                         formularioActual.overlay.Close();
+                        formularioActual.overlay.Dispose();
                     }
                 }));
                 if (player != null)

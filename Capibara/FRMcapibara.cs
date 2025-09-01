@@ -24,8 +24,6 @@ namespace Capibara
 
         private bool desplegarCombo = false;
 
-        private bool refrescar = true;
-
         Configuracion configuracion;
 
         Capas capas = null;
@@ -410,6 +408,9 @@ namespace Capibara
                         ArmarService(camposConsulta, claves);
                         ArmarServiceInterface(claves);
                     }
+                    resultado += ArmarGlobal();
+                    resultado += "\r\n";
+
                     if (CHKtypeScript.Checked)
                     {
                         resultado += ArmarTypeScript(camposConsulta);
@@ -457,7 +458,7 @@ namespace Capibara
             if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ origen };");
             if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ Capas.SERVICE };");
             Controller.AppendLine();
-            Controller.AppendLine($"namespace { espacioDeNombres }.Controllers");
+            Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
             Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
@@ -797,7 +798,7 @@ namespace Capibara
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Repositories.AppendLine();
-            Repositories.AppendLine($"namespace { espacioDeNombres }.Repositories");
+            Repositories.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES }");
             Repositories.AppendLine("{");
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
@@ -1626,6 +1627,48 @@ namespace Capibara
             return ServiceInterface.ToString();
         }
 
+        private string ArmarGlobal()
+        {
+            StringBuilder Global = new StringBuilder();
+
+            string espacioDeNombres = TXTespacioDeNombres.Text;
+
+            Global.AppendLine("***** AGREGAR USINGS *****");
+            Global.AppendLine();
+
+            Global.AppendLine($"using { espacioDeNombres }.{ Capas.REPOSITORIES };");
+            Global.AppendLine($"using { espacioDeNombres }.{ Capas.SERVICE };");
+
+            Global.AppendLine();
+            Global.AppendLine("***** AGREGAR REGISTROS *****");
+            Global.AppendLine();
+
+            Global.AppendLine($"\t\t\tbuilder.RegisterType<{ capas.TABLA + Capas.REPOSITORIES }>()");
+            Global.AppendLine($"\t\t\t\t\t.As<{ capas.TABLA + Capas.REPOSITORIES_INTERFACE }>()");
+            Global.AppendLine("\t\t\t\t\t.InstancePerRequest();");
+            Global.AppendLine($"\t\t\tbuilder.RegisterType<{ capas.TABLA + Capas.SERVICE }>()");
+            Global.AppendLine($"\t\t\t\t\t.As<{ capas.TABLA + Capas.SERVICE_INTERFACE }>()");
+            Global.AppendLine($"\t\t\t\t\t.InstancePerRequest();");
+
+            try
+            {
+                if (File.Exists(capas.pathGlobal))
+                {
+                    File.Delete(capas.pathGlobal);
+                }
+
+                StreamWriter clase = new StreamWriter(capas.pathGlobal);
+                clase.Write(Global.ToString());
+                clase.Flush();
+                clase.Close();
+            }
+            catch (Exception)
+            {
+            }
+
+            return Global.ToString();
+        }
+
         private string ArmarTypeScript(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
@@ -1917,14 +1960,22 @@ namespace Capibara
                         Ejecutar datos = EstablecerConexion();
                         ComandoDB2 Db2 = null;
                         // GENERO DESDE UNA CONSULTA
-                        if (refrescar && consulta.Trim().Length > 0)
+                        if (overlay.IsDisposed && consulta.Trim().Length > 0)
                         {
                             if (!consulta.Trim().ToUpper().Contains("FETCH"))
                             {
-                                if (CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione CANCELAR.\r\n   • Si desea agregar la clausula, presione ACEPTAR", CustomMessageBox.GUATEFAK, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                                DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                                switch (resultado)
                                 {
-                                    consulta += " FETCH FIRST 1 ROW ONLY";
-                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+                                    case DialogResult.Cancel:
+                                        CursorDefault();
+                                        return;
+                                        break;
+                                    case DialogResult.No:
+                                        consulta += " FETCH FIRST 1 ROW ONLY";
+                                        TXTgenerarAPartirDeConsulta.Text = consulta;
+                                        break;
                                 }
                             }
                             Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
@@ -2004,21 +2055,29 @@ namespace Capibara
 
                         bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
 
-                        if (refrescar && !comienzaConSelectTop)
+                        if (overlay.IsDisposed && !comienzaConSelectTop)
                         {
-                            if (CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione CANCELAR.\r\n   • Si desea agregar la clausula, presione ACEPTAR", CustomMessageBox.GUATEFAK, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                            switch (resultado)
                             {
-                                consulta = Regex.Replace(
-                                                consulta,
-                                                @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
-                                                "SELECT TOP 1",
-                                                RegexOptions.IgnoreCase
-                                            );
-                                TXTgenerarAPartirDeConsulta.Text = consulta;
+                                case DialogResult.Cancel:
+                                    CursorDefault();
+                                    return;
+                                    break;
+                                case DialogResult.No:
+                                    consulta = Regex.Replace(
+                                                    consulta,
+                                                    @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
+                                                    "SELECT TOP 1",
+                                                    RegexOptions.IgnoreCase
+                                                );
+                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+                                    break;
                             }
                         }
 
-                        string query = (refrescar && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
+                        string query = (overlay.IsDisposed && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
                             + "FROM sys.columns c "
                             + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
                             + "JOIN sys.tables t ON c.object_id = t.object_id "
@@ -2042,7 +2101,7 @@ namespace Capibara
                                 using (SqlDataReader reader = cmd.ExecuteReader())
                                 {
                                     // GENERO DESDE UNA CONSULTA
-                                    if (refrescar && consulta.Trim().Length > 0)
+                                    if (overlay.IsDisposed && consulta.Trim().Length > 0)
                                     {
                                         CargarListViewDesdeEsquema(reader, false);
                                     }
@@ -2123,10 +2182,6 @@ namespace Capibara
             }
             catch (Exception)
             {
-            }
-            finally
-            {
-                refrescar = true;
             }
 
             CursorDefault();
@@ -2271,7 +2326,6 @@ namespace Capibara
             WaitCursor();
             try
             {
-                refrescar = false;
                 CHKtryOrIf.Visible = !RDBsql.Checked;
                 if (RDBsql.Checked)
                 {
@@ -2295,7 +2349,6 @@ namespace Capibara
             WaitCursor();
             try
             {
-                refrescar = false;
                 SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
