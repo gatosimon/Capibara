@@ -115,9 +115,9 @@ namespace Capibara
             frames = new Image[]
             {
                 Properties.Resources.Capibara04,
-                Properties.Resources.Capibara00,
                 //Properties.Resources.Capibara01,
                 //Properties.Resources.Capibara02,
+                Properties.Resources.Capibara00,
                 //Properties.Resources.Capibara03
             };
             

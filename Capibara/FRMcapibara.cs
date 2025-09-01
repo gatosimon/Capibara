@@ -37,7 +37,7 @@ namespace Capibara
             InitializeComponent();
             capas = new Capas(this);
             overlay = new WaitOverlay(this);
-            Utilidades.ReproducirIntro(this);// ReproducirMusica(CAPIBARA, Properties.Resources.CapibaraCorto);
+            Utilidades.ReproducirIntro(this);
             WaitCursor();
         }
 
@@ -534,7 +534,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine("\t\t\telse");
                 Controller.AppendLine("\t\t\t{");
-                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError(\"No se halló { nombreDeClase }\");");
+                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\"No se halló {{ { capas.NombreTabla } }}\");");
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
@@ -557,7 +557,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine("\t\t\telse");
                 Controller.AppendLine("\t\t\t{");
-                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError(\" - No existe { nombreDeClase } que responda a la consulta indicada.\");");
+                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\" - No existe {{ { capas.NombreTabla } }} que responda a la consulta indicada.\");");
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
@@ -624,14 +624,14 @@ namespace Capibara
             Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
-            Dto.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
+            Dto.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Dto.AppendLine();
-            Dto.AppendLine("namespace " + espacioDeNombres + "." + Capas.DTO);
+            Dto.AppendLine($"namespace { espacioDeNombres }.{ Capas.DTO}");
             Dto.AppendLine("{");
-            Dto.AppendLine("\tpublic class " + nombreDeClase + Capas.DTO);
+            Dto.AppendLine($"\tpublic class { nombreDeClase + Capas.DTO}");
             Dto.AppendLine("\t{");
 
-            newDto.AppendLine("\t\tpublic " + nombreDeClase + Capas.DTO + " new" + nombreDeClase + Capas.DTO + "(" + nombreDeClase + (RDBsql.Checked ? string.Empty : Capas.MODEL) + " modelo)");
+            newDto.AppendLine($"\t\tpublic { nombreDeClase + Capas.DTO } new{ nombreDeClase + Capas.DTO }({ nombreDeClase + (RDBsql.Checked ? string.Empty : Capas.MODEL) } modelo)");
             newDto.AppendLine("\t\t{");
 
             int i = 0;
@@ -640,15 +640,15 @@ namespace Capibara
                 //Si es un array de byte en realidad es un booleano.
                 if (columna.DataType.Name == "Byte[]")
                 {
-                    Dto.AppendLine("\t\t[Required(ErrorMessage = \"- Ingrese " + columna.ColumnName + ".\")]");
-                    Dto.AppendLine("\t\tpublic bool " + columna.ColumnName + " { get;  set; }");
-                    newDto.AppendLine("\t\t\t" + columna.ColumnName + " = modelo." + columna.ColumnName + ";");
+                    Dto.AppendLine($"\t\t[Required(ErrorMessage = \"- Ingrese { columna.ColumnName }.\")]");
+                    Dto.AppendLine($"\t\tpublic bool { columna.ColumnName } {{ get;  set; }}");
+                    newDto.AppendLine($"\t\t\t{ columna.ColumnName } = modelo.{ columna.ColumnName };");
                 }
                 else
                 {
-                    Dto.AppendLine("\t\t[Required(ErrorMessage = \"- Ingrese " + columna.ColumnName + ".\")]");
-                    Dto.AppendLine("\t\tpublic " + capas.Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
-                    newDto.AppendLine("\t\t\t" + columna.ColumnName + " = modelo." + columna.ColumnName + ";");
+                    Dto.AppendLine($"\t\t[Required(ErrorMessage = \"- Ingrese { columna.ColumnName }.\")]");
+                    Dto.AppendLine($"\t\tpublic { capas.Tipo(columna) } { columna.ColumnName } {{ get;  set; }}");
+                    newDto.AppendLine($"\t\t\t{ columna.ColumnName } = modelo.{ columna.ColumnName };");
                 }
 
                 i++;
@@ -812,7 +812,8 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO \" + { capas.NombreTabla } + \" ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
+                    Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
@@ -877,9 +878,9 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
                     //Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE \" + " + capas.NombreTabla + " + \" SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
                     //Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ {capas.NombreTabla} }} ");
-                    Repositories.AppendLine($"\t\t\t\t                          SET {string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?"))}");
-                    Repositories.AppendLine($"\t\t\t\t                          WHERE {string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?"))}\";");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
+                    Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
+                    Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t#region UPDATE");
 
@@ -923,13 +924,13 @@ namespace Capibara
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic (string, bool) baja" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                    Repositories.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades." + nombreDeClase + ".Attach(" + nombreClasePrimeraMinuscula + ");");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + ").State = EntityState.Modified;");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Eliminación correcta de {{ { nombreDeClase } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
@@ -951,64 +952,67 @@ namespace Capibara
                     bool where = clavesConsulta.Count > 0 || generarDesdeConsulta;
                     if (where)
                     {
-                        //Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + columnasClave + ", " + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
-                        Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                        Repositories.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                         Repositories.AppendLine("\t\t{");
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                         Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE \" + " + capas.NombreTabla + " + \" SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
-                        Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
+                        Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
+                        Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                         Repositories.AppendLine();
-                        Repositories.AppendLine("\t\t\t\t// ***** UPDATE *****");
+                        Repositories.AppendLine("\t\t\t\t#region UPDATE");
 
                         foreach (DataColumn c in columnasUpdate)
                         {
-                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                         }
+                        Repositories.AppendLine("\t\t\t\t#endregion");
+
                         Repositories.AppendLine();
-                        Repositories.AppendLine("\t\t\t\t// ***** WHERE *****");
+                        Repositories.AppendLine("\t\t\t\t#region WHERE");
                         foreach (DataColumn c in claves)
                         {
-                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                         }
+                        Repositories.AppendLine("\t\t\t\t#endregion");
                         Repositories.AppendLine();
                         if (CHKtryOrIf.Checked)
                         {
                             Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                            Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de \" + " + capas.NombreTabla + ", true);");
+                            Repositories.AppendLine($"\t\t\t\treturn (\"Modificación correcta de {{ { capas.NombreTabla } }}, true);");
                         }
                         else
                         {
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\t\treturn (\"Modificación correcta de \" + " + capas.NombreTabla + ", true);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn (\"Modificación correcta de {{ { capas.NombreTabla } }}, true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + " + capas.NombreTabla + ", false);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}, false);");
                             Repositories.AppendLine("\t\t\t\t}");
                         }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
+                        Repositories.AppendLine($"\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message) }}\", false);");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}");
                     }
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                    Repositories.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades." + nombreDeClase + ".Attach(" + nombreClasePrimeraMinuscula + ");");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + ").State = EntityState.Modified;");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
                     Repositories.AppendLine();
-                    Repositories.AppendLine("\t\t\t\treturn (\"Modificación correcta de " + nombreDeClase + "\", true);");
+                    Repositories.AppendLine($"\t\t\t\treturn (\"Modificación correcta de { nombreDeClase }\", true);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1038,31 +1042,32 @@ namespace Capibara
 
                     bool where = campoBaja != null;
                     if (!where) where = clavesConsulta.Count > 0;
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM \" + " + capas.NombreTabla + " + ");
-                    Repositories.AppendLine("\t\t\t\t\t\"" + (where ? (" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty));
+
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }} ");
+                    Repositories.AppendLine($"\t\t\t\t                         { (where ? (" WHERE " + string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty)}");
                     Repositories.AppendLine();
 
                     foreach (string[] clave in clavesConsulta)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + clave[0] + "\", " + capas.Mapeo[clave[1]] + ", " + clave[0] + ");");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ clave[0] }\", { capas.Mapeo[clave[1]] }, { clave[0] });");
                     }
                     if (campoBaja != null)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + campoBaja + "\", OdbcType.DateTime, new System.DateTime(1900, 1, 1));");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ campoBaja }\", OdbcType.DateTime, new System.DateTime(1900, 1, 1));");
                     }
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\tif (SQLconsulta.HayRegistros())");
                     Repositories.AppendLine("\t\t\t\t{");
                     string instancia = char.ToLower(nombreDeClase[0]) + tipoClase.Substring(1);
-                    Repositories.AppendLine("\t\t\t\t\t" + tipoClase + " " + instancia + " = new " + tipoClase + "();");
-                    Repositories.AppendLine("\t\t\t\t\t" + tipoClase + " instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, " + instancia + ") as " + tipoClase + ";");
+                    Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } { instancia } = new { tipoClase }();");
+                    Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
                     Repositories.AppendLine("\t\t\t\t};");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\tSQLconsulta.CerrarConexion();");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tthrow new Exception (\"Ocurrió un error inesperado al intentar recuperar los datos por ID de la tabla \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message));");
+                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos por ID de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message))}}\";");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn Resultado;");
@@ -1070,13 +1075,13 @@ namespace Capibara
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic " + tipoClase + " obtenerPorId(" + columnasClave + ")");
+                    Repositories.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClave })");
                     Repositories.AppendLine("\t\t{");
-                    Repositories.AppendLine("\t\t\t" + tipoClase + " solicitado = null;");
+                    Repositories.AppendLine($"\t\t\t{ tipoClase } solicitado = null;");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tsolicitado = (from busqueda in BaseDeDatos" + espacio + "." + espacio + "Entidades." + nombreDeClase);
-                    Repositories.AppendLine("\t\t\t\t\t\t\t  where " + string.Join(" && ", (from c in claves select "busqueda." + c.ColumnName + " == " + c.ColumnName).ToList()));
+                    Repositories.AppendLine($"\t\t\t\tsolicitado = (from busqueda in BaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }");
+                    Repositories.AppendLine($"\t\t\t\t\t\t\t  where { string.Join(" && ", claves.Select(c => "busqueda." + c.ColumnName + " == " + c.ColumnName)) }");
                     Repositories.AppendLine("\t\t\t\t\t\t\t  select busqueda).FirstOrDefault();");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
@@ -1095,30 +1100,28 @@ namespace Capibara
             {
                 if (DB2)
                 {
-                    Repositories.AppendLine("\t\tpublic List<" + tipoClase + "> obtenerTodos()");
+                    Repositories.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                     Repositories.AppendLine("\t\t{");
-                    Repositories.AppendLine("\t\t\tList<" + tipoClase + "> todos = new List<" + tipoClase + ">();");
+                    Repositories.AppendLine($"\t\t\tList<{ tipoClase }> todos = new List<{ tipoClase }>();");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(\"\", \"DB2_Tributos\");");
                     Repositories.AppendLine();
-
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"SELECT " + string.Join(", ", camposConsulta.ToArray()) + " FROM \" + " + capas.NombreTabla + ";");
-
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }}\";");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\twhile (SQLconsulta.HayRegistros())");
                     Repositories.AppendLine("\t\t\t\t{");
                     string instancia = char.ToLower(nombreDeClase[0]) + nombreDeClase.Substring(1);
-                    Repositories.AppendLine("\t\t\t\t\t" + tipoClase + " " + instancia + " = new " + tipoClase + "();");
-                    Repositories.AppendLine("\t\t\t\t\t" + tipoClase + " instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, " + instancia + ") as " + tipoClase + ";");
+                    Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } { instancia } = new { tipoClase }();");
+                    Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
                     Repositories.AppendLine("\t\t\t\t\ttodos.Add(instancia);");
                     Repositories.AppendLine("\t\t\t\t}");
                     Repositories.AppendLine("\t\t\t\tSQLconsulta.CerrarConexion();");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tthrow new Exception (\"Ocurrió un error inesperado al intentar recuperar los datos de la tabla \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message));");
+                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)) }}\";");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn todos;");
@@ -1126,9 +1129,9 @@ namespace Capibara
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic List<" + tipoClase + "> obtenerTodos()");
+                    Repositories.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                     Repositories.AppendLine("\t\t{");
-                    Repositories.AppendLine("\t\t\treturn (from busqueda in BaseDeDatos" + espacio + "." + espacio + "Entidades." + nombreDeClase + "");
+                    Repositories.AppendLine($"\t\t\treturn (from busqueda in BaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }");
                     Repositories.AppendLine("\t\t\t\t\tselect busqueda).ToList();");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -1141,52 +1144,54 @@ namespace Capibara
             {
                 if (DB2)
                 {
-                    Repositories.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                    Repositories.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"INSERT INTO \" + " + capas.NombreTabla + " + \" (" + string.Join(", ", (from c in columnas select c.ColumnName).ToList()) + ") VALUES (" + string.Join(",", Enumerable.Repeat("?", columnas.Count)) + ")\";");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", columnas.Select(c => c.ColumnName)) }) ");
+                    Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
+
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Agregar(\"@" + c.ColumnName + "\", " + capas.Mapeo[capas.Tipo(c)] + ", " + nombreClasePrimeraMinuscula + "." + c.ColumnName + ");");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                     }
                     Repositories.AppendLine();
                     if (CHKtryOrIf.Checked)
                     {
                         Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de \" + " + capas.NombreTabla + ", true);");
+                        Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
                     }
                     else
                     {
                         Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Recuperación correcta de \" + " + capas.NombreTabla + ", true);");
+                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
                         Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t\telse");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine("\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + " + capas.NombreTabla + ", false);");
+                        Repositories.AppendLine($"\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}, false);");
                         Repositories.AppendLine("\t\t\t\t}");
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar \" + " + capas.NombreTabla + " + \". \" + (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message), false);");
+                    Repositories.AppendLine($"\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message) }}\", false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t}");
                 }
                 else
                 {
-                    Repositories.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                    Repositories.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades." + nombreDeClase + ".Attach(" + nombreClasePrimeraMinuscula + ");");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.Entry(" + nombreClasePrimeraMinuscula + ").State = EntityState.Modified;");
-                    Repositories.AppendLine("\t\t\t\tBaseDeDatos" + espacio + "." + espacio + "Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
                     Repositories.AppendLine();
-                    Repositories.AppendLine("\t\t\t\treturn (\"Recuperación correcta de " + nombreDeClase + "\", true);");
+                    Repositories.AppendLine($"\t\t\t\treturn (\"Recuperación correcta de { nombreDeClase }\", true);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1243,38 +1248,38 @@ namespace Capibara
             RepositoriesInterface.AppendLine("using System.Data.Odbc;");
             if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine("namespace " + espacioDeNombres + "." + Capas.REPOSITORIES);
+            RepositoriesInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES}");
             RepositoriesInterface.AppendLine("{");
-            RepositoriesInterface.AppendLine("\tpublic interface " + nombreDeClase + Capas.REPOSITORIES_INTERFACE);
+            RepositoriesInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             RepositoriesInterface.AppendLine("\t{");
             if (CHKalta.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
+                RepositoriesInterface.AppendLine($"\t\t(string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula + Capas.MODEL });");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKbaja.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
+                RepositoriesInterface.AppendLine($"\t\t(string, bool) baja{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula + Capas.MODEL });");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKmodificacion.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
+                RepositoriesInterface.AppendLine($"\t\t(string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula + Capas.MODEL });");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKobtenerPorId.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t" + tipoClase + " obtenerPorId(" + columnasClave + ");");
+                RepositoriesInterface.AppendLine($"\t\t{ tipoClase } obtenerPorId({ columnasClave });");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKtodos.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\tList <" + tipoClase + "> obtenerTodos();");
+                RepositoriesInterface.AppendLine($"\t\tList <{ tipoClase }> obtenerTodos();");
                 RepositoriesInterface.AppendLine();
             }
             if (CHKrecuperacion.Checked)
             {
-                RepositoriesInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + Capas.MODEL + ");");
+                RepositoriesInterface.AppendLine($"\t\t(string, bool) recuperar{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula + Capas.MODEL });");
             }
             RepositoriesInterface.AppendLine("\t}");
             RepositoriesInterface.AppendLine("}");
@@ -1313,8 +1318,8 @@ namespace Capibara
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
             string espacioDeNombres = TXTespacioDeNombres.Text;
-            string columnasClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
-            string columnasClaveTipo = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
+            string columnasClave = string.Join(", ", claves.Select(c => c.ColumnName));
+            string columnasClaveTipo = string.Join(", ", claves.Select(c => capas.Tipo(c) + " " + c.ColumnName));
 
             StringBuilder Service = new StringBuilder();
 
@@ -1323,47 +1328,50 @@ namespace Capibara
             Service.AppendLine("using SistemaMunicipalGeneral;");
             Service.AppendLine("using System.Linq;");
             Service.AppendLine("using System.Web;");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + origen + ";");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine("using " + espacioDeNombres + "." + Capas.REPOSITORIES + ";");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ origen };");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ Capas.REPOSITORIES };");
             Service.AppendLine();
-            Service.AppendLine("namespace " + espacioDeNombres + "." + Capas.SERVICE);
+            Service.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
             Service.AppendLine("{");
-            Service.AppendLine("\tpublic class " + nombreDeClase + Capas.SERVICE + " : " + nombreDeClase + Capas.SERVICE_INTERFACE);
+            Service.AppendLine($"\tpublic class { nombreDeClase + Capas.SERVICE } : { nombreDeClase + Capas.SERVICE_INTERFACE}");
             Service.AppendLine("\t{");
-            Service.AppendLine("\t\tprivate readonly " + nombreDeClase + Capas.REPOSITORIES_INTERFACE + " _repositories;");
+            Service.AppendLine($"\t\tprivate readonly { nombreDeClase + Capas.REPOSITORIES_INTERFACE } _repositories;");
             Service.AppendLine();
 
-            Service.AppendLine("\t\tpublic " + nombreDeClase + Capas.SERVICE + "(" + nombreDeClase + Capas.REPOSITORIES_INTERFACE + " repositories)");
+            Service.AppendLine($"\t\tpublic { nombreDeClase + Capas.SERVICE }({ nombreDeClase + Capas.REPOSITORIES_INTERFACE } repositories)");
             Service.AppendLine("\t\t{");
             Service.AppendLine("\t\t\t_repositories = repositories;");
             Service.AppendLine("\t\t}");
             Service.AppendLine();
-            //ALTA
+
+            #region ALTA
             if (CHKalta.Checked)
             {
-                Service.AppendLine("\t\tpublic (string, bool) alta" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                Service.AppendLine($"\t\tpublic (string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " nuevo = new " + nombreDeClase + (DB2 ? origen : string.Empty) + "()");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } nuevo = new { nombreDeClase + (DB2 ? origen : string.Empty) }()");
                 Service.AppendLine("\t\t\t{");
                 int i = 0;
                 foreach (DataColumn columna in columnas)
                 {
-                    Service.AppendLine("\t\t\t\t" + columna.ColumnName + " = " + nombreClasePrimeraMinuscula + "." + columna.ColumnName + (i < columnas.Count ? "," : string.Empty));
+                    Service.AppendLine($"\t\t\t\t{ columna.ColumnName } = { nombreClasePrimeraMinuscula }.{ columna.ColumnName + (i < columnas.Count ? "," : string.Empty)}");
                     i++;
                 }
                 Service.AppendLine("\t\t\t};");
-                Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.alta" + nombreDeClase + "(nuevo);");
+                Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.alta{ nombreDeClase }(nuevo);");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            //BAJA
+            #endregion
+
+            #region BAJA
             if (CHKbaja.Checked)
             {
-                Service.AppendLine("\t\tpublic (string, bool) baja" + nombreDeClase + "(" + columnasClaveTipo + ", int codigoBaja, string motivoBaja)");
+                Service.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ columnasClaveTipo }, int codigoBaja, string motivoBaja)");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasClave + ");");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 if (DGVbaja.Rows.Count == 0)
@@ -1377,23 +1385,25 @@ namespace Capibara
                 {
                     foreach (DataGridViewRow item in DGVbaja.Rows)
                     {
-                        Service.AppendLine("\t\t\t\tsolicitado." + item.Cells[0].FormattedValue + " = " + item.Cells[1].Value);
+                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
                 Service.AppendLine("\t\t\t}");
-                Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.baja" + nombreDeClase + "(solicitado);");
+                Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.baja{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            //MODIFICACION
+            #endregion
+
+            #region MODIFICACION
             if (CHKmodificacion.Checked)
             {
-                Service.AppendLine("\t\tpublic (string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ")");
+                Service.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                 Service.AppendLine("\t\t{");
-                string columnasBusqueda = string.Join(", ", (from c in claves select nombreClasePrimeraMinuscula + "." + c.ColumnName).ToList());
-                Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasBusqueda + ");");
+                string columnasBusqueda = string.Join(", ", claves.Select(c => nombreClasePrimeraMinuscula + "." + c.ColumnName));
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasBusqueda });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 if (DGVmodificacion.Rows.Count == 0)
@@ -1405,22 +1415,24 @@ namespace Capibara
                 {
                     foreach (DataGridViewRow item in DGVmodificacion.Rows)
                     {
-                        Service.AppendLine("\t\t\t\tsolicitado." + item.Cells[0].FormattedValue + " = " + item.Cells[1].Value);
+                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
                 Service.AppendLine("\t\t\t}");
-                Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.modificacion" + nombreDeClase + "(solicitado);");
+                Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.modificacion{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            //OBTENER POR ID
+            #endregion
+
+            #region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
-                Service.AppendLine("\t\tpublic " + tipoClase + " obtenerPorId(" + columnasClaveTipo + ")");
+                Service.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClaveTipo })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasClave + ");");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 if (DB2)
@@ -1429,10 +1441,10 @@ namespace Capibara
                 }
                 else
                 {
-                    Service.AppendLine("\t\t\t\t" + nombreDeClase + origen + " solicitado" + origen + " = new " + nombreDeClase + origen + "();");
+                    Service.AppendLine($"\t\t\t\t{ nombreDeClase + origen } solicitado{ origen } = new { nombreDeClase + origen }();");
                     Service.AppendLine();
-                    Service.AppendLine("\t\t\t\tsolicitado" + origen + ".new" + nombreDeClase + origen + "(solicitado);");
-                    Service.AppendLine("\t\t\t\treturn solicitado" + origen + ";");
+                    Service.AppendLine($"\t\t\t\tsolicitado{ origen }.new{ nombreDeClase + origen }(solicitado);");
+                    Service.AppendLine($"\t\t\t\treturn solicitado" + origen + ";");
                 }
                 Service.AppendLine("\t\t\t}");
                 Service.AppendLine("\t\t\telse");
@@ -1442,12 +1454,14 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            //TODOS
+            #endregion
+
+            #region TODOS
             if (CHKtodos.Checked)
             {
-                Service.AppendLine("\t\tpublic List<" + tipoClase + "> obtenerTodos()");
+                Service.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine("\t\t\tList<" + nombreDeClase + (DB2 ? origen : string.Empty) + "> listado = new List<" + nombreDeClase + (DB2 ? origen : string.Empty) + ">();");
+                Service.AppendLine($"\t\t\tList<{ nombreDeClase + (DB2 ? origen : string.Empty) }> listado = new List<{ nombreDeClase + (DB2 ? origen : string.Empty) }>();");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\tlistado = _repositories.obtenerTodos();");
                 Service.AppendLine("\t\t\tif (listado.Count() > 0)");
@@ -1458,25 +1472,27 @@ namespace Capibara
                 }
                 else
                 {
-                    Service.AppendLine("\t\t\t\tList<" + nombreDeClase + origen + "> " + nombreClasePrimeraMinuscula + " = new List<" + nombreDeClase + origen + ">();");
-                    Service.AppendLine("\t\t\t\tforeach (" + nombreDeClase + " model in listado)");
+                    Service.AppendLine($"\t\t\t\tList<{ nombreDeClase + origen }> { nombreClasePrimeraMinuscula } = new List<{ nombreDeClase + origen }>();");
+                    Service.AppendLine($"\t\t\t\tforeach (" + nombreDeClase + " model in listado)");
                     Service.AppendLine("\t\t\t\t{");
-                    Service.AppendLine("\t\t\t\t\t" + nombreDeClase + origen + " dto = new " + nombreDeClase + origen + "();");
-                    Service.AppendLine("\t\t\t\t\t" + nombreClasePrimeraMinuscula + ".Add(dto.new" + nombreDeClase + origen + "(model));");
+                    Service.AppendLine($"\t\t\t\t\t{ nombreDeClase + origen } dto = new { nombreDeClase + origen }();");
+                    Service.AppendLine($"\t\t\t\t\t{ nombreClasePrimeraMinuscula }.Add(dto.new{ nombreDeClase + origen }(model));");
                     Service.AppendLine("\t\t\t\t}");
-                    Service.AppendLine("\t\t\t\treturn " + nombreClasePrimeraMinuscula + ";");
+                    Service.AppendLine($"\t\t\t\treturn { nombreClasePrimeraMinuscula };");
                 }
                 Service.AppendLine("\t\t\t}");
                 Service.AppendLine("\t\t\treturn null;");
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            //RECUPERACION
+            #endregion
+
+            #region RECUPERACION
             if (CHKrecuperacion.Checked)
             {
-                Service.AppendLine("\t\tpublic (string, bool) recuperar" + nombreDeClase + "(" + columnasClaveTipo + ")");
+                Service.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ columnasClaveTipo })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine("\t\t\t" + nombreDeClase + (DB2 ? origen : string.Empty) + " solicitado = _repositories.obtenerPorId(" + columnasClave + ");");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 if (DGVrecuperacion.Rows.Count == 0)
@@ -1490,15 +1506,17 @@ namespace Capibara
                 {
                     foreach (DataGridViewRow item in DGVrecuperacion.Rows)
                     {
-                        Service.AppendLine("\t\t\t\tsolicitado." + item.Cells[0].FormattedValue + " = " + item.Cells[1].Value);
+                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
                 Service.AppendLine("\t\t\t}");
-                Service.AppendLine("\t\t\t(string, bool) respuesta = _repositories.recuperar" + nombreDeClase + "(solicitado);");
+                Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.recuperar{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
             }
+            #endregion
+
             Service.AppendLine("\t}");
             Service.AppendLine("}");
 
@@ -1546,38 +1564,38 @@ namespace Capibara
             ServiceInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine("using " + espacioDeNombres + "." + origen + ";");
             ServiceInterface.AppendLine();
-            ServiceInterface.AppendLine("namespace " + espacioDeNombres + "." + Capas.SERVICE);
+            ServiceInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
             ServiceInterface.AppendLine("{");
-            ServiceInterface.AppendLine("\tpublic interface " + nombreDeClase + Capas.SERVICE_INTERFACE);
+            ServiceInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.SERVICE_INTERFACE}");
             ServiceInterface.AppendLine("\t{");
             if (CHKalta.Checked)
             {
-                ServiceInterface.AppendLine("\t\t(string, bool) alta" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ");");
+                ServiceInterface.AppendLine($"\t\t(string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula });");
                 ServiceInterface.AppendLine();
             }
             if (CHKbaja.Checked)
             {
-                ServiceInterface.AppendLine("\t\t(string, bool) baja" + nombreDeClase + "(" + columnasClave + ", int codigoBaja, string motivoBaja);");
+                ServiceInterface.AppendLine($"\t\t(string, bool) baja{ nombreDeClase }({ columnasClave }, int codigoBaja, string motivoBaja);");
                 ServiceInterface.AppendLine();
             }
             if (CHKmodificacion.Checked)
             {
-                ServiceInterface.AppendLine("\t\t(string, bool) modificacion" + nombreDeClase + "(" + tipoClase + " " + nombreClasePrimeraMinuscula + ");");
+                ServiceInterface.AppendLine($"\t\t(string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula });");
                 ServiceInterface.AppendLine();
             }
             if (CHKobtenerPorId.Checked)
             {
-                ServiceInterface.AppendLine("\t\t" + tipoClase + " obtenerPorId(" + columnasClave + ");");
+                ServiceInterface.AppendLine($"\t\t{ tipoClase } obtenerPorId({ columnasClave });");
                 ServiceInterface.AppendLine();
             }
             if (CHKtodos.Checked)
             {
-                ServiceInterface.AppendLine("\t\tList<" + tipoClase + "> obtenerTodos();");
+                ServiceInterface.AppendLine($"\t\tList<{ tipoClase }> obtenerTodos();");
                 ServiceInterface.AppendLine();
             }
             if (CHKrecuperacion.Checked)
             {
-                ServiceInterface.AppendLine("\t\t(string, bool) recuperar" + nombreDeClase + "(" + columnasClave + ");");
+                ServiceInterface.AppendLine($"\t\t(string, bool) recuperar{ nombreDeClase }({ columnasClave });");
             }
             ServiceInterface.AppendLine("\t}");
             ServiceInterface.AppendLine("}");
@@ -1611,19 +1629,18 @@ namespace Capibara
         private string ArmarTypeScript(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
-            StringBuilder typeSript = new StringBuilder();
+            StringBuilder TypeSript = new StringBuilder();
 
-
-            typeSript.AppendLine("export class " + nombreDeClase + "{");
-            typeSript.AppendLine("\tconstructor(init?: Partial<" + nombreDeClase + ">) {");
-            typeSript.AppendLine("\t\tObject.assign(this, init);");
-            typeSript.AppendLine("\t}");
+            TypeSript.AppendLine($"export class { nombreDeClase }{{");
+            TypeSript.AppendLine($"\tconstructor(init?: Partial<{ nombreDeClase }>) {{");
+            TypeSript.AppendLine("\t\tObject.assign(this, init);");
+            TypeSript.AppendLine("\t}");
 
             foreach (var columna in columnas)
             {
-                typeSript.AppendLine("\tpublic " + columna.ColumnName + ": " + capas.PropiedadesTS[columna.DataType]);
+                TypeSript.AppendLine($"\tpublic { columna.ColumnName }: { capas.PropiedadesTS[columna.DataType]}");
             }
-            typeSript.AppendLine("}");
+            TypeSript.AppendLine("}");
 
             if (CHKtypeScript.Checked)
             {
@@ -1641,7 +1658,7 @@ namespace Capibara
                     }
 
                     StreamWriter clase = new StreamWriter(pathClaseTypeScript);
-                    clase.Write(typeSript.ToString());
+                    clase.Write(TypeSript.ToString());
                     clase.Flush();
                     clase.Close();
                 }
@@ -1649,7 +1666,7 @@ namespace Capibara
                 {
                 }
             }
-            return typeSript.ToString();
+            return TypeSript.ToString();
         }
 
         private void GenerarDesdeTabla()

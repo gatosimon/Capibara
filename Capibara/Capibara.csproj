@@ -208,15 +208,6 @@
     <None Include="Resources\Capibara00.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Capibara01.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Capibara02.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Capibara03.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\CapibaraCorto.mp3" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +215,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Capibarar.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Capibara01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Capibara02.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
