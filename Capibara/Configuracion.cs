@@ -6,30 +6,32 @@ using System.Xml.Serialization;
 [Serializable]
 public class Configuracion
 {
-    public string PathSolucion { get; set; }
-    public bool SQL { get; set; }
-    public string Servidor { get; set; }
-    public string Base { get; set; }
-    public string Tabla { get; set; }
-    public string Consulta { get; set; }
-    public List<string[]> camposBaja { get; set; }
-    public List<string[]> camposModificacion { get; set; }
-    public List<string[]> camposRecuperacion { get; set; }
-    public string UltimoNamespaceSeleccionado { get; set; }
-    public string RutaPorDefectoResultados { get; set; }
+    public string PathSolucion { get; set; } = string.Empty;
+    public bool SQL { get; set; } = false;
+    public string Servidor { get; set; } = string.Empty;
+    public string Base { get; set; } = string.Empty;
+    public string Tabla { get; set; } = string.Empty;
+    public string Consulta { get; set; } = string.Empty;
+    public List<string[]> camposBaja { get; set; } = new List<string[]>();
+    public List<string[]> camposModificacion { get; set; } = new List<string[]>();
+    public List<string[]> camposRecuperacion { get; set; } = new List<string[]>();
+    public string UltimoNamespaceSeleccionado { get; set; } = string.Empty;
+    public string RutaPorDefectoResultados { get; set; } = @"C:\Temp\";
+    public bool MostrarOverlayEnInicio { get; set; } = true;
     public Configuracion()
     {
-        PathSolucion = string.Empty;
-        SQL = false;
-        Servidor = string.Empty;
-        Base = string.Empty;
-        Tabla = string.Empty;
-        Consulta = string.Empty;
-        camposBaja = new List<string[]>();
-        camposModificacion = new List<string[]>();
-        camposRecuperacion = new List<string[]>();
-        UltimoNamespaceSeleccionado = string.Empty;
-        RutaPorDefectoResultados = @"C:\Temp\";
+        //PathSolucion = string.Empty;
+        //SQL = false;
+        //Servidor = string.Empty;
+        //Base = string.Empty;
+        //Tabla = string.Empty;
+        //Consulta = string.Empty;
+        //camposBaja = new List<string[]>();
+        //camposModificacion = new List<string[]>();
+        //camposRecuperacion = new List<string[]>();
+        //UltimoNamespaceSeleccionado = string.Empty;
+        //RutaPorDefectoResultados = @"C:\Temp\";
+        //MostrarOverlayEnInicio = true;
     }
 
     public static string ArchivoConfigPorDefecto

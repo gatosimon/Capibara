@@ -72,6 +72,8 @@ namespace Capibara
             this.VinculoModificacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.TBPrecuperacion = new System.Windows.Forms.TabPage();
             this.DGVrecuperacion = new System.Windows.Forms.DataGridView();
+            this.CampoRecuperacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VinculoRecuperacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.LBLclasesGeneradas = new System.Windows.Forms.Label();
             this.TXTclase = new System.Windows.Forms.TextBox();
             this.TBCbackFront = new System.Windows.Forms.TabControl();
@@ -92,18 +94,17 @@ namespace Capibara
             this.CHKbaja = new System.Windows.Forms.CheckBox();
             this.CHKalta = new System.Windows.Forms.CheckBox();
             this.GPBajustes = new System.Windows.Forms.GroupBox();
+            this.CHKmostrarOverlayEnIicio = new System.Windows.Forms.CheckBox();
             this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
             this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
             this.TBPfront = new System.Windows.Forms.TabPage();
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
             this.TTPusarTryOrIf = new System.Windows.Forms.ToolTip(this.components);
-            this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
             this.CMScapibarar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
-            this.CampoRecuperacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VinculoRecuperacion = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -616,6 +617,18 @@ namespace Capibara
             this.DGVrecuperacion.Size = new System.Drawing.Size(292, 263);
             this.DGVrecuperacion.TabIndex = 1;
             // 
+            // CampoRecuperacion
+            // 
+            this.CampoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.CampoRecuperacion.HeaderText = "CAMPO";
+            this.CampoRecuperacion.Name = "CampoRecuperacion";
+            // 
+            // VinculoRecuperacion
+            // 
+            this.VinculoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.VinculoRecuperacion.HeaderText = "VINCULAR";
+            this.VinculoRecuperacion.Name = "VinculoRecuperacion";
+            // 
             // LBLclasesGeneradas
             // 
             this.LBLclasesGeneradas.Dock = System.Windows.Forms.DockStyle.Top;
@@ -679,7 +692,7 @@ namespace Capibara
             // SPCback1.Panel2
             // 
             this.SPCback1.Panel2.Controls.Add(this.SPCbak2);
-            this.SPCback1.Size = new System.Drawing.Size(722, 107);
+            this.SPCback1.Size = new System.Drawing.Size(749, 107);
             this.SPCback1.SplitterDistance = 250;
             this.SPCback1.TabIndex = 4;
             // 
@@ -781,7 +794,7 @@ namespace Capibara
             // SPCbak2.Panel2
             // 
             this.SPCbak2.Panel2.Controls.Add(this.GPBajustes);
-            this.SPCbak2.Size = new System.Drawing.Size(468, 107);
+            this.SPCbak2.Size = new System.Drawing.Size(495, 107);
             this.SPCbak2.SplitterDistance = 289;
             this.SPCbak2.TabIndex = 4;
             // 
@@ -886,16 +899,30 @@ namespace Capibara
             // 
             this.GPBajustes.AutoSize = true;
             this.GPBajustes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.GPBajustes.Controls.Add(this.CHKmostrarOverlayEnIicio);
             this.GPBajustes.Controls.Add(this.CHKtryOrIf);
             this.GPBajustes.Controls.Add(this.CHKquitarEsquema);
             this.GPBajustes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GPBajustes.Location = new System.Drawing.Point(0, 0);
             this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
             this.GPBajustes.Name = "GPBajustes";
-            this.GPBajustes.Size = new System.Drawing.Size(175, 107);
+            this.GPBajustes.Size = new System.Drawing.Size(202, 107);
             this.GPBajustes.TabIndex = 20;
             this.GPBajustes.TabStop = false;
             this.GPBajustes.Text = "AJUSTES";
+            // 
+            // CHKmostrarOverlayEnIicio
+            // 
+            this.CHKmostrarOverlayEnIicio.AutoSize = true;
+            this.CHKmostrarOverlayEnIicio.Checked = true;
+            this.CHKmostrarOverlayEnIicio.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKmostrarOverlayEnIicio.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKmostrarOverlayEnIicio.Location = new System.Drawing.Point(8, 23);
+            this.CHKmostrarOverlayEnIicio.Name = "CHKmostrarOverlayEnIicio";
+            this.CHKmostrarOverlayEnIicio.Size = new System.Drawing.Size(114, 20);
+            this.CHKmostrarOverlayEnIicio.TabIndex = 0;
+            this.CHKmostrarOverlayEnIicio.Text = "Mostrar Intro";
+            this.CHKmostrarOverlayEnIicio.UseVisualStyleBackColor = true;
             // 
             // CHKtryOrIf
             // 
@@ -903,7 +930,7 @@ namespace Capibara
             this.CHKtryOrIf.Checked = true;
             this.CHKtryOrIf.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKtryOrIf.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtryOrIf.Location = new System.Drawing.Point(8, 23);
+            this.CHKtryOrIf.Location = new System.Drawing.Point(8, 51);
             this.CHKtryOrIf.Name = "CHKtryOrIf";
             this.CHKtryOrIf.Size = new System.Drawing.Size(148, 20);
             this.CHKtryOrIf.TabIndex = 1;
@@ -919,10 +946,10 @@ namespace Capibara
             this.CHKquitarEsquema.Checked = true;
             this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 51);
+            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 79);
             this.CHKquitarEsquema.Name = "CHKquitarEsquema";
             this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 20);
-            this.CHKquitarEsquema.TabIndex = 0;
+            this.CHKquitarEsquema.TabIndex = 2;
             this.CHKquitarEsquema.Text = "Quitar esquema   ";
             this.CHKquitarEsquema.UseVisualStyleBackColor = true;
             this.CHKquitarEsquema.Visible = false;
@@ -969,21 +996,6 @@ namespace Capibara
             this.TTPusarTryOrIf.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.TTPusarTryOrIf.ToolTipTitle = "Información";
             // 
-            // BTNgenerarDesdeTabla
-            // 
-            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
-            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
-            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 150);
-            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
-            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
-            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
-            this.BTNgenerarDesdeTabla.TabIndex = 12;
-            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
-            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
-            // 
             // CMScapibarar
             // 
             this.CMScapibarar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1008,17 +1020,20 @@ namespace Capibara
             this.TSMdesdeConsulta.Text = "DESDE CONSULTA";
             this.TSMdesdeConsulta.Click += new System.EventHandler(this.TSMdesdeConsulta_Click);
             // 
-            // CampoRecuperacion
+            // BTNgenerarDesdeTabla
             // 
-            this.CampoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.CampoRecuperacion.HeaderText = "CAMPO";
-            this.CampoRecuperacion.Name = "CampoRecuperacion";
-            // 
-            // VinculoRecuperacion
-            // 
-            this.VinculoRecuperacion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.VinculoRecuperacion.HeaderText = "VINCULAR";
-            this.VinculoRecuperacion.Name = "VinculoRecuperacion";
+            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1065, 150);
+            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
+            this.BTNgenerarDesdeTabla.TabIndex = 12;
+            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
+            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
             // FRMcapibara
             // 
@@ -1172,6 +1187,7 @@ namespace Capibara
         private System.Windows.Forms.ToolStripMenuItem TSMdesdeConsulta;
         private System.Windows.Forms.DataGridViewTextBoxColumn CampoRecuperacion;
         private System.Windows.Forms.DataGridViewComboBoxColumn VinculoRecuperacion;
+        private System.Windows.Forms.CheckBox CHKmostrarOverlayEnIicio;
     }
 }
 

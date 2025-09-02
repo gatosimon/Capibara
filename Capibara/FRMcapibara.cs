@@ -34,7 +34,8 @@ namespace Capibara
         {
             InitializeComponent();
             capas = new Capas(this);
-            overlay = new WaitOverlay(this);
+            configuracion = Configuracion.Cargar();
+            overlay = new WaitOverlay(this); 
             Utilidades.ReproducirIntro(this);
             WaitCursor();
         }
@@ -42,7 +43,7 @@ namespace Capibara
         private void FRMcapibara_Shown(object sender, EventArgs e)
         {
             // Mostrar overlay(en UI thread)
-            if (overlay != null && !overlay.IsDisposed)
+            if (configuracion.MostrarOverlayEnInicio && overlay != null && !overlay.IsDisposed)
             {
                 overlay.Show();
                 Application.DoEvents();
@@ -55,7 +56,6 @@ namespace Capibara
                 this.Invoke((Action)(() =>
                 {
                     // Cargar configuraciones y refrescar UI
-                    configuracion = Configuracion.Cargar();
                     ListarNameSpaces();
                     CargarConfiguracion();
                     InicializarIndices();
@@ -83,6 +83,7 @@ namespace Capibara
             TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
             OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
             OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
+            CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
 
             foreach (string[] item in configuracion.camposBaja)
             {
@@ -129,6 +130,7 @@ namespace Capibara
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
                 configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
+                configuracion.MostrarOverlayEnInicio = CHKmostrarOverlayEnIicio.Checked;
 
                 configuracion.camposBaja.Clear();
                 foreach (DataGridViewRow item in DGVbaja.Rows)
@@ -2349,7 +2351,7 @@ namespace Capibara
             WaitCursor();
             try
             {
-                SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
+                //SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
                     CHKtryOrIf.Visible = RDBdb2.Checked;

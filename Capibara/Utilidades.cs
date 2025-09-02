@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WMPLib;
 using System.Runtime.InteropServices;
+using NAudio.CoreAudioApi;
 
 namespace Capibara
 {
@@ -45,28 +46,38 @@ namespace Capibara
         private static WindowsMediaPlayer player;
         private static FRMcapibara formularioActual = null;
 
-        private static void ReproducirMusica(string nombreMP3, byte[] recurso, FRMcapibara form)
+
+        public static bool HayDispositivoDeAudio()
         {
-            if (player == null)
-            {
-                player = new WindowsMediaPlayer();
-            }
-            string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
-            if (!File.Exists(pathMp3))
-            {
-                File.WriteAllBytes(pathMp3, recurso);
-            }
-            if (formularioActual == null)
-            {
-                formularioActual = form;
-            }
-            player.settings.volume = 10;
-            player.URL = pathMp3;
-            player.settings.autoStart = true;
-            player.PlayStateChange += Player_PlayStateChange;
-            player.controls.play();
+            var enumerator = new MMDeviceEnumerator();
+            var dispositivo = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            return dispositivo != null && dispositivo.State == DeviceState.Active;
         }
 
+        private static void ReproducirMusica(string nombreMP3, byte[] recurso, FRMcapibara form)
+        {
+            if (HayDispositivoDeAudio())
+            {
+                if (player == null)
+                {
+                    player = new WindowsMediaPlayer();
+                }
+                string pathMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreMP3 + ".mp3");
+                if (!File.Exists(pathMp3))
+                {
+                    File.WriteAllBytes(pathMp3, recurso);
+                }
+                if (formularioActual == null)
+                {
+                    formularioActual = form;
+                }
+                player.settings.volume = 10;
+                player.URL = pathMp3;
+                player.settings.autoStart = true;
+                player.PlayStateChange += Player_PlayStateChange;
+                player.controls.play();
+            }
+        }
 
         private static void Player_PlayStateChange(int NewState)
         {
