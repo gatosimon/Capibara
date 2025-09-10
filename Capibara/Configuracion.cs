@@ -12,6 +12,7 @@ public class Configuracion
     public string Base { get; set; } = string.Empty;
     public string Tabla { get; set; } = string.Empty;
     public string Consulta { get; set; } = string.Empty;
+    public List<string[]> camposAlta { get; set; } = new List<string[]>();
     public List<string[]> camposBaja { get; set; } = new List<string[]>();
     public List<string[]> camposModificacion { get; set; } = new List<string[]>();
     public List<string[]> camposRecuperacion { get; set; } = new List<string[]>();

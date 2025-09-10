@@ -30,6 +30,8 @@ namespace Capibara
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMcapibara));
@@ -96,7 +98,7 @@ namespace Capibara
             this.GPBajustes = new System.Windows.Forms.GroupBox();
             this.CHKmostrarOverlayEnIicio = new System.Windows.Forms.CheckBox();
             this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
-            this.CHKquitarEsquema = new System.Windows.Forms.CheckBox();
+            this.CHKinsertarEnProyecto = new System.Windows.Forms.CheckBox();
             this.TBPfront = new System.Windows.Forms.TabPage();
             this.GPBFront = new System.Windows.Forms.GroupBox();
             this.CHKtypeScript = new System.Windows.Forms.CheckBox();
@@ -105,6 +107,10 @@ namespace Capibara
             this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
             this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
+            this.TBPalta = new System.Windows.Forms.TabPage();
+            this.DGValta = new System.Windows.Forms.DataGridView();
+            this.CampoAlta = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VinculoAlta = new System.Windows.Forms.DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -141,6 +147,8 @@ namespace Capibara
             this.TBPfront.SuspendLayout();
             this.GPBFront.SuspendLayout();
             this.CMScapibarar.SuspendLayout();
+            this.TBPalta.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DGValta)).BeginInit();
             this.SuspendLayout();
             // 
             // LBLservidor
@@ -491,6 +499,7 @@ namespace Capibara
             this.TBCcamposABM.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.TBCcamposABM.Controls.Add(this.TBPalta);
             this.TBCcamposABM.Controls.Add(this.TBPbaja);
             this.TBCcamposABM.Controls.Add(this.TBPmodificacion);
             this.TBCcamposABM.Controls.Add(this.TBPrecuperacion);
@@ -530,26 +539,26 @@ namespace Capibara
             // CampoBaja
             // 
             this.CampoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.CampoBaja.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.CampoBaja.DefaultCellStyle = dataGridViewCellStyle3;
             this.CampoBaja.HeaderText = "CAMPO";
             this.CampoBaja.Name = "CampoBaja";
             // 
             // VinculoBaja
             // 
             this.VinculoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.VinculoBaja.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.VinculoBaja.DefaultCellStyle = dataGridViewCellStyle4;
             this.VinculoBaja.HeaderText = "VINCULAR";
             this.VinculoBaja.Name = "VinculoBaja";
             // 
@@ -901,7 +910,7 @@ namespace Capibara
             this.GPBajustes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GPBajustes.Controls.Add(this.CHKmostrarOverlayEnIicio);
             this.GPBajustes.Controls.Add(this.CHKtryOrIf);
-            this.GPBajustes.Controls.Add(this.CHKquitarEsquema);
+            this.GPBajustes.Controls.Add(this.CHKinsertarEnProyecto);
             this.GPBajustes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GPBajustes.Location = new System.Drawing.Point(0, 0);
             this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
@@ -940,19 +949,18 @@ namespace Capibara
         "datos");
             this.CHKtryOrIf.UseVisualStyleBackColor = true;
             // 
-            // CHKquitarEsquema
+            // CHKinsertarEnProyecto
             // 
-            this.CHKquitarEsquema.AutoSize = true;
-            this.CHKquitarEsquema.Checked = true;
-            this.CHKquitarEsquema.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKquitarEsquema.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKquitarEsquema.Location = new System.Drawing.Point(8, 79);
-            this.CHKquitarEsquema.Name = "CHKquitarEsquema";
-            this.CHKquitarEsquema.Size = new System.Drawing.Size(145, 20);
-            this.CHKquitarEsquema.TabIndex = 2;
-            this.CHKquitarEsquema.Text = "Quitar esquema   ";
-            this.CHKquitarEsquema.UseVisualStyleBackColor = true;
-            this.CHKquitarEsquema.Visible = false;
+            this.CHKinsertarEnProyecto.AutoSize = true;
+            this.CHKinsertarEnProyecto.Checked = true;
+            this.CHKinsertarEnProyecto.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKinsertarEnProyecto.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKinsertarEnProyecto.Location = new System.Drawing.Point(8, 79);
+            this.CHKinsertarEnProyecto.Name = "CHKinsertarEnProyecto";
+            this.CHKinsertarEnProyecto.Size = new System.Drawing.Size(164, 20);
+            this.CHKinsertarEnProyecto.TabIndex = 2;
+            this.CHKinsertarEnProyecto.Text = "Insertar en proyecto";
+            this.CHKinsertarEnProyecto.UseVisualStyleBackColor = true;
             // 
             // TBPfront
             // 
@@ -1035,6 +1043,57 @@ namespace Capibara
             this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
+            // TBPalta
+            // 
+            this.TBPalta.Controls.Add(this.DGValta);
+            this.TBPalta.Location = new System.Drawing.Point(4, 25);
+            this.TBPalta.Name = "TBPalta";
+            this.TBPalta.Size = new System.Drawing.Size(298, 269);
+            this.TBPalta.TabIndex = 4;
+            this.TBPalta.Text = "ALTA";
+            this.TBPalta.UseVisualStyleBackColor = true;
+            // 
+            // DGValta
+            // 
+            this.DGValta.AllowUserToAddRows = false;
+            this.DGValta.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DGValta.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.CampoAlta,
+            this.VinculoAlta});
+            this.DGValta.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DGValta.Location = new System.Drawing.Point(0, 0);
+            this.DGValta.Name = "DGValta";
+            this.DGValta.RowHeadersVisible = false;
+            this.DGValta.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DGValta.Size = new System.Drawing.Size(298, 269);
+            this.DGValta.TabIndex = 1;
+            // 
+            // CampoAlta
+            // 
+            this.CampoAlta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.CampoAlta.DefaultCellStyle = dataGridViewCellStyle1;
+            this.CampoAlta.HeaderText = "CAMPO";
+            this.CampoAlta.Name = "CampoAlta";
+            // 
+            // VinculoAlta
+            // 
+            this.VinculoAlta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.VinculoAlta.DefaultCellStyle = dataGridViewCellStyle2;
+            this.VinculoAlta.HeaderText = "VINCULAR";
+            this.VinculoAlta.Name = "VinculoAlta";
+            // 
             // FRMcapibara
             // 
             this.ClientSize = new System.Drawing.Size(1186, 749);
@@ -1061,6 +1120,7 @@ namespace Capibara
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CAPIBARA";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRMcapibara_FormClosing);
             this.Shown += new System.EventHandler(this.FRMcapibara_Shown);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
             this.Validated += new System.EventHandler(this.FRMcapibara_Validated);
@@ -1109,6 +1169,8 @@ namespace Capibara
             this.GPBFront.ResumeLayout(false);
             this.GPBFront.PerformLayout();
             this.CMScapibarar.ResumeLayout(false);
+            this.TBPalta.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DGValta)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1181,13 +1243,17 @@ namespace Capibara
         private System.Windows.Forms.CheckBox CHKalta;
         private System.Windows.Forms.GroupBox GPBajustes;
         private System.Windows.Forms.CheckBox CHKtryOrIf;
-        private System.Windows.Forms.CheckBox CHKquitarEsquema;
+        private System.Windows.Forms.CheckBox CHKinsertarEnProyecto;
         private System.Windows.Forms.ContextMenuStrip CMScapibarar;
         private System.Windows.Forms.ToolStripMenuItem TSMdesdeTabla;
         private System.Windows.Forms.ToolStripMenuItem TSMdesdeConsulta;
         private System.Windows.Forms.DataGridViewTextBoxColumn CampoRecuperacion;
         private System.Windows.Forms.DataGridViewComboBoxColumn VinculoRecuperacion;
         private System.Windows.Forms.CheckBox CHKmostrarOverlayEnIicio;
+        private System.Windows.Forms.TabPage TBPalta;
+        private System.Windows.Forms.DataGridView DGValta;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CampoAlta;
+        private System.Windows.Forms.DataGridViewComboBoxColumn VinculoAlta;
     }
 }
 

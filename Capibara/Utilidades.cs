@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using WMPLib;
 using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 
 namespace Capibara
 {
@@ -45,16 +46,75 @@ namespace Capibara
         private const string CAPIBARAR = "Capibarar";
         private static WindowsMediaPlayer player;
         private static FRMcapibara formularioActual = null;
+        static MMDeviceEnumerator enumerator;
+        static AudioNotificationClient notificationClient;
 
+        public static void IniciarDeteccionDispositivos(FRMcapibara form)
+        {
+            if (formularioActual == null)
+            {
+                formularioActual = form;
+            }
+
+            enumerator = new MMDeviceEnumerator();
+            notificationClient = new AudioNotificationClient();
+
+            // enganchar al evento
+            notificationClient.DispositivoCambiado += (deviceId, state) =>
+            {
+                if (state == DeviceState.NotPresent || state == DeviceState.Unplugged || state == DeviceState.Disabled)
+                {
+                    // 🔹 el dispositivo ya no está disponible
+                    //formularioActual.Invoke((Action)(() =>
+                    //{
+                    //    // cerrar overlay si está abierto
+                    //    if (formularioActual.overlay != null && !formularioActual.overlay.IsDisposed)
+                    //    {
+                    //        formularioActual.overlay.Close();
+                    //        formularioActual.overlay.Dispose();
+                    //    }
+
+                    //    // detener player si sigue activo
+                    //    if (player != null)
+                    //    {
+                    //        player.controls.stop();              // detiene el audio/video
+                    //        Marshal.ReleaseComObject(player);    // libera la referencia COM
+                    //        player = null;                       // limpia la referencia
+                    //        GC.Collect();                        // fuerza GC (opcional)
+                    //        GC.WaitForPendingFinalizers();       // espera finalizadores
+                    //    }
+                    //}));
+                    DisposePlayer();
+                }
+            };
+
+            // registrar el callback
+            enumerator.RegisterEndpointNotificationCallback(notificationClient);
+        }
+
+        public static void DesRegistrar()
+        {
+            if (enumerator != null && notificationClient != null)
+            {
+                enumerator.UnregisterEndpointNotificationCallback(notificationClient);
+            }
+        }
 
         public static bool HayDispositivoDeAudio()
         {
-            var enumerator = new MMDeviceEnumerator();
-            var dispositivo = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            return dispositivo != null && dispositivo.State == DeviceState.Active;
+            try
+            {
+                enumerator = new MMDeviceEnumerator();
+                var dispositivos = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+                return dispositivos != null && dispositivos.Count > 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private static void ReproducirMusica(string nombreMP3, byte[] recurso, FRMcapibara form)
+        private static void ReproducirMusica(string nombreMP3, byte[] recurso)
         {
             if (HayDispositivoDeAudio())
             {
@@ -66,10 +126,6 @@ namespace Capibara
                 if (!File.Exists(pathMp3))
                 {
                     File.WriteAllBytes(pathMp3, recurso);
-                }
-                if (formularioActual == null)
-                {
-                    formularioActual = form;
                 }
                 player.settings.volume = 10;
                 player.URL = pathMp3;
@@ -84,34 +140,53 @@ namespace Capibara
             // 8 = MediaEnded
             if ((WMPPlayState)NewState == WMPPlayState.wmppsMediaEnded)
             {
-                formularioActual.Invoke((Action)(() =>
-                {
-                    // 🔹 cerrar overlay
-                    if (formularioActual.overlay != null && !formularioActual.overlay.IsDisposed)
-                    {
-                        formularioActual.overlay.Close();
-                        formularioActual.overlay.Dispose();
-                    }
-                }));
-                if (player != null)
-                {
-                    player.controls.stop();              // detiene el audio/video
-                    Marshal.ReleaseComObject(player);    // libera la referencia COM
-                    player = null;                       // limpia la referencia
-                    GC.Collect();                        // fuerza GC (opcional)
-                    GC.WaitForPendingFinalizers();       // espera finalizadores
-                }
+                DisposePlayer();
             }
         }
 
-        public static void ReproducirIntro(FRMcapibara form)
+        private static void DisposePlayer()
         {
-            ReproducirMusica(CAPIBARA, Properties.Resources.CapibaraCorto, form);
+            formularioActual.Invoke((Action)(() =>
+            {
+                // 🔹 cerrar overlay
+                if (formularioActual.overlay != null && !formularioActual.overlay.IsDisposed)
+                {
+                    formularioActual.overlay.Close();
+                    formularioActual.overlay.Dispose();
+                }
+            }));
+            if (player != null)
+            {
+                player.controls.stop();              // detiene el audio/video
+                Marshal.ReleaseComObject(player);    // libera la referencia COM
+                player = null;                       // limpia la referencia
+                GC.Collect();                        // fuerza GC (opcional)
+                GC.WaitForPendingFinalizers();       // espera finalizadores
+            }
         }
 
-        public static void ReproducirSplash(FRMcapibara form)
+        public static void ReproducirIntro()
         {
-            ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar, form);
+            ReproducirMusica(CAPIBARA, Properties.Resources.CapibaraCorto);
         }
+
+        public static void ReproducirSplash()
+        {
+            ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
+        }
+    }
+    public class AudioNotificationClient : IMMNotificationClient
+    {
+        public event Action<string, DeviceState> DispositivoCambiado;
+
+        public void OnDeviceStateChanged(string deviceId, DeviceState newState)
+        {
+            DispositivoCambiado?.Invoke(deviceId, newState);
+        }
+
+        public void OnDeviceAdded(string pwstrDeviceId) { }
+        public void OnDeviceRemoved(string deviceId) { }
+        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId) { }
+        public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key) { }
     }
 }

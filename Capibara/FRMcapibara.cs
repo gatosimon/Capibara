@@ -35,8 +35,9 @@ namespace Capibara
             InitializeComponent();
             capas = new Capas(this);
             configuracion = Configuracion.Cargar();
-            overlay = new WaitOverlay(this); 
-            Utilidades.ReproducirIntro(this);
+            overlay = new WaitOverlay(this);
+            Utilidades.IniciarDeteccionDispositivos(this);
+            Utilidades.ReproducirIntro();
             WaitCursor();
         }
 
@@ -75,6 +76,11 @@ namespace Capibara
             desplegarCombo = true;
         }
 
+        private void FRMcapibara_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Utilidades.DesRegistrar();
+        }
+
         private void CargarConfiguracion()
         {
             configuracion = Configuracion.Cargar();
@@ -84,6 +90,16 @@ namespace Capibara
             OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
             OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
             CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
+
+            foreach (string[] item in configuracion.camposAlta)
+            {
+                int indiceFila = DGValta.Rows.Add();
+                DGValta.Rows[indiceFila].Cells[0].Value = item[0];
+                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
+                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
+                DGValta.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
+            }
 
             foreach (string[] item in configuracion.camposBaja)
             {
@@ -131,6 +147,17 @@ namespace Capibara
                 configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
                 configuracion.MostrarOverlayEnInicio = CHKmostrarOverlayEnIicio.Checked;
+
+                configuracion.camposAlta.Clear();
+                foreach (DataGridViewRow item in DGValta.Rows)
+                {
+                    List<string> celdas = new List<string>();
+                    foreach (DataGridViewCell celdaActual in item.Cells)
+                    {
+                        celdas.Add(celdaActual.FormattedValue.ToString());
+                    }
+                    configuracion.camposAlta.Add(celdas.ToArray());
+                }
 
                 configuracion.camposBaja.Clear();
                 foreach (DataGridViewRow item in DGVbaja.Rows)
@@ -351,12 +378,9 @@ namespace Capibara
                 }
                 else
                 {
-
-                    if (CHKquitarEsquema.Checked)
-                    {
-                        string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                        tabla = partes[partes.Length - 1];
-                    }
+                    // Saco el esquema para las tablas de SQL
+                    string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    tabla = partes[partes.Length - 1];
                     capas.TABLA = tabla;
 
                     if (CHKcontrollers.Checked)
@@ -425,7 +449,7 @@ namespace Capibara
 
                     if (System.IO.Directory.Exists(TXTpathCapas.Text))
                     {
-                        Utilidades.ReproducirSplash(this);// ReproducirMusica(CAPIBARAR, Properties.Resources.Capibarar);
+                        Utilidades.ReproducirSplash();
                         Process.Start("explorer.exe", TXTpathCapas.Text);
                     }
                 }
@@ -818,6 +842,7 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
+
                     foreach (DataColumn c in columnas)
                     {
                         Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
@@ -879,8 +904,6 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    //Repositories.AppendLine("\t\t\t\tSQLconsulta.Consulta = \"UPDATE \" + " + capas.NombreTabla + " + \" SET " + string.Join(" AND ", (from c in columnasUpdate select c.ColumnName + " = ?").ToList()) + "\" +");
-                    //Repositories.AppendLine("\t\t\t\t\t\" WHERE " + string.Join(" AND ", (from c in claves select c.ColumnName + " = ?").ToList()) + "\";");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                     Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                     Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) }\";");
@@ -1354,10 +1377,27 @@ namespace Capibara
                 Service.AppendLine("\t\t{");
                 Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } nuevo = new { nombreDeClase + (DB2 ? origen : string.Empty) }()");
                 Service.AppendLine("\t\t\t{");
+
+                Dictionary<string, string> camposAlta = new Dictionary<string, string>();
+                if (DGValta.Rows.Count > 0)
+                {
+                    foreach (DataGridViewRow item in DGValta.Rows)
+                    {
+                        camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { item.Cells[1].Value.ToString().Replace(";", string.Empty) },");
+                    }
+                }
+
                 int i = 0;
                 foreach (DataColumn columna in columnas)
                 {
-                    Service.AppendLine($"\t\t\t\t{ columna.ColumnName } = { nombreClasePrimeraMinuscula }.{ columna.ColumnName + (i < columnas.Count ? "," : string.Empty)}");
+                    if (camposAlta.Count > 0 && camposAlta.ContainsKey(columna.ColumnName))
+                    {
+                        Service.AppendLine(camposAlta[columna.ColumnName]);
+                    }
+                    else
+                    {
+                        Service.AppendLine($"\t\t\t\t{ columna.ColumnName } = { nombreClasePrimeraMinuscula }.{ columna.ColumnName + (i < columnas.Count ? "," : string.Empty)}");
+                    }
                     i++;
                 }
                 Service.AppendLine("\t\t\t};");
@@ -1377,6 +1417,7 @@ namespace Capibara
                 Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
+
                 if (DGVbaja.Rows.Count == 0)
                 {
                     Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = System.DateTime.Now;");
@@ -2658,6 +2699,23 @@ namespace Capibara
 
         private void BTNagregarCampo_Click(object sender, EventArgs e)
         {
+            if (TBCcamposABM.SelectedTab == TBPalta)
+            {
+                foreach (ListViewItem item in LSVcampos.SelectedItems)
+                {
+                    var fila = Utilidades.BuscarFila(DGValta, item.Text);
+                    // Buscar fila por valor exacto en la primer celda
+                    if (fila == null)
+                    {
+                        int indiceFila = DGValta.Rows.Add();
+                        DGValta.Rows[indiceFila].Cells[0].Value = item.Text;
+                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
+                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
+                        PredecirValor(item, DGValta.Rows[indiceFila].Cells[1], true);
+                    }
+                }
+            }
             if (TBCcamposABM.SelectedTab == TBPbaja)
             {
                 foreach (ListViewItem item in LSVcampos.SelectedItems)
@@ -2671,6 +2729,7 @@ namespace Capibara
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
+                        PredecirValor(item, DGVbaja.Rows[indiceFila].Cells[1], true);
                     }
                 }
             }
@@ -2687,6 +2746,7 @@ namespace Capibara
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
+                        PredecirValor(item, DGVmodificacion.Rows[indiceFila].Cells[1], true);
                     }
                 }
             }
@@ -2703,13 +2763,48 @@ namespace Capibara
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
+                        PredecirValor(item, DGVrecuperacion.Rows[indiceFila].Cells[1], false);
                     }
                 }
             }
         }
 
+        private void PredecirValor(ListViewItem item, DataGridViewCell celda, bool ABM)
+        {
+            var campo = item.Text.ToUpper();
+
+            if (campo.StartsWith("FECHA") || campo.StartsWith("FECH") || campo.StartsWith("FEC") || campo.StartsWith("FE") || campo.StartsWith("F"))
+            {
+                celda.Value = capas.CamposABM[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
+            }
+            if (campo.StartsWith("USUARIO") || campo.StartsWith("USU") || campo.StartsWith("USER") || campo.StartsWith("USR") || campo.StartsWith("US") || campo.StartsWith("U"))
+            {
+                celda.Value = capas.CamposABM[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
+            }
+            if (campo.StartsWith("HORA") || campo.StartsWith("HOR") || campo.StartsWith("HO") || campo.StartsWith("H"))
+            {
+                celda.Value = capas.CamposABM[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
+            }
+            if (campo.StartsWith("CODIGO") || campo.StartsWith("CODIG") || campo.StartsWith("CODI") || campo.StartsWith("COD") || campo.StartsWith("CO") || campo.StartsWith("C"))
+            {
+                celda.Value = capas.CamposABM[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
+            }
+            if (campo.StartsWith("MOTIVO") || campo.StartsWith("MOTIV") || campo.StartsWith("MOTI") || campo.StartsWith("MOT") || campo.StartsWith("MO") || campo.StartsWith("M"))
+            {
+                celda.Value = capas.CamposABM[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
+            }
+        }
+
         private void BTNquitarCampo_Click(object sender, EventArgs e)
         {
+            if (TBCcamposABM.SelectedTab == TBPalta)
+            {
+                foreach (DataGridViewRow fila in DGValta.SelectedRows)
+                {
+                    DGValta.Rows.Remove(fila);
+                }
+                DGValta.Refresh();
+            }
             if (TBCcamposABM.SelectedTab == TBPbaja)
             {
                 foreach (DataGridViewRow fila in DGVbaja.SelectedRows)
