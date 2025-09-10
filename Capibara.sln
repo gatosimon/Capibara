@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capibara", "Capibara\Capiba
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CapibaraInstaller", "CapibaraInstaller\CapibaraInstaller.vdproj", "{622CA4A9-C455-4E38-82CA-5D1EC0CED800}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapibaraInstallerActions", "CapibaraInstallerActions\CapibaraInstallerActions.csproj", "{861009A0-6AA1-4318-B0FF-2F7497AC3D18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,26 @@ Global
 		{622CA4A9-C455-4E38-82CA-5D1EC0CED800}.Release|x64.Build.0 = Release
 		{622CA4A9-C455-4E38-82CA-5D1EC0CED800}.Release|x86.ActiveCfg = Release
 		{622CA4A9-C455-4E38-82CA-5D1EC0CED800}.Release|x86.Build.0 = Release
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|ARM.Build.0 = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|x64.Build.0 = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Debug|x86.Build.0 = Debug|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|ARM.ActiveCfg = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|ARM.Build.0 = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|ARM64.Build.0 = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x64.ActiveCfg = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x64.Build.0 = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x86.ActiveCfg = Release|Any CPU
+		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
