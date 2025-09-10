@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Capibara
 {
@@ -23,9 +21,9 @@ namespace Capibara
             {typeof(decimal),   "double"},
             {typeof(double),    "double"},
             {typeof(Guid),      "Guid"},
-            {typeof(int),       "int"},			// Int32
-            {typeof(Int16),     "short"},			// Int16s
-            {typeof(Int64),     "long"},			// Int64
+            {typeof(int),       "int"},			//                                                                      Int32
+            {typeof(Int16),     "int" },        // "short"}, GONZA PIDIO ESTO SI REVIENTA OTRA VEZ ES ES SU CULPA		Int16s
+            {typeof(Int64),     "long"},		//                                                                      Int64
             {typeof(Object),    ERROR},
             {typeof(SByte),     "double"},
             {typeof(Single),    "double"},
@@ -61,8 +59,8 @@ namespace Capibara
             { "string",     "OdbcType.VarChar"},	    // VARCHAR, usar NVarChar si es Unicode	
             { "TimeSpan",   "OdbcType.Time"},	        // TIME
             { "uint",       "OdbcType.BigInt"},          // BIGINT
-            { "ulong",       "OdbcType.BigInt"},          // BIGINT
-            { "ushort",      "OdbcType.BigInt"}          // BIGINT
+            { "ulong",      "OdbcType.BigInt"},          // BIGINT
+            { "ushort",     "OdbcType.BigInt"}          // BIGINT
         };
 
         // Diccionario de mapeo de tipos .NET a tipos DB2
