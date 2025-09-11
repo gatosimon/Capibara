@@ -22,6 +22,10 @@ namespace Capibara
         private bool generarDesdeConsulta = false;
 
         private bool desplegarCombo = false;
+        
+        private string pathProyecto = string.Empty;
+
+        private string pathGlobalAsax = string.Empty;
 
         Configuracion configuracion;
 
@@ -452,9 +456,9 @@ namespace Capibara
                         ArmarTypeScript(camposConsulta);
                     }
 
-                    if (System.IO.Directory.Exists(TXTpathCapas.Text))
+                    Utilidades.ReproducirSplash();
+                    if (!CHKinsertarEnProyecto.Checked && Directory.Exists(TXTpathCapas.Text))
                     {
-                        Utilidades.ReproducirSplash();
                         Process.Start("explorer.exe", TXTpathCapas.Text);
                     }
                 }
@@ -486,10 +490,10 @@ namespace Capibara
             Controller.AppendLine("using System.Threading.Tasks;");
             Controller.AppendLine("using System.Web.Http;");
             Controller.AppendLine("using System.Web.Http.Cors;");
-            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ origen };");
-            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ Capas.SERVICE };");
+            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
+            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE };");
             Controller.AppendLine();
-            Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
+            Controller.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
             Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
@@ -656,9 +660,9 @@ namespace Capibara
             Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
-            Dto.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
+            Dto.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
             Dto.AppendLine();
-            Dto.AppendLine($"namespace { espacioDeNombres }.{ Capas.DTO}");
+            Dto.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.DTO}");
             Dto.AppendLine("{");
             Dto.AppendLine($"\tpublic class { nombreDeClase + Capas.DTO}");
             Dto.AppendLine("\t{");
@@ -737,7 +741,7 @@ namespace Capibara
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations.Schema;");
             Modelo.AppendLine();
-            Modelo.AppendLine($"namespace { espacioDeNombres }.{ Capas.MODEL}");
+            Modelo.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL}");
             Modelo.AppendLine("{");
             Modelo.AppendLine($"\t[Table(\"{nombreDeClase}\")]");
             Modelo.AppendLine($"\tpublic class {nombreDeClase + Capas.MODEL}");
@@ -827,9 +831,9 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
+            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
             Repositories.AppendLine();
-            Repositories.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES }");
+            Repositories.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES }");
             Repositories.AppendLine("{");
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
@@ -1012,23 +1016,23 @@ namespace Capibara
                         if (CHKtryOrIf.Checked)
                         {
                             Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                            Repositories.AppendLine($"\t\t\t\treturn (\"Modificación correcta de {{ { capas.NombreTabla } }}, true);");
+                            Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
                         }
                         else
                         {
                             Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine($"\t\t\t\t\treturn (\"Modificación correcta de {{ { capas.NombreTabla } }}, true);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine($"\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}, false);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}, false);");
                             Repositories.AppendLine("\t\t\t\t}");
                         }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                         Repositories.AppendLine("\t\t\t{");
-                        Repositories.AppendLine($"\t\t\t\treturn (\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message) }}\", false);");
+                        Repositories.AppendLine($"\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message) }}\", false);");
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t}");
                     }
@@ -1043,7 +1047,7 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
                     Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
                     Repositories.AppendLine();
-                    Repositories.AppendLine($"\t\t\t\treturn (\"Modificación correcta de { nombreDeClase }\", true);");
+                    Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de { nombreDeClase }\", true);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1098,7 +1102,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos por ID de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message))}}\";");
+                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos por ID de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)}}\");");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn Resultado;");
@@ -1152,7 +1156,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)) }}\";");
+                    Repositories.AppendLine($"\t\t\t\tthrow new Exception ($\"Ocurrió un error inesperado al intentar recuperar los datos de la tabla {{ { capas.NombreTabla } }}. {{ (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message) }}\");");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\treturn todos;");
@@ -1202,7 +1206,7 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\t\t}");
                         Repositories.AppendLine("\t\t\t\telse");
                         Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine($"\t\t\t\t\treturn (\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}, false);");
+                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
                     }
                     Repositories.AppendLine("\t\t\t}");
@@ -1222,7 +1226,7 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
                     Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
                     Repositories.AppendLine();
-                    Repositories.AppendLine($"\t\t\t\treturn (\"Recuperación correcta de { nombreDeClase }\", true);");
+                    Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de { nombreDeClase }\", true);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1274,12 +1278,13 @@ namespace Capibara
 
             StringBuilder RepositoriesInterface = new StringBuilder();
 
+            RepositoriesInterface.AppendLine("using System;");
             RepositoriesInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
             RepositoriesInterface.AppendLine("using System.Collections.Generic;");
             RepositoriesInterface.AppendLine("using System.Data.Odbc;");
-            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine("using " + espacioDeNombres + "." + Capas.MODEL + ";");
+            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES}");
+            RepositoriesInterface.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES}");
             RepositoriesInterface.AppendLine("{");
             RepositoriesInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             RepositoriesInterface.AppendLine("\t{");
@@ -1359,10 +1364,10 @@ namespace Capibara
             Service.AppendLine("using SistemaMunicipalGeneral;");
             Service.AppendLine("using System.Linq;");
             Service.AppendLine("using System.Web;");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ origen };");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ Capas.REPOSITORIES };");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES };");
             Service.AppendLine();
-            Service.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
+            Service.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE}");
             Service.AppendLine("{");
             Service.AppendLine($"\tpublic class { nombreDeClase + Capas.SERVICE } : { nombreDeClase + Capas.SERVICE_INTERFACE}");
             Service.AppendLine("\t{");
@@ -1611,9 +1616,9 @@ namespace Capibara
             ServiceInterface.AppendLine("using System.Collections.Generic;");
             ServiceInterface.AppendLine("using System.Data.Odbc;");
             ServiceInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine("using " + espacioDeNombres + "." + origen + ";");
+            if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
             ServiceInterface.AppendLine();
-            ServiceInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
+            ServiceInterface.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE}");
             ServiceInterface.AppendLine("{");
             ServiceInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.SERVICE_INTERFACE}");
             ServiceInterface.AppendLine("\t{");
@@ -2613,11 +2618,7 @@ namespace Capibara
                     WaitCursor();
 
                     ListarNameSpaces();
-                    if (CHKinsertarEnProyecto.Checked)
-                    {
-
-                    }
-                    CursorDefault();
+                    desplegarCombo = !CHKinsertarEnProyecto.Checked;
                     CargarSolucionPorCarpetas();
                     if (desplegarCombo)
                     {
@@ -2629,6 +2630,7 @@ namespace Capibara
                 {
                     CustomMessageBox.Show("Ocurrió un error al intentar acceder a la lista de carpetas de la solución seleccionada.", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                CursorDefault();
             }
         }
 
@@ -3092,11 +3094,10 @@ namespace Capibara
             }
             GetProjectAndGlobalAsaxPaths(slnPath, out string csprojPath, out string globalAsaxCsPath);
             pathProyecto = csprojPath;
-            pathGlobal = globalAsaxCsPath;
+            pathGlobalAsax = globalAsaxCsPath;
             rootNode.Expand();
         }
-        string pathProyecto = string.Empty;
-        string pathGlobal = string.Empty; 
+
         private void LoadProjectStructure(string csprojPath, TreeNode parentNode)
         {
             var doc = XDocument.Load(csprojPath);
@@ -3225,47 +3226,76 @@ namespace Capibara
 
         private void AgregarArchivosACsproj(string carpeta)
         {
-            string csproj = pathProyecto;// Directory.GetFiles(Path.GetDirectoryName(carpeta), "*.csproj").FirstOrDefault();
-            if (csproj == null) return;
+            if (pathProyecto == null) return;
 
-            XDocument doc = XDocument.Load(csproj);
+            XDocument doc = XDocument.Load(pathProyecto);
             XNamespace ns = doc.Root.Name.Namespace;
-            //TODO Recorrer las carpetas internas
-            foreach (var archivo in Directory.GetFiles(carpeta, "*.cs"))
+
+            // 🔹 Recorre todos los .cs en la carpeta y subcarpetas
+            foreach (var archivo in Directory.GetFiles(carpeta, "*.cs", SearchOption.AllDirectories))
             {
-                string relativePath = archivo.Replace(Path.GetDirectoryName(csproj) + "\\", "");
+                string relativePath = archivo.Replace(Path.GetDirectoryName(pathProyecto) + "\\", "");
+
                 if (!doc.Descendants(ns + "Compile").Any(e => (string)e.Attribute("Include") == relativePath))
                 {
-                    doc.Root.Add(new XElement(ns + "ItemGroup",
-                        new XElement(ns + "Compile", new XAttribute("Include", relativePath))));
+                    // Busco un ItemGroup existente o creo uno nuevo
+                    var itemGroup = doc.Root.Elements(ns + "ItemGroup").FirstOrDefault();
+                    if (itemGroup == null)
+                    {
+                        itemGroup = new XElement(ns + "ItemGroup");
+                        doc.Root.Add(itemGroup);
+                    }
+
+                    itemGroup.Add(new XElement(ns + "Compile", new XAttribute("Include", relativePath.Replace("(", "%28").Replace(")", "%29"))));
                 }
             }
 
-            doc.Save(csproj);
+            doc.Save(pathProyecto);
         }
-        
+
         private void ActualizarGlobalAsax()
         {
-            string globalAsaxPath = pathGlobal;// Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Global.asax.cs");
-
-            if (!File.Exists(globalAsaxPath))
+            if (!File.Exists(pathGlobalAsax))
                 return;
 
-            var lineas = File.ReadAllLines(globalAsaxPath).ToList();
-            // TODO Asignar el verdadero NAMESPACE y no .Generado
+            var lineas = File.ReadAllLines(pathGlobalAsax).ToList();
             // Agregar using
-            if (!lineas.Any(l => l.Contains("using " + TXTespacioDeNombres.Text + ".Generado;")))
-                lineas.Insert(0, "using " + TXTespacioDeNombres.Text + ".Generado;");
-
-            // Agregar registros de Autofac
-            int idx = lineas.FindIndex(l => l.Contains("var builder = new ContainerBuilder();"));
-            if (idx >= 0)
+            int idx = lineas.FindIndex(l => l.Contains("namespace"));
+            if (idx > 1)
             {
-                lineas.Insert(idx + 1, "builder.RegisterType<Repositorio>().As<IRepositorio>();");
-                lineas.Insert(idx + 2, "builder.RegisterType<Servicio>().As<IServicio>();");
+                idx--;
+            }
+            string usingRepositories = $"using {TXTespacioDeNombres.Text.Trim()}.{capas.TABLA}.Repositories;";
+            string usingService = $"using {TXTespacioDeNombres.Text.Trim()}.{capas.TABLA}.Service;";
+
+            if (!lineas.Any(l => l.Contains(usingRepositories)))
+            {
+                lineas.Insert(idx, usingRepositories);
+                idx++;
+            }
+            if (!lineas.Any(l => l.Contains(usingService)))
+            {
+                lineas.Insert(idx, usingService);
+                idx++;
             }
 
-            File.WriteAllLines(globalAsaxPath, lineas);
+            // Agregar registros de Autofac
+            idx = lineas.FindIndex(l => l.Contains("var container = builder.Build();"));
+            if (idx >= 0)
+            {
+                if (idx > 2)
+                {
+                    idx -= 2;
+                }
+                lineas.Insert(idx, string.Empty);
+                lineas.Insert(idx + 1, $"            builder.RegisterType<{capas.TABLA}Repositories>()");
+                lineas.Insert(idx + 2, $"                    .As<{capas.TABLA}RepositoriesInterface>()");
+                lineas.Insert(idx + 3, $"                    .InstancePerRequest();");
+                lineas.Insert(idx + 4, $"            builder.RegisterType<{capas.TABLA}Service>()");
+                lineas.Insert(idx + 5, $"                    .As<{capas.TABLA}ServiceInterface>()");
+                lineas.Insert(idx + 6, $"                    .InstancePerRequest();");
+            }
+            File.WriteAllLines(pathGlobalAsax, lineas);
         }
 
         private void AgregarNodoJerarquicoCarpetas(TreeNode parent, string rutaCarpeta)
