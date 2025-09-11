@@ -19,6 +19,7 @@ public class Configuracion
     public string UltimoNamespaceSeleccionado { get; set; } = string.Empty;
     public string RutaPorDefectoResultados { get; set; } = @"C:\Temp\";
     public bool MostrarOverlayEnInicio { get; set; } = true;
+    public bool InsertarEnProyecto { get; set; } = true;
     public Configuracion()
     {
         //PathSolucion = string.Empty;

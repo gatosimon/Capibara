@@ -13,7 +13,6 @@ using System.Xml.Linq;
 using Capibara.Controles;
 using System.Threading.Tasks;
 
-
 namespace Capibara
 {
     public partial class FRMcapibara : Form
@@ -87,9 +86,10 @@ namespace Capibara
             RDBsql.Checked = configuracion.SQL;
             TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
             TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
-            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Directory.GetDirectoryRoot(configuracion.PathSolucion) : string.Empty;
+            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Path.GetDirectoryName(configuracion.PathSolucion) : string.Empty;
             OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
             CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
+            CHKinsertarEnProyecto.Checked = configuracion.InsertarEnProyecto;
 
             foreach (string[] item in configuracion.camposAlta)
             {
@@ -130,6 +130,8 @@ namespace Capibara
                 ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
                 DGVrecuperacion.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
             }
+
+            CargarComboyTreeView();
         }
 
         private void GuardarConfiguracion()
@@ -147,6 +149,7 @@ namespace Capibara
                 configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
                 configuracion.MostrarOverlayEnInicio = CHKmostrarOverlayEnIicio.Checked;
+                configuracion.InsertarEnProyecto = CHKinsertarEnProyecto.Checked;
 
                 configuracion.camposAlta.Clear();
                 foreach (DataGridViewRow item in DGValta.Rows)
@@ -1825,8 +1828,10 @@ namespace Capibara
                     }
                 }
 
-                CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
-                GuardarConfiguracion();
+                if (CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text))
+                {
+                    GuardarConfiguracion();
+                }
             }
             else
             {
@@ -1986,9 +1991,10 @@ namespace Capibara
             }
         }
 
-        private void CamposTabla(string tabla = "", string consulta = "")
+        private bool CamposTabla(string tabla = "", string consulta = "")
         {
             WaitCursor();
+            bool camposOk = true;
             capas.camposTabla = new List<string>();
             try
             {
@@ -2013,7 +2019,7 @@ namespace Capibara
                                 {
                                     case DialogResult.Cancel:
                                         CursorDefault();
-                                        return;
+                                        camposOk = false;
                                         break;
                                     case DialogResult.No:
                                         consulta += " FETCH FIRST 1 ROW ONLY";
@@ -2021,15 +2027,18 @@ namespace Capibara
                                         break;
                                 }
                             }
-                            Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
-                            Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
-                            Db2.HayRegistros();
-
-                            using (var reader = Db2.ObtenerLector())
+                            if (camposOk)
                             {
-                                CargarListViewDesdeEsquema(reader, true);
+                                Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
+                                Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+                                Db2.HayRegistros();
+
+                                using (var reader = Db2.ObtenerLector())
+                                {
+                                    CargarListViewDesdeEsquema(reader, true);
+                                }
+                                Db2.Cerrar(); 
                             }
-                            Db2.Cerrar();
                         }
                         else // GENERO DESDE UNA TABLA
                         {
@@ -2078,6 +2087,7 @@ namespace Capibara
                     }
                     catch (Exception ex)
                     {
+                        camposOk = false;
                         var error = ex.InnerException ?? ex;
                         if (consulta.Trim().Length > 0)
                         {
@@ -2106,7 +2116,7 @@ namespace Capibara
                             {
                                 case DialogResult.Cancel:
                                     CursorDefault();
-                                    return;
+                                    camposOk = false;
                                     break;
                                 case DialogResult.No:
                                     consulta = Regex.Replace(
@@ -2120,88 +2130,41 @@ namespace Capibara
                             }
                         }
 
-                        string query = (overlay.IsDisposed && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
-                            + "FROM sys.columns c "
-                            + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
-                            + "JOIN sys.tables t ON c.object_id = t.object_id "
-                            + "WHERE t.name = @tabla "
-                            + "ORDER BY c.column_id;";
-
-                        using (SqlConnection conn = new SqlConnection(connectionString))
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        if (camposOk)
                         {
-                            if (consulta.Trim().Length == 0)
-                            {
-                                string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                                tablaSeleccionada = partes[partes.Length - 1];
-
-                                cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
-                            }
-
-                            try
-                            {
-                                conn.Open();
-                                using (SqlDataReader reader = cmd.ExecuteReader())
-                                {
-                                    // GENERO DESDE UNA CONSULTA
-                                    if (overlay.IsDisposed && consulta.Trim().Length > 0)
-                                    {
-                                        CargarListViewDesdeEsquema(reader, false);
-                                    }
-                                    else // GENERO DESDE UNA TABLA
-                                    {
-                                        while (reader.Read())
-                                        {
-                                            CargarListViewDesdeReader(reader);
-                                        }
-                                    }
-                                }
-                                conn.Close();
-                            }
-                            catch (Exception ex)
-                            {
-                                var error = ex.InnerException.Message ?? ex.Message;
-                                if (consulta.Trim().Length > 0)
-                                {
-                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                                else
-                                {
-                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
-                        }
-
-                        // Seteo las claves primarias si es que contiene
-                        if (LSVcampos.Items.Count > 0)
-                        {
-                            string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                            tablaSeleccionada = partes[partes.Length - 1];
-                            query = "SELECT KU.COLUMN_NAME Nombre "
-                                + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
-                                + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
-                                + "WHERE TC.TABLE_NAME = @tabla AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                            string query = (overlay.IsDisposed && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
+                                                + "FROM sys.columns c "
+                                                + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
+                                                + "JOIN sys.tables t ON c.object_id = t.object_id "
+                                                + "WHERE t.name = @tabla "
+                                                + "ORDER BY c.column_id;";
 
                             using (SqlConnection conn = new SqlConnection(connectionString))
                             using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+                                if (consulta.Trim().Length == 0)
+                                {
+                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                                    tablaSeleccionada = partes[partes.Length - 1];
+
+                                    cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+                                }
 
                                 try
                                 {
                                     conn.Open();
                                     using (SqlDataReader reader = cmd.ExecuteReader())
                                     {
-                                        while (reader.Read())
+                                        // GENERO DESDE UNA CONSULTA
+                                        if (overlay.IsDisposed && consulta.Trim().Length > 0)
                                         {
-                                            var nombre = reader["Nombre"].ToString().ToUpper();
-
-                                            foreach (ListViewItem item in LSVcampos.Items)
+                                            CargarListViewDesdeEsquema(reader, false);
+                                        }
+                                        else // GENERO DESDE UNA TABLA
+                                        {
+                                            while (reader.Read())
                                             {
-                                                if (item.SubItems[0].Text.ToUpper() == nombre)
-                                                {
-                                                    item.Checked = true;
-                                                }
+                                                CargarListViewDesdeReader(reader);
                                             }
                                         }
                                     }
@@ -2210,24 +2173,90 @@ namespace Capibara
                                 catch (Exception ex)
                                 {
                                     var error = ex.InnerException.Message ?? ex.Message;
-                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    if (consulta.Trim().Length > 0)
+                                    {
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                    else
+                                    {
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
                                 }
                             }
+
+                            // Seteo las claves primarias si es que contiene
+                            if (LSVcampos.Items.Count > 0)
+                            {
+                                string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                                tablaSeleccionada = partes[partes.Length - 1];
+                                query = "SELECT KU.COLUMN_NAME Nombre "
+                                    + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
+                                    + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
+                                    + "WHERE TC.TABLE_NAME = @tabla AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                                using (SqlConnection conn = new SqlConnection(connectionString))
+                                using (SqlCommand cmd = new SqlCommand(query, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
+
+                                    try
+                                    {
+                                        conn.Open();
+                                        using (SqlDataReader reader = cmd.ExecuteReader())
+                                        {
+                                            while (reader.Read())
+                                            {
+                                                var nombre = reader["Nombre"].ToString().ToUpper();
+
+                                                foreach (ListViewItem item in LSVcampos.Items)
+                                                {
+                                                    if (item.SubItems[0].Text.ToUpper() == nombre)
+                                                    {
+                                                        item.Checked = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        conn.Close();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        var error = ex.InnerException.Message ?? ex.Message;
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+                                }
+                            } 
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        camposOk = false;
+                        var error = ex.InnerException ?? ex;
+                        if (consulta.Trim().Length > 0)
+                        {
+                            CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
-                ComprobarTiposDeCampos(tablaSeleccionada);
-                LSVcampos.Refresh();
+                if (camposOk)
+                {
+                    ComprobarTiposDeCampos(tablaSeleccionada);
+                    LSVcampos.Refresh(); 
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                camposOk = false;
+                var error = ex.InnerException ?? ex;
+                CustomMessageBox.Show("Ocurrió un error al intentar acceder a la base de datos:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             CursorDefault();
+            return camposOk;
         }
 
         private void CargarListViewDesdeEsquema(IDataReader reader, bool esDB2)
@@ -2288,7 +2317,7 @@ namespace Capibara
                 try
                 {
                     Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    datos.Consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
                     ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
                     DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
 
@@ -2307,7 +2336,7 @@ namespace Capibara
                     string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    string query = "SELECT TOP 1 * FROM " + tabla;
+                    string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
 
                     using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
                     {
@@ -2545,11 +2574,35 @@ namespace Capibara
         private void BTNbuscarSolucion_Click(object sender, EventArgs e)
         {
             OFDlistarDeSolucion.ShowDialog();
-            WaitCursor();
+            CargarComboyTreeView();
+        }
 
-            ListarNameSpaces();
-            CursorDefault();
-            CMBnamespaces.DroppedDown = true;
+        private void CargarComboyTreeView()
+        {
+            if (OFDlistarDeSolucion.FileName.Length > 0)
+            {
+                try
+                {
+                    WaitCursor();
+
+                    ListarNameSpaces();
+                    if (CHKinsertarEnProyecto.Checked)
+                    {
+
+                    }
+                    CursorDefault();
+                    CargarSolucionPorCarpetas();
+                    if (desplegarCombo)
+                    {
+                        CMBnamespaces.DroppedDown = true; 
+                    }
+                    desplegarCombo = true;
+                }
+                catch (Exception ex)
+                {
+                    CustomMessageBox.Show("Ocurrió un error al intentar acceder a la lista de carpetas de la solución seleccionada.", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void ListarNameSpaces()
@@ -2605,10 +2658,12 @@ namespace Capibara
 
                 foreach (var include in includes)
                 {
-                    string carpeta = Path.GetDirectoryName(include);
+                    string decoded = Uri.UnescapeDataString(include); // 🔹 decodificar
+                    string carpeta = Path.GetDirectoryName(decoded);
                     if (!string.IsNullOrEmpty(carpeta))
                         resultado.Add(carpeta);
                 }
+
             }
 
             // Devolvemos solo carpetas únicas
@@ -2932,6 +2987,97 @@ namespace Capibara
             Cursor.Current = Cursors.Default;
             this.UseWaitCursor = false;
             Application.DoEvents();
+        }
+
+        private void CHKinsertarEnProyecto_CheckedChanged(object sender, EventArgs e)
+        {
+            CargarSolucionPorCarpetas();
+        }
+
+        private void CargarSolucionPorCarpetas()
+        {
+            if (CHKinsertarEnProyecto.Checked)
+            {
+                if (OFDlistarDeSolucion.FileName.Length > 0)
+                {
+                    TRVsolucion.Show();
+                    WaitCursor();
+                    TRVsolucion.Nodes.Clear();
+                    TRVsolucion.Refresh();
+                    string slnPath = OFDlistarDeSolucion.FileName;
+                    var rootNode = new TreeNode(Path.GetFileNameWithoutExtension(slnPath))
+                    {
+                        ImageKey = "solution.png",
+                        SelectedImageKey = "solution.png"
+                    };
+                    TRVsolucion.Nodes.Add(rootNode);
+
+                    List<string> carpetas = ObtenerCarpetasDesdeProyectos(slnPath);
+
+                    foreach (var carpeta in carpetas)
+                    {
+                        AgregarNodoJerarquicoCarpetas(rootNode, carpeta);
+                    }
+
+                    rootNode.Expand();
+                    CursorDefault();  
+                }
+                else
+                {
+                    CustomMessageBox.Show("Seleccione una solución.", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            else
+            {
+                TRVsolucion.Hide();
+            }
+        }
+
+        private void AgregarNodoJerarquicoCarpetas(TreeNode parent, string rutaCarpeta)
+        {
+            // Divide por separador de directorios
+            string[] partes = rutaCarpeta.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            TreeNode nodoActual = parent;
+
+            foreach (var parte in partes)
+            {
+                if (string.IsNullOrWhiteSpace(parte))
+                    continue;
+
+                // buscar si ya existe un subnodo con ese nombre
+                TreeNode encontrado = nodoActual.Nodes
+                    .Cast<TreeNode>()
+                    .FirstOrDefault(n => n.Text.Equals(parte, StringComparison.OrdinalIgnoreCase));
+
+                if (encontrado != null)
+                {
+                    nodoActual = encontrado;
+                }
+                else
+                {
+                    var nuevoNodo = new TreeNode(parte)
+                    {
+                        ImageKey = "fclose.png",
+                        SelectedImageKey = "fopen.png"
+                    };
+                    nodoActual.Nodes.Add(nuevoNodo);
+                    nodoActual = nuevoNodo;
+                }
+            }
+        }
+
+        // Manejar el cambio de iconos
+        private void TRVsolucion_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node.ImageKey == "fclose")
+                e.Node.ImageKey = e.Node.SelectedImageKey = "fopen";
+        }
+
+        private void TRVsolucion_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node.ImageKey == "fopen")
+                e.Node.ImageKey = e.Node.SelectedImageKey = "fclose";
         }
     }
 }
