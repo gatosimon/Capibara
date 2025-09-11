@@ -27,7 +27,7 @@ namespace Capibara
 
         Capas capas = null;
 
-        public  WaitOverlay overlay;
+        public WaitOverlay overlay;
 
         public FRMcapibara()
         {
@@ -67,7 +67,7 @@ namespace Capibara
 
         private void FRMgeneradorDeCapas_Resize(object sender, EventArgs e)
         {
-            EnforceSplitBounds();
+            ForzarSeparacionClase();
         }
 
         private void FRMcapibara_Validated(object sender, EventArgs e)
@@ -139,6 +139,8 @@ namespace Capibara
             try
             {
                 TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString(), generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : string.Empty);
+
+                CapibararProyecto();
 
                 configuracion.SQL = RDBsql.Checked;
                 configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
@@ -239,7 +241,7 @@ namespace Capibara
             LSVcampos.Columns.Add("Acepta Nulos", 100);
 
             EnsureFormMinimumSize();
-            EnforceSplitBounds();
+            ForzarSeparacionClase();
         }
 
         private string Clase(string tabla, string consulta = "")
@@ -500,7 +502,7 @@ namespace Capibara
             Controller.AppendLine($"\t\t\t_{ nombreClasePrimeraMinuscula + Capas.SERVICE } = { nombreClasePrimeraMinuscula + Capas.SERVICE } ?? throw new ArgumentNullException(nameof({ nombreClasePrimeraMinuscula + Capas.SERVICE }));");
             Controller.AppendLine("\t\t}");
             Controller.AppendLine();
-            
+
             #region ALTA
             if (CHKalta.Checked)
             {
@@ -725,7 +727,7 @@ namespace Capibara
         {
             string nombreDeClase = capas.TABLA;
             string espacioDeNombres = TXTespacioDeNombres.Text;
-            
+
             StringBuilder Modelo = new StringBuilder();
 
             Modelo.AppendLine("using System;");
@@ -1899,6 +1901,7 @@ namespace Capibara
 
         private void CMBtablas_SelectedIndexChanged(object sender, EventArgs e)
         {
+            generarDesdeConsulta = false;
             CamposTabla();
         }
 
@@ -2009,7 +2012,7 @@ namespace Capibara
                         Ejecutar datos = EstablecerConexion();
                         ComandoDB2 Db2 = null;
                         // GENERO DESDE UNA CONSULTA
-                        if (overlay.IsDisposed && consulta.Trim().Length > 0)
+                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
                         {
                             if (!consulta.Trim().ToUpper().Contains("FETCH"))
                             {
@@ -2037,7 +2040,7 @@ namespace Capibara
                                 {
                                     CargarListViewDesdeEsquema(reader, true);
                                 }
-                                Db2.Cerrar(); 
+                                Db2.Cerrar();
                             }
                         }
                         else // GENERO DESDE UNA TABLA
@@ -2080,7 +2083,7 @@ namespace Capibara
                                         {
                                             item.Checked = true;
                                         }
-                                    } 
+                                    }
                                 }
                             }
                         }
@@ -2108,7 +2111,7 @@ namespace Capibara
 
                         bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
 
-                        if (overlay.IsDisposed && !comienzaConSelectTop)
+                        if (overlay.IsDisposed && generarDesdeConsulta && !comienzaConSelectTop)
                         {
                             DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
@@ -2132,7 +2135,7 @@ namespace Capibara
 
                         if (camposOk)
                         {
-                            string query = (overlay.IsDisposed && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
+                            string query = (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
                                                 + "FROM sys.columns c "
                                                 + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
                                                 + "JOIN sys.tables t ON c.object_id = t.object_id "
@@ -2156,7 +2159,7 @@ namespace Capibara
                                     using (SqlDataReader reader = cmd.ExecuteReader())
                                     {
                                         // GENERO DESDE UNA CONSULTA
-                                        if (overlay.IsDisposed && consulta.Trim().Length > 0)
+                                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
                                         {
                                             CargarListViewDesdeEsquema(reader, false);
                                         }
@@ -2225,7 +2228,7 @@ namespace Capibara
                                         CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     }
                                 }
-                            } 
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -2245,7 +2248,7 @@ namespace Capibara
                 if (camposOk)
                 {
                     ComprobarTiposDeCampos(tablaSeleccionada);
-                    LSVcampos.Refresh(); 
+                    LSVcampos.Refresh();
                 }
             }
             catch (Exception ex)
@@ -2338,6 +2341,7 @@ namespace Capibara
 
                     string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
 
+                    DS = new DataSet();
                     using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
                     {
                         DA.Fill(DS);
@@ -2518,7 +2522,7 @@ namespace Capibara
             }
         }
 
-        private void EnforceSplitBounds()
+        private void ForzarSeparacionClase()
         {
             try
             {
@@ -2548,6 +2552,24 @@ namespace Capibara
             }
         }
 
+        private void ForzarSeparacionSeparador()
+        {
+            try
+            {
+                //int min = (SPCseparador.Height / 2) > SPCseparador.Panel1MinSize ? Convert.ToInt32(SPCseparador.Height / 2) : SPCseparador.Panel1MinSize;
+                int min = SPCseparador.Panel1MinSize;
+                int max = Math.Max(min, SPCseparador.Height - SPCseparador.Panel2MinSize - SPCseparador.SplitterWidth);
+
+                if (SPCseparador.SplitterDistance < min)
+                    SPCseparador.SplitterDistance = min;
+                else if (SPCseparador.SplitterDistance > max)
+                    SPCseparador.SplitterDistance = max;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         private void EnsureFormMinimumSize()
         {
             // Calcula un MinimumSize del Form para que nunca puedas redimensionarlo
@@ -2568,7 +2590,12 @@ namespace Capibara
 
         private void SPCclase_SplitterMoved(object sender, SplitterEventArgs e)
         {
-            EnforceSplitBounds();
+            ForzarSeparacionClase();
+        }
+
+        private void SPCseparador_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            ForzarSeparacionSeparador();
         }
 
         private void BTNbuscarSolucion_Click(object sender, EventArgs e)
@@ -2594,7 +2621,7 @@ namespace Capibara
                     CargarSolucionPorCarpetas();
                     if (desplegarCombo)
                     {
-                        CMBnamespaces.DroppedDown = true; 
+                        CMBnamespaces.DroppedDown = true;
                     }
                     desplegarCombo = true;
                 }
@@ -2747,7 +2774,7 @@ namespace Capibara
             }
         }
 
-        private void BNTobtenerEstructura_Click(object sender, EventArgs e)
+        private void BTNobtenerEstructura_Click(object sender, EventArgs e)
         {
             CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
         }
@@ -3005,22 +3032,25 @@ namespace Capibara
                     TRVsolucion.Nodes.Clear();
                     TRVsolucion.Refresh();
                     string slnPath = OFDlistarDeSolucion.FileName;
-                    var rootNode = new TreeNode(Path.GetFileNameWithoutExtension(slnPath))
-                    {
-                        ImageKey = "solution.png",
-                        SelectedImageKey = "solution.png"
-                    };
-                    TRVsolucion.Nodes.Add(rootNode);
+                    //var rootNode = new TreeNode(Path.GetFileNameWithoutExtension(slnPath))
+                    //{
+                    //    ImageKey = "solution.png",
+                    //    SelectedImageKey = "solution.png"
+                    //};
+                    //TRVsolucion.Nodes.Add(rootNode);
 
-                    List<string> carpetas = ObtenerCarpetasDesdeProyectos(slnPath);
+                    //List<string> carpetas = ObtenerCarpetasDesdeProyectos(slnPath);
 
-                    foreach (var carpeta in carpetas)
-                    {
-                        AgregarNodoJerarquicoCarpetas(rootNode, carpeta);
-                    }
+                    //foreach (var carpeta in carpetas)
+                    //{
+                    //    AgregarNodoJerarquicoCarpetas(rootNode, carpeta);
+                    //}
 
-                    rootNode.Expand();
-                    CursorDefault();  
+                    //rootNode.Expand();
+
+                    LoadSolutionStructure(slnPath, TRVsolucion);
+
+                    CursorDefault();
                 }
                 else
                 {
@@ -3031,6 +3061,211 @@ namespace Capibara
             {
                 TRVsolucion.Hide();
             }
+        }
+
+        public void LoadSolutionStructure(string slnPath, TreeView treeView)
+        {
+            if (!File.Exists(slnPath))
+                throw new FileNotFoundException("No se encontró el archivo .sln", slnPath);
+
+            treeView.Nodes.Clear();
+            TreeNode rootNode = new TreeNode(Path.GetFileNameWithoutExtension(slnPath));
+            treeView.Nodes.Add(rootNode);
+
+            // Leer proyectos del .sln
+            var projectLines = File.ReadAllLines(slnPath)
+                .Where(l => l.StartsWith("Project("))
+                .ToList();
+
+            foreach (var line in projectLines)
+            {
+                var parts = line.Split(',');
+                if (parts.Length < 2) continue;
+
+                string projPath = parts[1].Trim().Trim('"'); // ruta relativa al .sln
+                string projFullPath = Path.Combine(Path.GetDirectoryName(slnPath), projPath);
+
+                if (File.Exists(projFullPath))
+                {
+                    LoadProjectStructure(projFullPath, rootNode);
+                }
+            }
+            GetProjectAndGlobalAsaxPaths(slnPath, out string csprojPath, out string globalAsaxCsPath);
+            pathProyecto = csprojPath;
+            pathGlobal = globalAsaxCsPath;
+            rootNode.Expand();
+        }
+        string pathProyecto = string.Empty;
+        string pathGlobal = string.Empty; 
+        private void LoadProjectStructure(string csprojPath, TreeNode parentNode)
+        {
+            var doc = XDocument.Load(csprojPath);
+            string projName = Path.GetFileNameWithoutExtension(csprojPath);
+            TreeNode projNode = parentNode.Nodes.Add(projName);
+
+            string projDir = Path.GetDirectoryName(csprojPath);
+
+            // Extraer nodos que agregan archivos al proyecto
+            var itemGroups = doc.Descendants()
+                .Where(x => x.Name.LocalName == "Compile" ||
+                            x.Name.LocalName == "Content" ||
+                            x.Name.LocalName == "None")
+                .Select(x => (string)x.Attribute("Include"))
+                .Where(x => !string.IsNullOrEmpty(x));
+
+            foreach (var includePath in itemGroups)
+            {
+                string decoded = Uri.UnescapeDataString(includePath); // 🔹 decodificar
+                string fullPath = Path.Combine(projDir, decoded);
+                AddPathToTree(projNode, decoded, fullPath);
+            }
+        }
+
+        private static void AddPathToTree(TreeNode projNode, string relativePath, string fullPath)
+        {
+            var parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            TreeNode currentNode = projNode;
+
+            foreach (var part in parts)
+            {
+                var existing = currentNode.Nodes.Cast<TreeNode>()
+                    .FirstOrDefault(n => n.Text == part);
+
+                if (existing == null)
+                {
+                    existing = currentNode.Nodes.Add(part);
+                    existing.Tag = fullPath.Substring(0, fullPath.IndexOf(part) + part.Length);
+                }
+
+                currentNode = existing;
+            }
+        }
+
+        private void CapibararProyecto()
+        {
+            if (TRVsolucion.SelectedNode == null || TRVsolucion.SelectedNode.Tag == null)
+                return;
+
+            string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
+            string nuevaCarpeta = $@"{Path.Combine(carpetaSeleccionada, capas.TABLA)} ({capas.TABLA})";
+
+            // Crear carpeta en el disco
+            CopyDirectory(capas.pathCarpetaClase, nuevaCarpeta, true);
+            
+            // Agregar al proyecto
+            AgregarArchivosACsproj(nuevaCarpeta);
+
+            // Modificar Global.asax
+            ActualizarGlobalAsax();
+
+            // Refrescar Combo y TreeView
+            CargarComboyTreeView();
+        }
+
+        public void CopyDirectory(string sourceDir, string destDir, bool overwrite = true)
+        {
+            // Crear el destino si no existe
+            if (!Directory.Exists(destDir))
+                Directory.CreateDirectory(destDir);
+
+            // Copiar todos los archivos
+            foreach (string file in Directory.GetFiles(sourceDir))
+            {
+                string fileName = Path.GetFileName(file);
+                string destFile = Path.Combine(destDir, fileName);
+                File.Copy(file, destFile, overwrite);
+            }
+
+            // Copiar recursivamente los subdirectorios
+            foreach (string subDir in Directory.GetDirectories(sourceDir))
+            {
+                string dirName = Path.GetFileName(subDir);
+                string destSubDir = Path.Combine(destDir, dirName);
+                CopyDirectory(subDir, destSubDir, overwrite);
+            }
+        }
+
+        public void GetProjectAndGlobalAsaxPaths(string slnPath, out string csprojPath, out string globalAsaxCsPath)
+        {
+            csprojPath = null;
+            globalAsaxCsPath = null;
+
+            if (!File.Exists(slnPath))
+                throw new FileNotFoundException("No se encontró el archivo .sln", slnPath);
+
+            string slnDir = Path.GetDirectoryName(slnPath);
+
+            // Buscar línea con ruta al .csproj dentro del .sln
+            string csprojRelative = File.ReadAllLines(slnPath)
+                .Where(l => l.StartsWith("Project(") && l.Contains(".csproj"))
+                .Select(l => l.Split(',')[1].Trim().Trim('"'))
+                .FirstOrDefault();
+
+            if (csprojRelative == null)
+                throw new Exception("No se encontró ningún proyecto .csproj en la solución.");
+
+            csprojPath = Path.Combine(slnDir, csprojRelative);
+
+            if (!File.Exists(csprojPath))
+                throw new FileNotFoundException("No se encontró el archivo .csproj referenciado.", csprojPath);
+
+            // Leer el .csproj y buscar Global.asax.cs
+            var doc = XDocument.Load(csprojPath);
+
+            var globalAsaxInclude = doc.Descendants()
+                .Where(x => x.Name.LocalName == "Compile" || x.Name.LocalName == "Content" || x.Name.LocalName == "None")
+                .Select(x => (string)x.Attribute("Include"))
+                .FirstOrDefault(p => p != null && p.EndsWith("Global.asax.cs", StringComparison.OrdinalIgnoreCase));
+
+            if (globalAsaxInclude != null)
+            {
+                globalAsaxCsPath = Path.Combine(Path.GetDirectoryName(csprojPath), globalAsaxInclude);
+            }
+        }
+
+        private void AgregarArchivosACsproj(string carpeta)
+        {
+            string csproj = pathProyecto;// Directory.GetFiles(Path.GetDirectoryName(carpeta), "*.csproj").FirstOrDefault();
+            if (csproj == null) return;
+
+            XDocument doc = XDocument.Load(csproj);
+            XNamespace ns = doc.Root.Name.Namespace;
+            //TODO Recorrer las carpetas internas
+            foreach (var archivo in Directory.GetFiles(carpeta, "*.cs"))
+            {
+                string relativePath = archivo.Replace(Path.GetDirectoryName(csproj) + "\\", "");
+                if (!doc.Descendants(ns + "Compile").Any(e => (string)e.Attribute("Include") == relativePath))
+                {
+                    doc.Root.Add(new XElement(ns + "ItemGroup",
+                        new XElement(ns + "Compile", new XAttribute("Include", relativePath))));
+                }
+            }
+
+            doc.Save(csproj);
+        }
+        
+        private void ActualizarGlobalAsax()
+        {
+            string globalAsaxPath = pathGlobal;// Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "Global.asax.cs");
+
+            if (!File.Exists(globalAsaxPath))
+                return;
+
+            var lineas = File.ReadAllLines(globalAsaxPath).ToList();
+            // TODO Asignar el verdadero NAMESPACE y no .Generado
+            // Agregar using
+            if (!lineas.Any(l => l.Contains("using " + TXTespacioDeNombres.Text + ".Generado;")))
+                lineas.Insert(0, "using " + TXTespacioDeNombres.Text + ".Generado;");
+
+            // Agregar registros de Autofac
+            int idx = lineas.FindIndex(l => l.Contains("var builder = new ContainerBuilder();"));
+            if (idx >= 0)
+            {
+                lineas.Insert(idx + 1, "builder.RegisterType<Repositorio>().As<IRepositorio>();");
+                lineas.Insert(idx + 2, "builder.RegisterType<Servicio>().As<IServicio>();");
+            }
+
+            File.WriteAllLines(globalAsaxPath, lineas);
         }
 
         private void AgregarNodoJerarquicoCarpetas(TreeNode parent, string rutaCarpeta)
@@ -3061,6 +3296,7 @@ namespace Capibara
                         ImageKey = "fclose.png",
                         SelectedImageKey = "fopen.png"
                     };
+                    nuevoNodo.Tag = rutaCarpeta.Substring(0, rutaCarpeta.IndexOf(parte) + parte.Length);
                     nodoActual.Nodes.Add(nuevoNodo);
                     nodoActual = nuevoNodo;
                 }
@@ -3078,6 +3314,14 @@ namespace Capibara
         {
             if (e.Node.ImageKey == "fopen")
                 e.Node.ImageKey = e.Node.SelectedImageKey = "fclose";
+        }
+
+        private void TRVsolucion_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Tag != null)
+            {
+                string carpetaSeleccionada = e.Node.Tag.ToString();
+            }
         }
     }
 }
