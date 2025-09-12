@@ -1,5 +1,5 @@
 ﻿
-namespace Capibara
+namespace Capibara.CustomControls
 {
     partial class WaitOverlay
     {

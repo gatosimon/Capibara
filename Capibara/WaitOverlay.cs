@@ -80,7 +80,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Capibara
+namespace Capibara.CustomControls
 {
     public partial class WaitOverlay : Form
     {

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using WMPLib;
 using System.Runtime.InteropServices;
 
-namespace Capibara.Controles
+namespace Capibara.CustomControls
 {
     public partial class CustomMessageBox : Form
     {

@@ -10,22 +10,25 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Capibara.Controles;
+using Capibara.CustomControls;
 using System.Threading.Tasks;
 
 namespace Capibara
 {
     public partial class FRMcapibara : Form
     {
+        private const int PANEL1_MIN = 510; // ancho/alto mínimo que querés para Panel1
+        private const string FOLDER_CLOSE = "fclose";
+        private const string FOLDER_OPEN = "fopen";
+        private const string PROYECT = "proyect";
+        private const string SOLUTION = "solution";
+        private const string NUEVA_CARPETA = "Nueva Carpeta";
+
         public string PathCapas { get { return TXTpathCapas.Text; } }
-
-        private bool generarDesdeConsulta = false;
-
-        private bool desplegarCombo = false;
-        
         private string pathProyecto = string.Empty;
-
         private string pathGlobalAsax = string.Empty;
+        private bool generarDesdeConsulta = false;
+        private bool desplegarCombo = false;
 
         Configuracion configuracion;
 
@@ -207,8 +210,6 @@ namespace Capibara
             {
             }
         }
-
-        private const int PANEL1_MIN = 510; // ancho/alto mínimo que querés para Panel1
 
         private void InicializarIndices()
         {
@@ -1770,8 +1771,15 @@ namespace Capibara
             WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
-                generarDesdeConsulta = false;
-                GuardarConfiguracion();
+                if (CHKinsertarEnProyecto.Checked && TXTnombreAmigable.Text.Trim().Length == 0) 
+                {
+                    CustomMessageBox.Show("Indique un 'nombre amigable' para la carpeta en el proyecto!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                }
+                else
+                {
+                    generarDesdeConsulta = false;
+                    GuardarConfiguracion();
+                }
             }
             else
             {
@@ -1786,58 +1794,65 @@ namespace Capibara
             WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
-                generarDesdeConsulta = true;
-                List<CheckBox> capasNecesarias = new List<CheckBox>();
-                if (CHKalta.Checked)
+                if (CHKinsertarEnProyecto.Checked && TXTnombreAmigable.Text.Trim().Length == 0)
                 {
-                    capasNecesarias.Add(CHKalta);
+                    CustomMessageBox.Show("Indique un 'nombre amigable' para la carpeta en el proyecto!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
-                if (CHKbaja.Checked)
+                else
                 {
-                    capasNecesarias.Add(CHKbaja);
-                }
-                if (CHKmodificacion.Checked)
-                {
-                    capasNecesarias.Add(CHKmodificacion);
-                }
-                if (CHKobtenerPorId.Checked)
-                {
-                    capasNecesarias.Add(CHKobtenerPorId);
-                }
-                if (CHKrecuperacion.Checked)
-                {
-                    capasNecesarias.Add(CHKrecuperacion);
-                }
-                string mensaje = string.Empty;
-                if (capasNecesarias.Count > 0)
-                {
-                    if (capasNecesarias.Count == 1)
+                    generarDesdeConsulta = true;
+                    List<CheckBox> capasNecesarias = new List<CheckBox>();
+                    if (CHKalta.Checked)
                     {
-                        mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
-                            $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
-                            $"Generar en estos 3 últimos el método de:\r\n   • {Utilidades.FormatearTitulo(capasNecesarias[0].Name.Replace("CHK", string.Empty))}\r\npuede generar inconsistencias.\r\n" +
-                            $"¿Desea generarlo de todos modos?";
+                        capasNecesarias.Add(CHKalta);
                     }
-                    else
+                    if (CHKbaja.Checked)
                     {
-                        string metodos = string.Join("\r\n   • ", (from c in capasNecesarias select Utilidades.FormatearTitulo(c.Name.Replace("CHK", string.Empty))).ToArray());
-                        mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
-                            $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
-                            $"Generar en estos 3 últimos los métodos de:\r\n   • {metodos}\r\npueden generar inconsistencias.\r\n" +
-                            $"¿Desea generarlos de todos modos?";
+                        capasNecesarias.Add(CHKbaja);
                     }
-                    if (CustomMessageBox.Show(mensaje, CustomMessageBox.ATENCION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                    if (CHKmodificacion.Checked)
                     {
-                        foreach (CheckBox item in capasNecesarias)
+                        capasNecesarias.Add(CHKmodificacion);
+                    }
+                    if (CHKobtenerPorId.Checked)
+                    {
+                        capasNecesarias.Add(CHKobtenerPorId);
+                    }
+                    if (CHKrecuperacion.Checked)
+                    {
+                        capasNecesarias.Add(CHKrecuperacion);
+                    }
+                    string mensaje = string.Empty;
+                    if (capasNecesarias.Count > 0)
+                    {
+                        if (capasNecesarias.Count == 1)
                         {
-                            item.Checked = false;
+                            mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
+                                $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
+                                $"Generar en estos 3 últimos el método de:\r\n   • {Utilidades.FormatearTitulo(capasNecesarias[0].Name.Replace("CHK", string.Empty))}\r\npuede generar inconsistencias.\r\n" +
+                                $"¿Desea generarlo de todos modos?";
+                        }
+                        else
+                        {
+                            string metodos = string.Join("\r\n   • ", (from c in capasNecesarias select Utilidades.FormatearTitulo(c.Name.Replace("CHK", string.Empty))).ToArray());
+                            mensaje = $"Al generar desde una consulta puede que solo necesite generar el Modelo y el Dto.\r\n" +
+                                $"Conviene generar el Controlador, Servicio y Repositorio para la consulta en sí.\r\n" +
+                                $"Generar en estos 3 últimos los métodos de:\r\n   • {metodos}\r\npueden generar inconsistencias.\r\n" +
+                                $"¿Desea generarlos de todos modos?";
+                        }
+                        if (CustomMessageBox.Show(mensaje, CustomMessageBox.ATENCION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                        {
+                            foreach (CheckBox item in capasNecesarias)
+                            {
+                                item.Checked = false;
+                            }
                         }
                     }
-                }
 
-                if (CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text))
-                {
-                    GuardarConfiguracion();
+                    if (CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text))
+                    {
+                        GuardarConfiguracion();
+                    }
                 }
             }
             else
@@ -3057,7 +3072,8 @@ namespace Capibara
 
             trvSolucion.Nodes.Clear();
             TreeNode nodoRaiz = new TreeNode(Path.GetFileNameWithoutExtension(pathSolucion));
-            nodoRaiz.ImageKey = nodoRaiz.SelectedImageKey = "solution";
+            nodoRaiz.ImageKey = nodoRaiz.SelectedImageKey = SOLUTION;
+            nodoRaiz.Tag = Path.GetDirectoryName(pathSolucion);
             trvSolucion.Nodes.Add(nodoRaiz);
 
             // Leer proyectos del .sln
@@ -3089,9 +3105,10 @@ namespace Capibara
             var doc = XDocument.Load(pathCsproj);
             string nombreDelProyecto = Path.GetFileNameWithoutExtension(pathCsproj);
             TreeNode nodoDelProyecto = nodoPadre.Nodes.Add(nombreDelProyecto);
-            nodoDelProyecto.ImageKey = nodoDelProyecto.SelectedImageKey = "proyect";
+            nodoDelProyecto.ImageKey = nodoDelProyecto.SelectedImageKey = PROYECT;
 
             string directorioDelProyecto = Path.GetDirectoryName(pathCsproj);
+            nodoDelProyecto.Tag = directorioDelProyecto;
 
             // Extraer nodos que agregan archivos al proyecto
             var itemGroups = doc.Descendants()
@@ -3126,7 +3143,7 @@ namespace Capibara
                     {
                         existe = nodoActual.Nodes.Add(parte);
                         //existe.ImageKey = existe.SelectedImageKey = pathCompleto.EndsWith(parte) ? "file" : "fclose";
-                        existe.ImageKey = existe.SelectedImageKey = "fclose";
+                        existe.ImageKey = existe.SelectedImageKey = FOLDER_CLOSE;
                         existe.Tag = pathCompleto.Substring(0, pathCompleto.IndexOf(parte) + parte.Length);
                     }
                 }
@@ -3144,7 +3161,7 @@ namespace Capibara
                     return;
 
                 string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
-                string nuevaCarpeta = $@"{Path.Combine(carpetaSeleccionada, capas.TABLA)} ({capas.TABLA})";
+                string nuevaCarpeta = $@"{Path.Combine(carpetaSeleccionada, Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
                 CopiarDirectorio(capas.pathCarpetaClase, nuevaCarpeta, true);
@@ -3221,34 +3238,6 @@ namespace Capibara
             }
         }
 
-        //private void AgregarArchivosACsproj(string carpeta)
-        //{
-        //    if (pathProyecto == null) return;
-
-        //    XDocument doc = XDocument.Load(pathProyecto);
-        //    XNamespace ns = doc.Root.Name.Namespace;
-
-        //    // 🔹 Recorre todos los .cs en la carpeta y subcarpetas
-        //    foreach (var archivo in Directory.GetFiles(carpeta, "*.cs", SearchOption.AllDirectories))
-        //    {
-        //        string relativePath = archivo.Replace(Path.GetDirectoryName(pathProyecto) + "\\", "");
-
-        //        if (!doc.Descendants(ns + "Compile").Any(e => (string)e.Attribute("Include") == relativePath))
-        //        {
-        //            // Busco un ItemGroup existente o creo uno nuevo
-        //            var itemGroup = doc.Root.Elements(ns + "ItemGroup").FirstOrDefault();
-        //            if (itemGroup == null)
-        //            {
-        //                itemGroup = new XElement(ns + "ItemGroup");
-        //                doc.Root.Add(itemGroup);
-        //            }
-        //            itemGroup.Add(new XElement(ns + "Compile", new XAttribute("Include", relativePath.Replace("(", "%28").Replace(")", "%29"))));
-        //        }
-        //    }
-
-        //    doc.Save(pathProyecto);
-        //}
-
         private void AgregarArchivosACsproj(string carpeta)
         {
             if (pathProyecto == null) return;
@@ -3279,7 +3268,6 @@ namespace Capibara
 
             doc.Save(pathProyecto);
         }
-
 
         private void ActualizarGlobalAsax()
         {
@@ -3329,17 +3317,17 @@ namespace Capibara
         // Manejar el cambio de iconos
         private void TRVsolucion_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.ImageKey == "fclose")
+            if (e.Node.ImageKey == FOLDER_CLOSE)
             {
-                e.Node.ImageKey = e.Node.SelectedImageKey = "fopen";
+                e.Node.ImageKey = e.Node.SelectedImageKey = FOLDER_OPEN;
             }
         }
 
         private void TRVsolucion_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.ImageKey == "fopen")
+            if (e.Node.ImageKey == FOLDER_OPEN)
             {
-                e.Node.ImageKey = e.Node.SelectedImageKey = "fclose";
+                e.Node.ImageKey = e.Node.SelectedImageKey = FOLDER_CLOSE;
             }
         }
 
@@ -3349,6 +3337,46 @@ namespace Capibara
             {
                 string carpetaSeleccionada = e.Node.Tag.ToString();
             }
+        }
+
+        private void TRVsolucion_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TRVsolucion.SelectedNode = e.Node; // asegura que quede seleccionado
+            }
+        }
+
+        private void TSMnuevaCarpeta_Click(object sender, EventArgs e)
+        {
+            if (TRVsolucion.SelectedNode == null) return;
+            TRVsolucion.LabelEdit = true;
+            TreeNode nuevoNodo = new TreeNode(NUEVA_CARPETA);
+            nuevoNodo.ImageKey = nuevoNodo.SelectedImageKey = FOLDER_CLOSE;
+            nuevoNodo.Tag = TRVsolucion.SelectedNode.Tag; // path padre
+            TRVsolucion.SelectedNode.Nodes.Add(nuevoNodo);
+            TRVsolucion.SelectedNode.Expand();
+
+            // Permitir editar el texto del nodo
+            TRVsolucion.SelectedNode.LastNode.BeginEdit();
+        }
+
+        private void TRVsolucion_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(e.Label))
+            {
+                e.CancelEdit = true;
+                return;
+            }
+
+            string parentPath = e.Node.Parent.Tag.ToString();
+            string nuevaRuta = Path.Combine(parentPath, e.Label);
+
+            if (!Directory.Exists(nuevaRuta))
+                Directory.CreateDirectory(nuevaRuta);
+
+            e.Node.Tag = nuevaRuta;
+            TRVsolucion.LabelEdit = false;
         }
     }
 }
