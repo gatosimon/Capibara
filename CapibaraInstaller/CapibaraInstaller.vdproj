@@ -2829,15 +2829,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Capibara"
-        "ProductCode" = "8:{C7C3916F-538F-44E5-830B-11EFFBD1EE2B}"
-        "PackageCode" = "8:{77C3E060-9AC3-41E7-8A1A-4F6EF32D9A0D}"
+        "ProductCode" = "8:{A579E9C2-60E2-4F97-908D-0246689C9ADA}"
+        "PackageCode" = "8:{2C825F49-8D8C-46F1-9A64-4E638F5A23A9}"
         "UpgradeCode" = "8:{222D8F49-3D1F-4391-85CF-ABF3ABB8830C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.0.3"
         "Manufacturer" = "8:Capibara"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -3389,7 +3389,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_73A258D226CF42658C13B2C00E1495A4"
             {
-            "SourcePath" = "8:..\\Capibara\\obj\\Release\\Capibara.exe"
+            "SourcePath" = "8:..\\Capibara\\obj\\Debug\\Capibara.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
@@ -3417,7 +3417,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D223181369EE46D18EAD0D2F61439D81"
             {
-            "SourcePath" = "8:..\\CapibaraInstallerActions\\obj\\Release\\CapibaraInstallerActions.dll"
+            "SourcePath" = "8:..\\CapibaraInstallerActions\\obj\\Debug\\CapibaraInstallerActions.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0FC6CA4AC2574FCE99D2F7D0DE556EE7"
