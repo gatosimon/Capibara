@@ -23,8 +23,11 @@ namespace Capibara
         private const string PROYECT = "proyect";
         private const string SOLUTION = "solution";
         private const string NUEVA_CARPETA = "Nueva Carpeta";
+        private const string FILE = "file";
 
         public string PathCapas { get { return TXTpathCapas.Text; } }
+        private string OrigenDeDatoSql = string.Empty;
+        private string carpetaSeleccionada = string.Empty;
         private string pathProyecto = string.Empty;
         private string pathGlobalAsax = string.Empty;
         private bool generarDesdeConsulta = false;
@@ -479,7 +482,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
             string camposFromUri = string.Join(", ", (from c in claves select "[FromUri] " + capas.Tipo(c) + " " + c.ColumnName).ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
@@ -491,10 +494,12 @@ namespace Capibara
             Controller.AppendLine("using System.Threading.Tasks;");
             Controller.AppendLine("using System.Web.Http;");
             Controller.AppendLine("using System.Web.Http.Cors;");
-            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
-            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE };");
+            //if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ origen };");
+            Controller.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
+            Controller.AppendLine($"using { espacioDeNombres }.{ Capas.DTO };");
+            if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ Capas.SERVICE };");
             Controller.AppendLine();
-            Controller.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.CONTROLLERS }");
+            Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
             Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
@@ -650,7 +655,7 @@ namespace Capibara
         private string ArmarDto(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
 
             StringBuilder Dto = new StringBuilder();
             StringBuilder newDto = new StringBuilder();
@@ -661,9 +666,9 @@ namespace Capibara
             Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
-            Dto.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
+            Dto.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Dto.AppendLine();
-            Dto.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.DTO}");
+            Dto.AppendLine($"namespace { espacioDeNombres }.{ Capas.DTO}");
             Dto.AppendLine("{");
             Dto.AppendLine($"\tpublic class { nombreDeClase + Capas.DTO}");
             Dto.AppendLine("\t{");
@@ -731,7 +736,7 @@ namespace Capibara
         private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
 
             StringBuilder Modelo = new StringBuilder();
 
@@ -742,7 +747,7 @@ namespace Capibara
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations.Schema;");
             Modelo.AppendLine();
-            Modelo.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL}");
+            Modelo.AppendLine($"namespace { espacioDeNombres }.{ Capas.MODEL}");
             Modelo.AppendLine("{");
             Modelo.AppendLine($"\t[Table(\"{nombreDeClase}\")]");
             Modelo.AppendLine($"\tpublic class {nombreDeClase + Capas.MODEL}");
@@ -817,13 +822,13 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
             List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
             string[] partes = espacioDeNombres.Trim().Length > 0 ? espacioDeNombres.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries) : new string[] { };
             string espacio = partes.Length > 0 ? partes[partes.Length - 1] : string.Empty;
-
+            if (OrigenDeDatoSql.Trim().Length == 0) OrigenDeDatoSql = $"BaseDeDatos{ espacio }.{ espacio }Entidades";
             StringBuilder Repositories = new StringBuilder();
 
             Repositories.AppendLine("using System;");
@@ -831,10 +836,10 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
-            Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
+            Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");    
+            if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Repositories.AppendLine();
-            Repositories.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES }");
+            Repositories.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES }");
             Repositories.AppendLine("{");
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
@@ -887,9 +892,9 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Added;");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Added;");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
@@ -964,9 +969,9 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
@@ -1044,9 +1049,9 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
@@ -1116,7 +1121,7 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t{ tipoClase } solicitado = null;");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tsolicitado = (from busqueda in BaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }");
+                    Repositories.AppendLine($"\t\t\t\tsolicitado = (from busqueda in {OrigenDeDatoSql}.{ nombreDeClase }");
                     Repositories.AppendLine($"\t\t\t\t\t\t\t  where { string.Join(" && ", claves.Select(c => "busqueda." + c.ColumnName + " == " + c.ColumnName)) }");
                     Repositories.AppendLine("\t\t\t\t\t\t\t  select busqueda).FirstOrDefault();");
                     Repositories.AppendLine("\t\t\t}");
@@ -1167,7 +1172,7 @@ namespace Capibara
                 {
                     Repositories.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                     Repositories.AppendLine("\t\t{");
-                    Repositories.AppendLine($"\t\t\treturn (from busqueda in BaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }");
+                    Repositories.AppendLine($"\t\t\treturn (from busqueda in {OrigenDeDatoSql}.{ nombreDeClase }");
                     Repositories.AppendLine("\t\t\t\t\tselect busqueda).ToList();");
                     Repositories.AppendLine("\t\t}");
                 }
@@ -1223,9 +1228,9 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
-                    Repositories.AppendLine($"\t\t\t\tBaseDeDatos{ espacio }.{ espacio }Entidades.SaveChanges();");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.{ nombreDeClase }.Attach({ nombreClasePrimeraMinuscula });");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Modified;");
+                    Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
@@ -1274,7 +1279,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder RepositoriesInterface = new StringBuilder();
@@ -1283,9 +1288,9 @@ namespace Capibara
             RepositoriesInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
             RepositoriesInterface.AppendLine("using System.Collections.Generic;");
             RepositoriesInterface.AppendLine("using System.Data.Odbc;");
-            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.MODEL };");
+            if (espacioDeNombres.Trim().Length > 0) RepositoriesInterface.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             RepositoriesInterface.AppendLine();
-            RepositoriesInterface.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES}");
+            RepositoriesInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES}");
             RepositoriesInterface.AppendLine("{");
             RepositoriesInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             RepositoriesInterface.AppendLine("\t{");
@@ -1354,7 +1359,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", claves.Select(c => c.ColumnName));
             string columnasClaveTipo = string.Join(", ", claves.Select(c => capas.Tipo(c) + " " + c.ColumnName));
 
@@ -1365,10 +1370,10 @@ namespace Capibara
             Service.AppendLine("using SistemaMunicipalGeneral;");
             Service.AppendLine("using System.Linq;");
             Service.AppendLine("using System.Web;");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
-            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ Capas.REPOSITORIES };");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ origen };");
+            if (espacioDeNombres.Trim().Length > 0) Service.AppendLine($"using { espacioDeNombres }.{ Capas.REPOSITORIES };");
             Service.AppendLine();
-            Service.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE}");
+            Service.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
             Service.AppendLine("{");
             Service.AppendLine($"\tpublic class { nombreDeClase + Capas.SERVICE } : { nombreDeClase + Capas.SERVICE_INTERFACE}");
             Service.AppendLine("\t{");
@@ -1429,20 +1434,41 @@ namespace Capibara
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
 
+                Dictionary<string, string> camposBaja = new Dictionary<string, string>();
                 if (DGVbaja.Rows.Count == 0)
                 {
-                    Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = System.DateTime.Now;");
-                    Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = Config.UsuarioMagic;");
-                    Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
-                    Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
+                    camposBaja.Add("FechaBaja", "\t\t\t\tsolicitado.FechaBaja = System.DateTime.Now;");
+                    camposBaja.Add("UsuarioBaja", "\t\t\t\tsolicitado.UsuarioBaja = Config.UsuarioMagic;");
+                    camposBaja.Add("CodigoBaja", "\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
+                    camposBaja.Add("MotivoBaja", "\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = System.DateTime.Now;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = Config.UsuarioMagic;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVbaja.Rows)
                     {
-                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+                        camposBaja.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
+
+                bool existeCoincidencia = false;
+                foreach (DataColumn columna in columnas)
+                {
+                    if (camposBaja.ContainsKey(columna.ColumnName))
+                    {
+                        Service.AppendLine(camposBaja[columna.ColumnName]);
+                        existeCoincidencia = true;
+                    }
+                }
+                if (!existeCoincidencia)
+                {
+                    Service.AppendLine("\t\t\t\t// SIN COINCIDENCIAS PARA ASIGNAR");
+                }
+
                 Service.AppendLine("\t\t\t}");
                 Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.baja{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
@@ -1461,18 +1487,38 @@ namespace Capibara
                 Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasBusqueda });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
+                Dictionary<string, string> camposModificacion = new Dictionary<string, string>();
+
                 if (DGVmodificacion.Rows.Count == 0)
                 {
-                    Service.AppendLine("\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
-                    Service.AppendLine("\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
+                    camposModificacion.Add("FechaModificacion", "\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
+                    camposModificacion.Add("UsuarioModificacion", "\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVmodificacion.Rows)
                     {
-                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+                        camposModificacion.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+
+                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
+                bool existeCoincidencia = false;
+                foreach (DataColumn columna in columnas)
+                {
+                    if (camposModificacion.ContainsKey(columna.ColumnName))
+                    {
+                        Service.AppendLine(camposModificacion[columna.ColumnName]);
+                        existeCoincidencia = true;
+                    }
+                }
+                if (!existeCoincidencia)
+                {
+                    Service.AppendLine("\t\t\t\t// SIN COINCIDENCIAS PARA ASIGNAR");
+                }
+
                 Service.AppendLine("\t\t\t}");
                 Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.modificacion{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
@@ -1550,20 +1596,43 @@ namespace Capibara
                 Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
+                Dictionary<string, string> camposRecuperacion = new Dictionary<string, string>();
+
                 if (DGVrecuperacion.Rows.Count == 0)
                 {
-                    Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = new DateTime(1900, 1, 1);");
-                    Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = string.Empty;");
-                    Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = 0;");
-                    Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
+                    camposRecuperacion.Add("FechaBaja", "\t\t\t\tsolicitado.FechaBaja = new DateTime(1900, 1, 1);");
+                    camposRecuperacion.Add("UsuarioBaja", "\t\t\t\tsolicitado.UsuarioBaja = string.Empty;");
+                    camposRecuperacion.Add("CodigoBaja", "\t\t\t\tsolicitado.CodigoBaja = 0;");
+                    camposRecuperacion.Add("MotivoBaja", "\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
+
+                    //Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = new DateTime(1900, 1, 1);");
+                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = string.Empty;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = 0;");
+                    //Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVrecuperacion.Rows)
                     {
-                        Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+                        camposRecuperacion.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
+
+                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
+                bool existeCoincidencia = false;
+                foreach (DataColumn columna in columnas)
+                {
+                    if (camposRecuperacion.ContainsKey(columna.ColumnName))
+                    {
+                        Service.AppendLine(camposRecuperacion[columna.ColumnName]);
+                        existeCoincidencia = true;
+                    }
+                }
+                if (!existeCoincidencia)
+                {
+                    Service.AppendLine("\t\t\t\t// SIN COINCIDENCIAS PARA ASIGNAR");
+                }
+
                 Service.AppendLine("\t\t\t}");
                 Service.AppendLine($"\t\t\t(string, bool) respuesta = _repositories.recuperar{ nombreDeClase }(solicitado);");
                 Service.AppendLine();
@@ -1608,7 +1677,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder ServiceInterface = new StringBuilder();
@@ -1617,9 +1686,9 @@ namespace Capibara
             ServiceInterface.AppendLine("using System.Collections.Generic;");
             ServiceInterface.AppendLine("using System.Data.Odbc;");
             ServiceInterface.AppendLine("using SistemaMunicipalGeneral.Controles;");
-            if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine($"using { espacioDeNombres }.{nombreDeClase}.{ origen };");
+            if (espacioDeNombres.Trim().Length > 0) ServiceInterface.AppendLine($"using { espacioDeNombres }.{ origen };");
             ServiceInterface.AppendLine();
-            ServiceInterface.AppendLine($"namespace { espacioDeNombres }.{nombreDeClase}.{ Capas.SERVICE}");
+            ServiceInterface.AppendLine($"namespace { espacioDeNombres }.{ Capas.SERVICE}");
             ServiceInterface.AppendLine("{");
             ServiceInterface.AppendLine($"\tpublic interface { nombreDeClase + Capas.SERVICE_INTERFACE}");
             ServiceInterface.AppendLine("\t{");
@@ -1685,7 +1754,7 @@ namespace Capibara
         {
             StringBuilder Global = new StringBuilder();
 
-            string espacioDeNombres = TXTespacioDeNombres.Text;
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
 
             Global.AppendLine("***** AGREGAR USINGS *****");
             Global.AppendLine();
@@ -1771,14 +1840,17 @@ namespace Capibara
             WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
-                if (CHKinsertarEnProyecto.Checked && TXTnombreAmigable.Text.Trim().Length == 0) 
+                if (TXTnombreAmigable.Text.Trim().Length == 0) 
                 {
                     CustomMessageBox.Show("Indique un 'nombre amigable' para la carpeta en el proyecto!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
                 else
                 {
-                    generarDesdeConsulta = false;
-                    GuardarConfiguracion();
+                    if (ComprobarClaves())
+                    {
+                        generarDesdeConsulta = false;
+                        GuardarConfiguracion(); 
+                    }
                 }
             }
             else
@@ -1794,7 +1866,7 @@ namespace Capibara
             WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
-                if (CHKinsertarEnProyecto.Checked && TXTnombreAmigable.Text.Trim().Length == 0)
+                if (TXTnombreAmigable.Text.Trim().Length == 0)
                 {
                     CustomMessageBox.Show("Indique un 'nombre amigable' para la carpeta en el proyecto!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
@@ -2288,7 +2360,8 @@ namespace Capibara
 
             foreach (DataRow row in schema.Rows)
             {
-                var nombre = row["ColumnName"].ToString().ToUpper();
+                //var nombre = row["ColumnName"].ToString().ToUpper();
+                var nombre = row["ColumnName"].ToString();
                 var dataType = (Type)row["DataType"];
                 var longitud = row["NumericPrecision"] != DBNull.Value ? Convert.ToInt32(row["NumericPrecision"]) : 0;
                 var escala = row["NumericScale"] != DBNull.Value ? Convert.ToInt32(row["NumericScale"]) : 0;
@@ -2315,7 +2388,8 @@ namespace Capibara
 
         private void CargarListViewDesdeReader(IDataReader reader)
         {
-            var nombre = reader["Nombre"].ToString().ToUpper();
+            //var nombre = reader["Nombre"].ToString().ToUpper();
+            var nombre = reader["Nombre"].ToString();
             var tipo = reader["Tipo"].ToString().ToUpper();
             var longitud = reader["Longitud"].ToString();
             var escala = reader["Escala"].ToString();
@@ -2415,6 +2489,18 @@ namespace Capibara
             {
                 BTNgenerarDesdeTabla.Enabled = true;
             }
+        }
+
+        private bool ComprobarClaves()
+        {
+            bool resultado = LSVcampos.CheckedItems.Count > 0;
+
+            if (!resultado)
+            {
+                CustomMessageBox.Show("La tabla seleccionada debe contener una clave. \n\nAgréguela en su motor de base datos o seleccione al menos el checkbox de uno de sus campos en la lista.", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+
+            return resultado;
         }
 
         private void RDBsql_CheckedChanged(object sender, EventArgs e)
@@ -3139,11 +3225,10 @@ namespace Capibara
 
                 if (existe == null)
                 {
-                    if (!pathCompleto.EndsWith(parte))
+                    //if (!pathCompleto.EndsWith(parte))
                     {
                         existe = nodoActual.Nodes.Add(parte);
-                        //existe.ImageKey = existe.SelectedImageKey = pathCompleto.EndsWith(parte) ? "file" : "fclose";
-                        existe.ImageKey = existe.SelectedImageKey = FOLDER_CLOSE;
+                        existe.ImageKey = existe.SelectedImageKey = pathCompleto.EndsWith(parte) ? FILE : FOLDER_CLOSE;
                         existe.Tag = pathCompleto.Substring(0, pathCompleto.IndexOf(parte) + parte.Length);
                     }
                 }
@@ -3157,10 +3242,10 @@ namespace Capibara
             if (CHKinsertarEnProyecto.Checked)
             {
                 desplegarCombo = false;
-                if (TRVsolucion.SelectedNode == null || TRVsolucion.SelectedNode.Tag == null)
+                if (string.IsNullOrEmpty(carpetaSeleccionada))
                     return;
 
-                string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
+                //string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
                 string nuevaCarpeta = $@"{Path.Combine(carpetaSeleccionada, Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
@@ -3281,8 +3366,9 @@ namespace Capibara
             {
                 idx--;
             }
-            string usingRepositories = $"using {TXTespacioDeNombres.Text.Trim()}.{capas.TABLA}.Repositories;";
-            string usingService = $"using {TXTespacioDeNombres.Text.Trim()}.{capas.TABLA}.Service;";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string usingRepositories = $"using {espacioDeNombres}.Repositories;";
+            string usingService = $"using {espacioDeNombres}.Service;";
 
             if (!lineas.Any(l => l.Contains(usingRepositories)))
             {
@@ -3335,7 +3421,9 @@ namespace Capibara
         {
             if (e.Node.Tag != null)
             {
-                string carpetaSeleccionada = e.Node.Tag.ToString();
+                carpetaSeleccionada = e.Node.Tag.ToString();
+
+                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {e.Node.Text}\nORIGEN DE DATOS SQL:\n   {OrigenDeDatoSql}";
             }
         }
 
@@ -3377,6 +3465,18 @@ namespace Capibara
 
             e.Node.Tag = nuevaRuta;
             TRVsolucion.LabelEdit = false;
+        }
+
+        private void TSMorigenDeDatosSQL_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (TRVsolucion.SelectedNode == null) return;
+                OrigenDeDatoSql = Utilidades.ObtenerClaseYEntidad(TRVsolucion.SelectedNode.Tag.ToString());
+
+                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {TRVsolucion.SelectedNode.Text}\nORIGEN DE DATOS SQL:\n   {OrigenDeDatoSql}";
+            }
+            catch { }
         }
     }
 }

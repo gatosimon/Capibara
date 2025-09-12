@@ -22,7 +22,7 @@ namespace Capibara
             {typeof(double),    "double"},
             {typeof(Guid),      "Guid"},
             {typeof(int),       "int"},			//                                                                      Int32
-            {typeof(Int16),     "int" },        // "short"}, GONZA PIDIO ESTO SI REVIENTA OTRA VEZ ES ES SU CULPA		Int16s
+            {typeof(Int16),     "short" },        // "short"}, GONZA PIDIO ESTO SI REVIENTA OTRA VEZ ES ES SU CULPA		Int16s
             {typeof(Int64),     "long"},		//                                                                      Int64
             {typeof(Object),    ERROR},
             {typeof(SByte),     "double"},
@@ -128,7 +128,7 @@ namespace Capibara
 
         public Dictionary<string, string> CamposABM = new Dictionary<string, string>
         {
-            { "FECHA ACTUAL", "System.DateTime.Now;"},
+            { "FECHA ACTUAL", "DateTime.Now;"},
             { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
             { "USUARIO MAGIC",  "Config.UsuarioMagic;" },
             { "CÓDIGO BAJA",  "codigoBaja;" },

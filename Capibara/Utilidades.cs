@@ -124,6 +124,47 @@ namespace Capibara
 
             return resultado.ToString();
         }
+        public static bool EsCarpeta(string path)
+        {
+            FileAttributes attr = File.GetAttributes(path);
+            return (attr & FileAttributes.Directory) == FileAttributes.Directory;
+        }
+        public static string ObtenerClaseYEntidad(string rutaArchivo)
+        {
+            if (!File.Exists(rutaArchivo))
+                throw new FileNotFoundException("No se encontró el archivo especificado", rutaArchivo);
+
+            string nombreClase = null;
+            string nombrePropiedad = null;
+
+            foreach (var linea in File.ReadLines(rutaArchivo))
+            {
+                string lineaTrim = linea.Trim();
+
+                // Buscar clase
+                if (nombreClase == null && lineaTrim.StartsWith("public static class"))
+                {
+                    var partes = lineaTrim.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    nombreClase = partes.Last(); // último token es el nombre de la clase
+                    continue;
+                }
+
+                // Buscar propiedad
+                if (nombrePropiedad == null && lineaTrim.StartsWith("public static"))
+                {
+                    var partes = lineaTrim.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    // ejemplo: public static apremiosEntities ApremiosEntidades
+                    // el penúltimo token es el tipo, el último token es el nombre de la propiedad
+                    nombrePropiedad = partes[partes.Length - 1];
+                    continue;
+                }
+            }
+
+            if (nombreClase != null && nombrePropiedad != null)
+                return nombreClase + "." + nombrePropiedad;
+
+            return null;
+        }
 
         public static void IniciarDeteccionDispositivos(FRMcapibara form)
         {
