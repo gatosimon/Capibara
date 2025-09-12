@@ -83,7 +83,6 @@ namespace Capibara
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
             this.BTNobtenerEstructura = new System.Windows.Forms.Button();
             this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
-            this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
             this.CMScapibarar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,6 +113,7 @@ namespace Capibara
             this.LBLclasesGeneradas = new System.Windows.Forms.Label();
             this.TXTclase = new System.Windows.Forms.TextBox();
             this.TTPusarTryOrIf = new System.Windows.Forms.ToolTip(this.components);
+            this.BTNgenerarDesdeTabla = new Capibara.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -415,8 +415,10 @@ namespace Capibara
             this.IMLfolders.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IMLfolders.ImageStream")));
             this.IMLfolders.TransparentColor = System.Drawing.Color.Transparent;
             this.IMLfolders.Images.SetKeyName(0, "solution");
-            this.IMLfolders.Images.SetKeyName(1, "fclose");
-            this.IMLfolders.Images.SetKeyName(2, "fopen");
+            this.IMLfolders.Images.SetKeyName(1, "proyect");
+            this.IMLfolders.Images.SetKeyName(2, "fclose");
+            this.IMLfolders.Images.SetKeyName(3, "fopen");
+            this.IMLfolders.Images.SetKeyName(4, "file");
             // 
             // SPCback1
             // 
@@ -780,21 +782,6 @@ namespace Capibara
             this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(921, 187);
             this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
             // 
-            // BTNgenerarDesdeTabla
-            // 
-            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
-            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
-            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
-            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
-            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
-            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
-            this.BTNgenerarDesdeTabla.TabIndex = 14;
-            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
-            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
-            // 
             // CMScapibarar
             // 
             this.CMScapibarar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1143,6 +1130,21 @@ namespace Capibara
             // 
             this.TTPusarTryOrIf.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.TTPusarTryOrIf.ToolTipTitle = "Información";
+            // 
+            // BTNgenerarDesdeTabla
+            // 
+            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
+            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
+            this.BTNgenerarDesdeTabla.TabIndex = 14;
+            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
+            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
             // FRMcapibara
             // 
