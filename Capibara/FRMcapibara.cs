@@ -26,8 +26,8 @@ namespace Capibara
         private const string FILE = "file";
 
         public string PathCapas { get { return TXTpathCapas.Text; } }
+        private string CarpetaDestino = string.Empty;
         private string OrigenDeDatoSql = string.Empty;
-        private string carpetaSeleccionada = string.Empty;
         private string pathProyecto = string.Empty;
         private string pathGlobalAsax = string.Empty;
         private bool generarDesdeConsulta = false;
@@ -95,6 +95,10 @@ namespace Capibara
             configuracion = Configuracion.Cargar();
             RDBsql.Checked = configuracion.SQL;
             TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
+            TXTnombreAmigable.Text = configuracion.NombreAmigable;
+            CarpetaDestino = configuracion.CarpetaDestino;
+            OrigenDeDatoSql = configuracion.OrigenDeDatosMsSQL;
+            ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
             TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
             OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Path.GetDirectoryName(configuracion.PathSolucion) : string.Empty;
             OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
@@ -105,43 +109,51 @@ namespace Capibara
             {
                 int indiceFila = DGValta.Rows.Add();
                 DGValta.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
-                DGValta.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
+                DGValta.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
             }
 
             foreach (string[] item in configuracion.camposBaja)
             {
                 int indiceFila = DGVbaja.Rows.Add();
                 DGVbaja.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
-                DGVbaja.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
+                DGVbaja.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
             }
 
             foreach (string[] item in configuracion.camposModificacion)
             {
                 int indiceFila = DGVmodificacion.Rows.Add();
                 DGVmodificacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
-                DGVmodificacion.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
+                DGVmodificacion.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
             }
 
             foreach (string[] item in configuracion.camposRecuperacion)
             {
                 int indiceFila = DGVrecuperacion.Rows.Add();
                 DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                 ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
                 ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
-                DGVrecuperacion.Rows[indiceFila].Cells[1].Value = capas.CamposABM[item[1]];
+                DGVrecuperacion.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
             }
 
             CargarComboyTreeView();
+        }
+
+        private void ActualizarLabelSeleccionTRV(string carpeta, string origenDatos)
+        {
+            if (RDBsql.Checked)
+            {
+                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}\nORIGEN DE DATOS SQL:\n   {origenDatos}";
+            }
         }
 
         private void GuardarConfiguracion()
@@ -158,6 +170,9 @@ namespace Capibara
                 configuracion.Tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
                 configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
+                configuracion.NombreAmigable = TXTnombreAmigable.Text;
+                configuracion.CarpetaDestino = CarpetaDestino;
+                configuracion.OrigenDeDatosMsSQL = OrigenDeDatoSql;
                 configuracion.RutaPorDefectoResultados = TXTpathCapas.Text;
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
                 configuracion.MostrarOverlayEnInicio = CHKmostrarOverlayEnIicio.Checked;
@@ -482,7 +497,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string camposFromUri = string.Join(", ", (from c in claves select "[FromUri] " + capas.Tipo(c) + " " + c.ColumnName).ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
@@ -494,14 +509,14 @@ namespace Capibara
             Controller.AppendLine("using System.Threading.Tasks;");
             Controller.AppendLine("using System.Web.Http;");
             Controller.AppendLine("using System.Web.Http.Cors;");
-            //if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ origen };");
             Controller.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Controller.AppendLine($"using { espacioDeNombres }.{ Capas.DTO };");
             if (espacioDeNombres.Trim().Length > 0) Controller.AppendLine($"using { espacioDeNombres }.{ Capas.SERVICE };");
             Controller.AppendLine();
             Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
-            Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
+            //Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
+            Controller.AppendLine($"\t[RoutePrefix(\"{ Utilidades.FormatearCadena(TXTnombreAmigable.Text).ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
             Controller.AppendLine();
             Controller.AppendLine($"\tpublic class { nombreDeClase + Capas.CONTROLLER } : ApiController");
@@ -655,7 +670,7 @@ namespace Capibara
         private string ArmarDto(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Dto = new StringBuilder();
             StringBuilder newDto = new StringBuilder();
@@ -736,7 +751,7 @@ namespace Capibara
         private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Modelo = new StringBuilder();
 
@@ -822,13 +837,13 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
             List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
             string[] partes = espacioDeNombres.Trim().Length > 0 ? espacioDeNombres.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries) : new string[] { };
             string espacio = partes.Length > 0 ? partes[partes.Length - 1] : string.Empty;
-            if (OrigenDeDatoSql.Trim().Length == 0) OrigenDeDatoSql = $"BaseDeDatos{ espacio }.{ espacio }Entidades";
+            if (OrigenDeDatoSql.Trim().Length == 0 || !CHKinsertarEnProyecto.Checked) OrigenDeDatoSql = $"BaseDeDatos{ espacio }.{ espacio }Entidades";
             StringBuilder Repositories = new StringBuilder();
 
             Repositories.AppendLine("using System;");
@@ -836,6 +851,7 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
+            if(!DB2)Repositories.AppendLine("using System.Text;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");    
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Repositories.AppendLine();
@@ -896,7 +912,22 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.Entry({ nombreClasePrimeraMinuscula }).State = EntityState.Added;");
                     Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
-                    Repositories.AppendLine($"\t\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
+                    Repositories.AppendLine($"\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
+                    Repositories.AppendLine("\t\t\t}");
+                    Repositories.AppendLine("\t\t\tcatch (System.Data.Entity.Validation.DbEntityValidationException ex)");
+                    Repositories.AppendLine("\t\t\t{");
+                    Repositories.AppendLine("\t\t\t\tStringBuilder entityValidationException = new StringBuilder();");
+                    Repositories.AppendLine($"\t\t\t\tentityValidationException.AppendLine($\"{{(ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)}}\");");
+                    Repositories.AppendLine("\t\t\t\tforeach (var eve in ex.EntityValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\tentityValidationException.AppendLine($\"Entidad: {{eve.Entry.Entity.GetType().Name}}, Estado: {{eve.Entry.State}}\");");
+                    Repositories.AppendLine();
+                    Repositories.AppendLine("\t\t\t\t\tforeach (var ve in eve.ValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\t\tentityValidationException.AppendLine($\" - Propiedad: {{ve.PropertyName}}, Error: {{ve.ErrorMessage}}\");");
+                    Repositories.AppendLine("\t\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\treturn (entityValidationException.ToString(), false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -975,6 +1006,22 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
+                    Repositories.AppendLine("\t\t\tcatch (System.Data.Entity.Validation.DbEntityValidationException ex)");
+                    Repositories.AppendLine("\t\t\t{");
+                    Repositories.AppendLine("\t\t\t\tStringBuilder entityValidationException = new StringBuilder();");
+                    Repositories.AppendLine($"\t\t\t\tentityValidationException.AppendLine($\"{{(ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)}}\");");
+                    Repositories.AppendLine("\t\t\t\tforeach (var eve in ex.EntityValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\tentityValidationException.AppendLine($\"Entidad: {{eve.Entry.Entity.GetType().Name}}, Estado: {{eve.Entry.State}}\");");
+                    Repositories.AppendLine();
+                    Repositories.AppendLine("\t\t\t\t\tforeach (var ve in eve.ValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\t\tentityValidationException.AppendLine($\" - Propiedad: {{ve.PropertyName}}, Error: {{ve.ErrorMessage}}\");");
+                    Repositories.AppendLine("\t\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\treturn (entityValidationException.ToString(), false);");
+                    Repositories.AppendLine("\t\t\t}");
+
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
@@ -1054,6 +1101,21 @@ namespace Capibara
                     Repositories.AppendLine($"\t\t\t\t{OrigenDeDatoSql}.SaveChanges();");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
+                    Repositories.AppendLine("\t\t\t}");
+                    Repositories.AppendLine("\t\t\tcatch (System.Data.Entity.Validation.DbEntityValidationException ex)");
+                    Repositories.AppendLine("\t\t\t{");
+                    Repositories.AppendLine("\t\t\t\tStringBuilder entityValidationException = new StringBuilder();");
+                    Repositories.AppendLine($"\t\t\t\tentityValidationException.AppendLine($\"{{(ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)}}\");");
+                    Repositories.AppendLine("\t\t\t\tforeach (var eve in ex.EntityValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\tentityValidationException.AppendLine($\"Entidad: {{eve.Entry.Entity.GetType().Name}}, Estado: {{eve.Entry.State}}\");");
+                    Repositories.AppendLine();
+                    Repositories.AppendLine("\t\t\t\t\tforeach (var ve in eve.ValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\t\tentityValidationException.AppendLine($\" - Propiedad: {{ve.PropertyName}}, Error: {{ve.ErrorMessage}}\");");
+                    Repositories.AppendLine("\t\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\treturn (entityValidationException.ToString(), false);");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1234,6 +1296,21 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
                     Repositories.AppendLine("\t\t\t}");
+                    Repositories.AppendLine("\t\t\tcatch (System.Data.Entity.Validation.DbEntityValidationException ex)");
+                    Repositories.AppendLine("\t\t\t{");
+                    Repositories.AppendLine("\t\t\t\tStringBuilder entityValidationException = new StringBuilder();");
+                    Repositories.AppendLine($"\t\t\t\tentityValidationException.AppendLine($\"{{(ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message)}}\");");
+                    Repositories.AppendLine("\t\t\t\tforeach (var eve in ex.EntityValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\tentityValidationException.AppendLine($\"Entidad: {{eve.Entry.Entity.GetType().Name}}, Estado: {{eve.Entry.State}}\");");
+                    Repositories.AppendLine();
+                    Repositories.AppendLine("\t\t\t\t\tforeach (var ve in eve.ValidationErrors)");
+                    Repositories.AppendLine("\t\t\t\t\t{");
+                    Repositories.AppendLine($"\t\t\t\t\t\tentityValidationException.AppendLine($\" - Propiedad: {{ve.PropertyName}}, Error: {{ve.ErrorMessage}}\");");
+                    Repositories.AppendLine("\t\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\t}");
+                    Repositories.AppendLine("\t\t\t\treturn (entityValidationException.ToString(), false);");
+                    Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
                     Repositories.AppendLine("\t\t\t\treturn (ex.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, false);");
@@ -1279,7 +1356,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder RepositoriesInterface = new StringBuilder();
@@ -1359,7 +1436,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", claves.Select(c => c.ColumnName));
             string columnasClaveTipo = string.Join(", ", claves.Select(c => capas.Tipo(c) + " " + c.ColumnName));
 
@@ -1403,6 +1480,50 @@ namespace Capibara
                     }
                 }
 
+                if (DGVmodificacion.Rows.Count > 0)
+                {
+                    foreach (DataGridViewRow item in DGVmodificacion.Rows)
+                    {
+                        switch (item.Cells[1].FormattedValue.ToString())
+                        {
+                            case "FECHA ACTUAL":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
+                                break;
+                            case "USUARIO MAGIC":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["CADENA VACÍA"].Replace(";", string.Empty) },");
+                                break;
+                            case "HORA ACTUAL":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["HORA POR DEFECTO"].Replace(";", string.Empty) },");
+                                break;
+                            default:
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { item.Cells[1].Value.ToString().Replace(";", string.Empty) },");
+                                break;
+                        }
+                    }
+                }
+
+                if (DGVbaja.Rows.Count > 0)
+                {
+                    foreach (DataGridViewRow item in DGVbaja.Rows)
+                    {
+                        switch (item.Cells[1].FormattedValue.ToString())
+                        {
+                            case "FECHA ACTUAL":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
+                                break;
+                            case "USUARIO MAGIC":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["CADENA VACÍA"].Replace(";", string.Empty) },");
+                                break;
+                            case "HORA ACTUAL":
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["HORA POR DEFECTO"].Replace(";", string.Empty) },");
+                                break;
+                            default:
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { item.Cells[1].Value.ToString().Replace(";", string.Empty) },");
+                                break;
+                        }
+                    }
+                }
+
                 int i = 0;
                 foreach (DataColumn columna in columnas)
                 {
@@ -1441,17 +1562,12 @@ namespace Capibara
                     camposBaja.Add("UsuarioBaja", "\t\t\t\tsolicitado.UsuarioBaja = Config.UsuarioMagic;");
                     camposBaja.Add("CodigoBaja", "\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
                     camposBaja.Add("MotivoBaja", "\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = System.DateTime.Now;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = Config.UsuarioMagic;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = codigoBaja;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = motivoBaja;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVbaja.Rows)
                     {
                         camposBaja.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
-                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
 
@@ -1677,7 +1793,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder ServiceInterface = new StringBuilder();
@@ -1754,7 +1870,7 @@ namespace Capibara
         {
             StringBuilder Global = new StringBuilder();
 
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             Global.AppendLine("***** AGREGAR USINGS *****");
             Global.AppendLine();
@@ -2894,7 +3010,7 @@ namespace Capibara
                     {
                         int indiceFila = DGValta.Rows.Add();
                         DGValta.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
                         PredecirValor(item, DGValta.Rows[indiceFila].Cells[1], true);
@@ -2911,7 +3027,7 @@ namespace Capibara
                     {
                         int indiceFila = DGVbaja.Rows.Add();
                         DGVbaja.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
                         PredecirValor(item, DGVbaja.Rows[indiceFila].Cells[1], true);
@@ -2928,7 +3044,7 @@ namespace Capibara
                     {
                         int indiceFila = DGVmodificacion.Rows.Add();
                         DGVmodificacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
                         PredecirValor(item, DGVmodificacion.Rows[indiceFila].Cells[1], true);
@@ -2945,7 +3061,7 @@ namespace Capibara
                     {
                         int indiceFila = DGVrecuperacion.Rows.Add();
                         DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(capas.CamposABM, null);
+                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
                         ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
                         PredecirValor(item, DGVrecuperacion.Rows[indiceFila].Cells[1], false);
@@ -2960,23 +3076,23 @@ namespace Capibara
 
             if (campo.StartsWith("FECHA") || campo.StartsWith("FECH") || campo.StartsWith("FEC") || campo.StartsWith("FE") || campo.StartsWith("F"))
             {
-                celda.Value = capas.CamposABM[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
+                celda.Value = Capas.CamposABM[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
             }
             if (campo.StartsWith("USUARIO") || campo.StartsWith("USU") || campo.StartsWith("USER") || campo.StartsWith("USR") || campo.StartsWith("US") || campo.StartsWith("U"))
             {
-                celda.Value = capas.CamposABM[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposABM[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
             }
             if (campo.StartsWith("HORA") || campo.StartsWith("HOR") || campo.StartsWith("HO") || campo.StartsWith("H"))
             {
-                celda.Value = capas.CamposABM[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
+                celda.Value = Capas.CamposABM[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
             }
             if (campo.StartsWith("CODIGO") || campo.StartsWith("CODIG") || campo.StartsWith("CODI") || campo.StartsWith("COD") || campo.StartsWith("CO") || campo.StartsWith("C"))
             {
-                celda.Value = capas.CamposABM[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
+                celda.Value = Capas.CamposABM[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
             }
             if (campo.StartsWith("MOTIVO") || campo.StartsWith("MOTIV") || campo.StartsWith("MOTI") || campo.StartsWith("MOT") || campo.StartsWith("MO") || campo.StartsWith("M"))
             {
-                celda.Value = capas.CamposABM[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposABM[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
             }
         }
 
@@ -3131,6 +3247,7 @@ namespace Capibara
                 if (OFDlistarDeSolucion.FileName.Length > 0)
                 {
                     TRVsolucion.Show();
+                    LBLseleccionesTRV.Show();
                     WaitCursor();
                     TRVsolucion.Nodes.Clear();
                     TRVsolucion.Refresh();
@@ -3148,6 +3265,7 @@ namespace Capibara
             else
             {
                 TRVsolucion.Hide();
+                LBLseleccionesTRV.Hide();
             }
         }
 
@@ -3242,11 +3360,11 @@ namespace Capibara
             if (CHKinsertarEnProyecto.Checked)
             {
                 desplegarCombo = false;
-                if (string.IsNullOrEmpty(carpetaSeleccionada))
+                if (string.IsNullOrEmpty(CarpetaDestino))
                     return;
 
                 //string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
-                string nuevaCarpeta = $@"{Path.Combine(carpetaSeleccionada, Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text))} ({capas.TABLA})";
+                string nuevaCarpeta = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
                 CopiarDirectorio(capas.pathCarpetaClase, nuevaCarpeta, true);
@@ -3366,7 +3484,7 @@ namespace Capibara
             {
                 idx--;
             }
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.LimpiarYPascalCase(TXTnombreAmigable.Text)}";
+            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string usingRepositories = $"using {espacioDeNombres}.Repositories;";
             string usingService = $"using {espacioDeNombres}.Service;";
 
@@ -3421,9 +3539,9 @@ namespace Capibara
         {
             if (e.Node.Tag != null)
             {
-                carpetaSeleccionada = e.Node.Tag.ToString();
+                CarpetaDestino = e.Node.Tag.ToString();
 
-                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {e.Node.Text}\nORIGEN DE DATOS SQL:\n   {OrigenDeDatoSql}";
+                ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
             }
         }
 
@@ -3472,9 +3590,10 @@ namespace Capibara
             try
             {
                 if (TRVsolucion.SelectedNode == null) return;
+                CarpetaDestino = TRVsolucion.SelectedNode.Tag.ToString();
                 OrigenDeDatoSql = Utilidades.ObtenerClaseYEntidad(TRVsolucion.SelectedNode.Tag.ToString());
 
-                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {TRVsolucion.SelectedNode.Text}\nORIGEN DE DATOS SQL:\n   {OrigenDeDatoSql}";
+                ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
             }
             catch { }
         }

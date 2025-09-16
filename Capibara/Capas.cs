@@ -126,7 +126,7 @@ namespace Capibara
             {typeof(ulong),     "number = 0;"}
         };
 
-        public Dictionary<string, string> CamposABM = new Dictionary<string, string>
+        static public Dictionary<string, string> CamposABM = new Dictionary<string, string>
         {
             { "FECHA ACTUAL", "DateTime.Now;"},
             { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
