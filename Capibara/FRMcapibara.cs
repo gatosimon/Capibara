@@ -173,6 +173,10 @@ namespace Capibara
             {
                 LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}\nORIGEN DE DATOS SQL:\n   {origenDatos}";
             }
+            else
+            {
+                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}";
+            }
         }
 
         private void GuardarConfiguracion()
@@ -203,8 +207,9 @@ namespace Capibara
 
                 configuracion.Guardar();
             }
-            catch (Exception)
+            catch (Exception err)
             {
+                CustomMessageBox.Show("Ocurrió un error inesperado", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -482,6 +487,7 @@ namespace Capibara
         }
 
         #region ARMADO DE CAPAS
+
         private string ArmarControllers(List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
@@ -3420,6 +3426,8 @@ namespace Capibara
             }
         }
 
+        TfsHelper tfs = null;
+
         private void CapibararProyecto()
         {
             if (CHKinsertarEnProyecto.Checked)
@@ -3429,13 +3437,14 @@ namespace Capibara
                     return;
 
                 //string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
-                string nuevaCarpeta = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
+                string carpetaCapas = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
-                CopiarDirectorio(capas.pathCarpetaClase, nuevaCarpeta, true);
+                tfs = new TfsHelper(Path.Combine(Path.GetDirectoryName(OFDlistarDeSolucion.FileName), pathProyecto));
+                CopiarDirectorio(capas.pathCarpetaClase, carpetaCapas);
 
                 // Agregar al proyecto
-                AgregarArchivosACsproj(nuevaCarpeta);
+                AgregarArchivosACsproj(carpetaCapas);
 
                 // Modificar Global.asax
                 ActualizarGlobalAsax();
@@ -3449,7 +3458,10 @@ namespace Capibara
         {
             // Crear el destino si no existe
             if (!Directory.Exists(directorioDestino))
+            {
                 Directory.CreateDirectory(directorioDestino);
+                tfs.AddIfNotInTfs(directorioDestino);
+            }
 
             // Copiar todos los archivos
             foreach (string archivo in Directory.GetFiles(directorioFuente))
@@ -3457,6 +3469,7 @@ namespace Capibara
                 string nombreArchivo = Path.GetFileName(archivo);
                 string archivoDestino = Path.Combine(directorioDestino, nombreArchivo);
                 File.Copy(archivo, archivoDestino, sobreescribir);
+                tfs.AddIfNotInTfs(archivoDestino);
             }
 
             // Copiar recursivamente los subdirectorios

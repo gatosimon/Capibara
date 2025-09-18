@@ -93,7 +93,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoldComboBox.cs" />
+    <Compile Include="BoldComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Capas.cs" />
     <Compile Include="BaseDatos.cs" />
     <Compile Include="CustomMessageBox.cs">
@@ -116,6 +118,7 @@
     <Compile Include="SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TfsHelper.cs" />
     <Compile Include="Utilidades.cs" />
     <Compile Include="WaitOverlay.cs">
       <SubType>Form</SubType>
