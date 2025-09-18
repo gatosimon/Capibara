@@ -148,25 +148,28 @@ namespace Capibara
         public const string REPOSITORIES_INTERFACE = "RepositoriesInterface";
         public const string SERVICE = "Service";
         public const string SERVICE_INTERFACE = "ServiceInterface";
+        public const string TYPESCRIPT = "TypeScript";
         public const string MODELTABNAME = "MODELTABNAME";
 
         #endregion
 
         #region PATHS
 
-        public string pathControllers { get { return pathCarpetaClase + @"\Controllers\"; } }
-        public string pathClaseController { get { return pathControllers + TABLA + Capas.CONTROLLER + ".cs"; } }
-        public string pathDto { get { return pathCarpetaClase + @"\" + Capas.DTO + @"\"; } }
-        public string pathClaseDto { get { return pathDto + TABLA + Capas.DTO + ".cs"; } }
-        public string pathModel { get { return pathCarpetaClase + @"\" + Capas.MODEL + @"\"; } }
-        public string pathClaseModel { get { return pathModel + TABLA + Capas.MODEL + ".cs"; } }
-        public string pathRepositories { get { return pathCarpetaClase + @"\" + Capas.REPOSITORIES + @"\"; } }
-        public string pathClaseRepositories { get { return pathRepositories + TABLA + Capas.REPOSITORIES + ".cs"; } }
-        public string pathClaseRepositoriesInterface { get { return pathRepositories + TABLA + Capas.REPOSITORIES_INTERFACE + ".cs"; } }
-        public string pathService { get { return pathCarpetaClase + @"\" + Capas.SERVICE + @"\"; } }
-        public string pathClaseService { get { return pathService + TABLA + Capas.SERVICE + ".cs"; } }
-        public string pathClaseServiceInterface { get { return pathService + TABLA + Capas.SERVICE_INTERFACE + ".cs"; } }
-        public string pathGlobal { get { return formulario.PathCapas + @"\AGREGAR AL GLOBAL.txt"; } }
+        public string pathControllers { get { return $@"{pathCarpetaClase}\Controllers\"; } }
+        public string pathClaseController { get { return $@"{pathControllers}{TABLA}{Capas.CONTROLLER}.cs"; } }
+        public string pathDto { get { return $@"{pathCarpetaClase}\{Capas.DTO}\"; } }
+        public string pathClaseDto { get { return $@"{pathDto}{TABLA}{Capas.DTO}.cs"; } }
+        public string pathModel { get { return $@"{pathCarpetaClase}\{Capas.MODEL}\"; } }
+        public string pathClaseModel { get { return $@"{pathModel}{TABLA}{Capas.MODEL}.cs"; } }
+        public string pathRepositories { get { return $@"{pathCarpetaClase}\{Capas.REPOSITORIES}\"; } }
+        public string pathClaseRepositories { get { return $@"{pathRepositories}{TABLA}{Capas.REPOSITORIES}.cs"; } }
+        public string pathClaseRepositoriesInterface { get { return $@"{pathRepositories}{TABLA}{Capas.REPOSITORIES_INTERFACE}.cs"; } }
+        public string pathService { get { return $@"{pathCarpetaClase}\{Capas.SERVICE}\"; } }
+        public string pathClaseService { get { return $@"{pathService}{TABLA}{Capas.SERVICE}.cs"; } }
+        public string pathClaseServiceInterface { get { return $@"{pathService}{TABLA}{Capas.SERVICE_INTERFACE}.cs"; } }
+        public string pathGlobal { get { return $@"{formulario.PathCapas}\AGREGAR AL GLOBAL.txt"; } }
+        public string pathTypeScript { get { return $@"{pathCarpetaClase}\{Capas.TYPESCRIPT}\"; } }
+        public string pathClaseTypeScript { get { return $@"{pathTypeScript}{TABLA}.ts"; } }
         public string pathCarpetaClase { get { return $@"{formulario.PathCapas}\{TABLA}\"; } }
 
         #endregion

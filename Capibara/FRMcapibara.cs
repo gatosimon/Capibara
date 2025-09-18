@@ -490,6 +490,7 @@ namespace Capibara
             return resultado;
         }
 
+        #region ARMADO DE CAPAS
         private string ArmarControllers(List<DataColumn> claves)
         {
             bool DB2 = RDBdb2.Checked;
@@ -515,7 +516,6 @@ namespace Capibara
             Controller.AppendLine();
             Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
-            //Controller.AppendLine($"\t[RoutePrefix(\"{ nombreDeClase.ToLower() }\")]");
             Controller.AppendLine($"\t[RoutePrefix(\"{ Utilidades.FormatearCadena(TXTnombreAmigable.Text).ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
             Controller.AppendLine();
@@ -641,6 +641,18 @@ namespace Capibara
             Controller.AppendLine("\t}");
             Controller.AppendLine("}");
 
+            // Elimino cualquier versión anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseController))
+                {
+                    File.Delete(capas.pathClaseController);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKcontrollers.Checked)
             {
                 try
@@ -648,10 +660,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathControllers))
                     {
                         Directory.CreateDirectory(capas.pathControllers);
-                    }
-                    if (File.Exists(capas.pathClaseController))
-                    {
-                        File.Delete(capas.pathClaseController);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseController);
@@ -722,6 +730,18 @@ namespace Capibara
             Dto.AppendLine("\t}");
             Dto.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseDto))
+                {
+                    File.Delete(capas.pathClaseDto);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKdto.Checked)
             {
                 try
@@ -729,10 +749,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathDto))
                     {
                         Directory.CreateDirectory(capas.pathDto);
-                    }
-                    if (File.Exists(capas.pathClaseDto))
-                    {
-                        File.Delete(capas.pathClaseDto);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseDto);
@@ -804,6 +820,18 @@ namespace Capibara
             Modelo.AppendLine("}");
             Modelo.AppendLine("\r\n");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseModel))
+                {
+                    File.Delete(capas.pathClaseModel);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKmodel.Checked)
             {
                 try
@@ -811,10 +839,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathModel))
                     {
                         Directory.CreateDirectory(capas.pathModel);
-                    }
-                    if (File.Exists(capas.pathClaseModel))
-                    {
-                        File.Delete(capas.pathClaseModel);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseModel);
@@ -1323,6 +1347,18 @@ namespace Capibara
             Repositories.AppendLine("\t}");
             Repositories.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseRepositories))
+                {
+                    File.Delete(capas.pathClaseRepositories);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKrepositories.Checked)
             {
                 try
@@ -1330,10 +1366,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathRepositories))
                     {
                         Directory.CreateDirectory(capas.pathRepositories);
-                    }
-                    if (File.Exists(capas.pathClaseRepositories))
-                    {
-                        File.Delete(capas.pathClaseRepositories);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseRepositories);
@@ -1344,8 +1376,8 @@ namespace Capibara
                 catch (Exception)
                 {
                 }
-
             }
+
             return Repositories.ToString();
         }
 
@@ -1403,6 +1435,18 @@ namespace Capibara
             RepositoriesInterface.AppendLine("\t}");
             RepositoriesInterface.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseRepositoriesInterface))
+                {
+                    File.Delete(capas.pathClaseRepositoriesInterface);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKrepositories.Checked)
             {
                 try
@@ -1410,10 +1454,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathRepositories))
                     {
                         Directory.CreateDirectory(capas.pathRepositories);
-                    }
-                    if (File.Exists(capas.pathClaseRepositoriesInterface))
-                    {
-                        File.Delete(capas.pathClaseRepositoriesInterface);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseRepositoriesInterface);
@@ -1609,30 +1649,25 @@ namespace Capibara
                 {
                     camposModificacion.Add("FechaModificacion", "\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
                     camposModificacion.Add("UsuarioModificacion", "\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.FechaModificacion = System.DateTime.Now;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioModificacion = Config.UsuarioMagic;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVmodificacion.Rows)
                     {
                         camposModificacion.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
-
-                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
-                bool existeCoincidencia = false;
+
                 foreach (DataColumn columna in columnas)
                 {
                     if (camposModificacion.ContainsKey(columna.ColumnName))
                     {
                         Service.AppendLine(camposModificacion[columna.ColumnName]);
-                        existeCoincidencia = true;
                     }
-                }
-                if (!existeCoincidencia)
-                {
-                    Service.AppendLine("\t\t\t\t// SIN COINCIDENCIAS PARA ASIGNAR");
+                    else
+                    {
+                        Service.AppendLine($"\t\t\t\tsolicitado.{ columna.ColumnName } = { nombreClasePrimeraMinuscula }.{ columna.ColumnName };");
+                    }
                 }
 
                 Service.AppendLine("\t\t\t}");
@@ -1720,21 +1755,15 @@ namespace Capibara
                     camposRecuperacion.Add("UsuarioBaja", "\t\t\t\tsolicitado.UsuarioBaja = string.Empty;");
                     camposRecuperacion.Add("CodigoBaja", "\t\t\t\tsolicitado.CodigoBaja = 0;");
                     camposRecuperacion.Add("MotivoBaja", "\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
-
-                    //Service.AppendLine("\t\t\t\tsolicitado.FechaBaja = new DateTime(1900, 1, 1);");
-                    //Service.AppendLine("\t\t\t\tsolicitado.UsuarioBaja = string.Empty;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.CodigoBaja = 0;");
-                    //Service.AppendLine("\t\t\t\tsolicitado.MotivoBaja = string.Empty;");
                 }
                 else
                 {
                     foreach (DataGridViewRow item in DGVrecuperacion.Rows)
                     {
                         camposRecuperacion.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
-
-                        //Service.AppendLine($"\t\t\t\tsolicitado.{ item.Cells[0].FormattedValue } = { item.Cells[1].Value}");
                     }
                 }
+
                 bool existeCoincidencia = false;
                 foreach (DataColumn columna in columnas)
                 {
@@ -1760,6 +1789,18 @@ namespace Capibara
             Service.AppendLine("\t}");
             Service.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseService))
+                {
+                    File.Delete(capas.pathClaseService);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKservice.Checked)
             {
                 try
@@ -1767,10 +1808,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathService))
                     {
                         Directory.CreateDirectory(capas.pathService);
-                    }
-                    if (File.Exists(capas.pathClaseService))
-                    {
-                        File.Delete(capas.pathClaseService);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseService);
@@ -1840,6 +1877,18 @@ namespace Capibara
             ServiceInterface.AppendLine("\t}");
             ServiceInterface.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
+            try
+            {
+                if (File.Exists(capas.pathClaseServiceInterface))
+                {
+                    File.Delete(capas.pathClaseServiceInterface);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (CHKservice.Checked)
             {
                 try
@@ -1847,10 +1896,6 @@ namespace Capibara
                     if (!Directory.Exists(capas.pathService))
                     {
                         Directory.CreateDirectory(capas.pathService);
-                    }
-                    if (File.Exists(capas.pathClaseServiceInterface))
-                    {
-                        File.Delete(capas.pathClaseServiceInterface);
                     }
 
                     StreamWriter clase = new StreamWriter(capas.pathClaseServiceInterface);
@@ -1889,6 +1934,7 @@ namespace Capibara
             Global.AppendLine($"\t\t\t\t\t.As<{ capas.TABLA + Capas.SERVICE_INTERFACE }>()");
             Global.AppendLine($"\t\t\t\t\t.InstancePerRequest();");
 
+            // Elimino cualquier version anterior de la capa
             try
             {
                 if (File.Exists(capas.pathGlobal))
@@ -1924,6 +1970,7 @@ namespace Capibara
             }
             TypeSript.AppendLine("}");
 
+            // Elimino cualquier version anterior de la capa
             if (CHKtypeScript.Checked)
             {
                 try
@@ -1948,9 +1995,31 @@ namespace Capibara
                 {
                 }
             }
+
+            if (CHKtypeScript.Checked)
+            {
+                try
+                {
+                    string pathTypeScript = TXTpathCapas.Text + @"\" + capas.TABLA + @"\TypeScript\";
+                    string pathClaseTypeScript = pathTypeScript + capas.TABLA + ".ts";
+                    if (!Directory.Exists(pathTypeScript))
+                    {
+                        Directory.CreateDirectory(pathTypeScript);
+                    }
+
+                    StreamWriter clase = new StreamWriter(pathClaseTypeScript);
+                    clase.Write(TypeSript.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
             return TypeSript.ToString();
         }
-
+        #endregion
         private void GenerarDesdeTabla()
         {
             WaitCursor();
