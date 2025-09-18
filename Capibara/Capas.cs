@@ -128,23 +128,23 @@ namespace Capibara
 
         static public Dictionary<string, string> CamposAbm = new Dictionary<string, string>
         {
-            { "USUARIO MAGIC",  "Config.UsuarioMagic;" },
-            { "CÓDIGO BAJA",  "codigoBaja;" },
-            { "MOTIVO BAJA", "motivoBaja;" },
-            { "CÓDIGO 0", "0;" },
-            { "CADENA VACÍA", "string.Empty;" },
+            { USUARIO_MAGIC_CLAVE,  USUARIO_MAGIC_VALOR },
+            { CODIGO_BAJA_CLAVE,  CODIGO_BAJA_VALOR },
+            { MOTIVO_BAJA_CLAVE, MOTIVO_BAJA_VALOR },
+            { CODIGO_0_CLAVE, CODIGO_0_VALOR },
+            { CADENA_VACIA_CLAVE, CADENA_VACIA_VALOR },
         };
 
         static public Dictionary<string, string> CamposAbmFechas = new Dictionary<string, string>
         {
-            { "FECHA ACTUAL", "DateTime.Now;"},
-            { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
+            { FECHA_ACTUAL_CLAVE, FECHA_ACTUAL_VALOR},
+            { FECHA_POR_DEFECTO_CLAVE, FECHA_POR_DEFECTO_VALOR },
         };
 
         static public Dictionary<string, string> CamposAbmHoras = new Dictionary<string, string>
         {
-            { "HORA ACTUAL", "DateTime.Now.TimeOfDay;" },
-            { "HORA POR DEFECTO", "TimeSpan.Zero;"}
+            { HORA_ACTUAL_CLAVE, HORA_ACTUAL_VALOR },
+            { HORA_POR_DEFECTO_CLAVE, HORA_POR_DEFECTO_VALOR }
         };
 
         public const string ERROR = "ERROR";
@@ -158,6 +158,32 @@ namespace Capibara
         public const string SERVICE_INTERFACE = "ServiceInterface";
         public const string TYPESCRIPT = "TypeScript";
         public const string MODELTABNAME = "MODELTABNAME";
+
+        public const string USUARIO_MAGIC_CLAVE = "USUARIO MAGIC";
+        public const string USUARIO_MAGIC_VALOR = "Config.UsuarioMagic;";
+        public const string CODIGO_BAJA_CLAVE = "CÓDIGO BAJA";
+        public const string CODIGO_BAJA_VALOR = "codigoBaja;";
+        public const string MOTIVO_BAJA_CLAVE = "MOTIVO BAJA";
+        public const string MOTIVO_BAJA_VALOR = "motivoBaja;";
+        public const string CODIGO_0_CLAVE = "CÓDIGO 0";
+        public const string CODIGO_0_VALOR = "0;";
+        public const string CADENA_VACIA_CLAVE = "CADENA VACÍA";
+        public const string CADENA_VACIA_VALOR = "string.Empty;";
+        public const string FECHA_ACTUAL_CLAVE = "FECHA ACTUAL";
+        public const string FECHA_ACTUAL_VALOR = "DateTime.Now;";
+        public const string FECHA_POR_DEFECTO_CLAVE = "FECHA POR DEFECTO";
+        public const string FECHA_POR_DEFECTO_VALOR = "new DateTime(1900, 1, 1);";
+        public const string HORA_ACTUAL_CLAVE = "HORA ACTUAL";
+        public const string HORA_ACTUAL_VALOR = "DateTime.Now.TimeOfDay;";
+        public const string HORA_POR_DEFECTO_CLAVE = "HORA POR DEFECTO";
+        public const string HORA_POR_DEFECTO_VALOR = "TimeSpan.Zero;";
+
+        public enum TipoCampoAbm
+        {
+            FECHA,
+            HORA,
+            CADENA
+        }
 
         #endregion
 

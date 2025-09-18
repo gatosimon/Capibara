@@ -167,7 +167,6 @@ namespace Capibara
             }
         }
 
-
         private void ActualizarLabelSeleccionTRV(string carpeta, string origenDatos)
         {
             if (RDBsql.Checked)
@@ -197,56 +196,28 @@ namespace Capibara
                 configuracion.PathSolucion = OFDlistarDeSolucion.FileName;
                 configuracion.MostrarOverlayEnInicio = CHKmostrarOverlayEnIicio.Checked;
                 configuracion.InsertarEnProyecto = CHKinsertarEnProyecto.Checked;
-
-                configuracion.camposAlta.Clear();
-                foreach (DataGridViewRow item in DGValta.Rows)
-                {
-                    List<string> celdas = new List<string>();
-                    foreach (DataGridViewCell celdaActual in item.Cells)
-                    {
-                        celdas.Add(celdaActual.FormattedValue.ToString());
-                    }
-                    configuracion.camposAlta.Add(celdas.ToArray());
-                }
-
-                configuracion.camposBaja.Clear();
-                foreach (DataGridViewRow item in DGVbaja.Rows)
-                {
-                    List<string> celdas = new List<string>();
-                    foreach (DataGridViewCell celdaActual in item.Cells)
-                    {
-                        celdas.Add(celdaActual.FormattedValue.ToString());
-                    }
-                    configuracion.camposBaja.Add(celdas.ToArray());
-                }
-
-                configuracion.camposModificacion.Clear();
-                foreach (DataGridViewRow item in DGVmodificacion.Rows)
-                {
-                    List<string> celdas = new List<string>();
-                    foreach (DataGridViewCell celdaActual in item.Cells)
-                    {
-                        celdas.Add(celdaActual.FormattedValue.ToString());
-                    }
-                    configuracion.camposModificacion.Add(celdas.ToArray());
-                }
-
-                configuracion.camposRecuperacion.Clear();
-                foreach (DataGridViewRow item in DGVrecuperacion.Rows)
-                {
-                    List<string> celdas = new List<string>();
-                    foreach (DataGridViewCell celdaActual in item.Cells)
-                    {
-                        celdas.Add(celdaActual.FormattedValue.ToString());
-                    }
-                    configuracion.camposRecuperacion.Add(celdas.ToArray());
-                }
+                configuracion.camposAlta = GuardarCamposAbm(DGValta);
+                configuracion.camposBaja = GuardarCamposAbm(DGVbaja);
+                configuracion.camposModificacion = GuardarCamposAbm(DGVmodificacion);
+                configuracion.camposRecuperacion = GuardarCamposAbm(DGVrecuperacion);
 
                 configuracion.Guardar();
             }
             catch (Exception)
             {
             }
+        }
+
+        private List<string[]> GuardarCamposAbm(DataGridView grilla)
+        {
+            return grilla.Rows
+                .Cast<DataGridViewRow>()
+                .Where(r => !r.IsNewRow) // 🔹 evita la fila vacía de edición
+                .Select(r => r.Cells
+                    .Cast<DataGridViewCell>()
+                    .Select(c => c.FormattedValue?.ToString() ?? string.Empty) // 🔹 null safe
+                    .ToArray())
+                .ToList();
         }
 
         private void InicializarIndices()
@@ -3172,26 +3143,37 @@ namespace Capibara
         private void PredecirValor(ListViewItem item, DataGridViewCell celda, bool ABM)
         {
             var campo = item.Text.ToUpper();
-
-            if (campo.StartsWith("FECHA") || campo.StartsWith("FECH") || campo.StartsWith("FEC") || campo.StartsWith("FE") || campo.StartsWith("F"))
+            var tipo = item.SubItems[1].Text.ToUpper().Trim();
+            celda.Value = Capas.CamposAbm[Capas.CADENA_VACIA_CLAVE];
+            var tipoCampo = Capas.TipoCampoAbm.CADENA;
+            if (tipo.StartsWith("DATE"))
             {
-                celda.Value = Capas.CamposAbmFechas[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
+                tipoCampo = Capas.TipoCampoAbm.FECHA;
+            }
+            else if (tipo == "TIME")
+            {
+                tipoCampo = Capas.TipoCampoAbm.HORA;
+            }
+
+            if (tipoCampo == Capas.TipoCampoAbm.FECHA || campo.StartsWith("FECHA") || campo.StartsWith("FECH") || campo.StartsWith("FEC") || campo.StartsWith("FE") || campo.StartsWith("F"))
+            {
+                celda.Value = Capas.CamposAbmFechas[ABM ? Capas.FECHA_ACTUAL_CLAVE : Capas.FECHA_POR_DEFECTO_CLAVE];
             }
             if (campo.StartsWith("USUARIO") || campo.StartsWith("USU") || campo.StartsWith("USER") || campo.StartsWith("USR") || campo.StartsWith("US") || campo.StartsWith("U"))
             {
-                celda.Value = Capas.CamposAbm[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposAbm[ABM ? Capas.USUARIO_MAGIC_CLAVE : Capas.CADENA_VACIA_CLAVE];
             }
-            if (campo.StartsWith("HORA") || campo.StartsWith("HOR") || campo.StartsWith("HO") || campo.StartsWith("H"))
+            if (tipoCampo == Capas.TipoCampoAbm.HORA || campo.StartsWith("HORA") || campo.StartsWith("HOR") || campo.StartsWith("HO") || campo.StartsWith("H"))
             {
-                celda.Value = Capas.CamposAbmHoras[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
+                celda.Value = Capas.CamposAbmHoras[ABM ? Capas.HORA_ACTUAL_CLAVE : Capas.HORA_POR_DEFECTO_CLAVE];
             }
             if (campo.StartsWith("CODIGO") || campo.StartsWith("CODIG") || campo.StartsWith("CODI") || campo.StartsWith("COD") || campo.StartsWith("CO") || campo.StartsWith("C"))
             {
-                celda.Value = Capas.CamposAbm[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
+                celda.Value = Capas.CamposAbm[ABM ? Capas.CODIGO_BAJA_CLAVE : Capas.CODIGO_0_CLAVE];
             }
             if (campo.StartsWith("MOTIVO") || campo.StartsWith("MOTIV") || campo.StartsWith("MOTI") || campo.StartsWith("MOT") || campo.StartsWith("MO") || campo.StartsWith("M"))
             {
-                celda.Value = Capas.CamposAbm[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposAbm[ABM ? Capas.MOTIVO_BAJA_CLAVE : Capas.CADENA_VACIA_CLAVE];
             }
         }
 
