@@ -134,7 +134,7 @@ namespace Capibara
         /// Si es false, convierte a minúsculas todos los caracteres excepto el primero de cada palabra (ej: 'ProductoID' -> 'Productoid').
         /// </param>
         /// <returns>La cadena formateada.</returns>
-        public static string FormatearCadena(string input, bool respetarMayusculasInternas = false)
+        public static string FormatearCadena(string input, bool respetarMayusculasInternas = true)
         {
             // 1. Manejar casos de entrada nula o vacía.
             if (string.IsNullOrWhiteSpace(input))

@@ -3577,12 +3577,24 @@ namespace Capibara
                     idx -= 2;
                 }
                 lineas.Insert(idx, string.Empty);
-                lineas.Insert(idx + 1, $"            builder.RegisterType<{capas.TABLA}Repositories>()");
-                lineas.Insert(idx + 2, $"                    .As<{capas.TABLA}RepositoriesInterface>()");
-                lineas.Insert(idx + 3, $"                    .InstancePerRequest();");
-                lineas.Insert(idx + 4, $"            builder.RegisterType<{capas.TABLA}Service>()");
-                lineas.Insert(idx + 5, $"                    .As<{capas.TABLA}ServiceInterface>()");
-                lineas.Insert(idx + 6, $"                    .InstancePerRequest();");
+                if (!lineas.Any(l => l.Trim().Contains($"builder.RegisterType<{capas.TABLA}Repositories>()")))
+                {
+                    idx++;
+                    lineas.Insert(idx, $"            builder.RegisterType<{capas.TABLA}Repositories>()");
+                    idx++;
+                    lineas.Insert(idx, $"                    .As<{capas.TABLA}RepositoriesInterface>()");
+                    idx++;
+                    lineas.Insert(idx, $"                    .InstancePerRequest();");
+                }
+                if (!lineas.Any(l => l.Trim().Contains($"builder.RegisterType<{capas.TABLA}Service>()")))
+                {
+                    idx++;
+                    lineas.Insert(idx, $"            builder.RegisterType<{capas.TABLA}Service>()");
+                    idx++;
+                    lineas.Insert(idx, $"                    .As<{capas.TABLA}ServiceInterface>()");
+                    idx++;
+                    lineas.Insert(idx, $"                    .InstancePerRequest();"); 
+                }
             }
             File.WriteAllLines(pathGlobalAsax, lineas);
         }
