@@ -105,48 +105,68 @@ namespace Capibara
             CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
             CHKinsertarEnProyecto.Checked = configuracion.InsertarEnProyecto;
 
-            foreach (string[] item in configuracion.camposAlta)
-            {
-                int indiceFila = DGValta.Rows.Add();
-                DGValta.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
-                ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
-                DGValta.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
-            }
-
-            foreach (string[] item in configuracion.camposBaja)
-            {
-                int indiceFila = DGVbaja.Rows.Add();
-                DGVbaja.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
-                ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
-                DGVbaja.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
-            }
-
-            foreach (string[] item in configuracion.camposModificacion)
-            {
-                int indiceFila = DGVmodificacion.Rows.Add();
-                DGVmodificacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
-                ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
-                DGVmodificacion.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
-            }
-
-            foreach (string[] item in configuracion.camposRecuperacion)
-            {
-                int indiceFila = DGVrecuperacion.Rows.Add();
-                DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item[0];
-                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
-                ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
-                DGVrecuperacion.Rows[indiceFila].Cells[1].Value = Capas.CamposABM[item[1]];
-            }
+            CargarCamposAbmDesdeConfiguracion(configuracion.camposAlta, DGValta);
+            CargarCamposAbmDesdeConfiguracion(configuracion.camposBaja, DGVbaja);
+            CargarCamposAbmDesdeConfiguracion(configuracion.camposModificacion, DGVmodificacion);
+            CargarCamposAbmDesdeConfiguracion(configuracion.camposRecuperacion, DGVrecuperacion);
 
             CargarComboyTreeView();
         }
+
+        private void CargarCamposAbmDesdeConfiguracion(List<string[]> campos, DataGridView grilla)
+        {
+            foreach (string[] item in campos)
+            {
+                int indiceFila = grilla.Rows.Add();
+                string campo = item[0];   // nombre del campo (ej: ALTAFECHA)
+                string valor = item[1];   // valor a vincular (ej: FECHA ACTUAL)
+
+                grilla.Rows[indiceFila].Cells[0].Value = campo;
+
+                // 🔹 Crear comboCell específico
+                var comboCell = new DataGridViewComboBoxCell();
+                BindingSource bs;
+
+                // Detectar qué diccionario usar según coincidencia
+                if (Capas.CamposAbm.ContainsKey(valor))
+                    bs = new BindingSource(Capas.CamposAbm, null);
+                else if (Capas.CamposAbmFechas.ContainsKey(valor))
+                    bs = new BindingSource(Capas.CamposAbmFechas, null);
+                else if (Capas.CamposAbmHoras.ContainsKey(valor))
+                    bs = new BindingSource(Capas.CamposAbmHoras, null);
+                else
+                    // fallback: lista general
+                    bs = new BindingSource(Capas.CamposAbm, null);
+
+                comboCell.DataSource = bs;
+                comboCell.DisplayMember = "Key";
+                comboCell.ValueMember = "Value";
+
+                // Asignar el combo a la grilla
+                grilla.Rows[indiceFila].Cells[1] = comboCell;
+
+                // 🔹 Buscar si el valor existe en el diccionario elegido
+                string valorReal = null;
+                if (bs.Cast<KeyValuePair<string, string>>().Any(x => x.Key == valor))
+                {
+                    valorReal = bs.Cast<KeyValuePair<string, string>>()
+                                  .First(x => x.Key == valor).Value;
+                }
+
+                // Si existe, lo asignamos; si no, fallback al primer valor
+                if (!string.IsNullOrEmpty(valorReal))
+                {
+                    comboCell.Value = valorReal;
+                }
+                else
+                {
+                    var primero = bs.Cast<KeyValuePair<string, string>>().FirstOrDefault();
+                    if (!primero.Equals(default(KeyValuePair<string, string>)))
+                        comboCell.Value = primero.Value;
+                }
+            }
+        }
+
 
         private void ActualizarLabelSeleccionTRV(string carpeta, string origenDatos)
         {
@@ -1527,13 +1547,13 @@ namespace Capibara
                         switch (item.Cells[1].FormattedValue.ToString())
                         {
                             case "FECHA ACTUAL":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbmFechas["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
                                 break;
                             case "USUARIO MAGIC":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["CADENA VACÍA"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbm["CADENA VACÍA"].Replace(";", string.Empty) },");
                                 break;
                             case "HORA ACTUAL":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["HORA POR DEFECTO"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbmHoras["HORA POR DEFECTO"].Replace(";", string.Empty) },");
                                 break;
                             default:
                                 camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { item.Cells[1].Value.ToString().Replace(";", string.Empty) },");
@@ -1549,13 +1569,13 @@ namespace Capibara
                         switch (item.Cells[1].FormattedValue.ToString())
                         {
                             case "FECHA ACTUAL":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbmFechas["FECHA POR DEFECTO"].Replace(";", string.Empty) },");
                                 break;
                             case "USUARIO MAGIC":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["CADENA VACÍA"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbm["CADENA VACÍA"].Replace(";", string.Empty) },");
                                 break;
                             case "HORA ACTUAL":
-                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposABM["HORA POR DEFECTO"].Replace(";", string.Empty) },");
+                                camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { Capas.CamposAbmHoras["HORA POR DEFECTO"].Replace(";", string.Empty) },");
                                 break;
                             default:
                                 camposAlta.Add(item.Cells[0].FormattedValue.ToString(), $"\t\t\t\t{ item.Cells[0].FormattedValue } = { item.Cells[1].Value.ToString().Replace(";", string.Empty) },");
@@ -2545,7 +2565,6 @@ namespace Capibara
 
             foreach (DataRow row in schema.Rows)
             {
-                //var nombre = row["ColumnName"].ToString().ToUpper();
                 var nombre = row["ColumnName"].ToString();
                 var dataType = (Type)row["DataType"];
                 var longitud = row["NumericPrecision"] != DBNull.Value ? Convert.ToInt32(row["NumericPrecision"]) : 0;
@@ -2573,7 +2592,6 @@ namespace Capibara
 
         private void CargarListViewDesdeReader(IDataReader reader)
         {
-            //var nombre = reader["Nombre"].ToString().ToUpper();
             var nombre = reader["Nombre"].ToString();
             var tipo = reader["Tipo"].ToString().ToUpper();
             var longitud = reader["Longitud"].ToString();
@@ -3069,74 +3087,86 @@ namespace Capibara
 
         private void BTNagregarCampo_Click(object sender, EventArgs e)
         {
-            if (TBCcamposABM.SelectedTab == TBPalta)
+            // Filtrar las tablas por tipos de datos
+            // DATE y DATETIME juntos
+            // TIME
+            // EL RESTO
+            CargarCamposAbm(TBPalta, DGValta);
+            CargarCamposAbm(TBPbaja, DGVbaja);
+            CargarCamposAbm(TBPmodificacion, DGVmodificacion);
+            CargarCamposAbm(TBPrecuperacion, DGVrecuperacion, false);
+        }
+
+        private void CargarCamposAbm(TabPage tab, DataGridView grilla, bool ABM = true)
+        {
+            if (TBCcamposABM.SelectedTab == tab)
             {
                 foreach (ListViewItem item in LSVcampos.SelectedItems)
                 {
-                    var fila = Utilidades.BuscarFila(DGValta, item.Text);
-                    // Buscar fila por valor exacto en la primer celda
+                    var fila = Utilidades.BuscarFila(grilla, item.Text);
                     if (fila == null)
                     {
-                        int indiceFila = DGValta.Rows.Add();
-                        DGValta.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).DisplayMember = "Key";
-                        ((DataGridViewComboBoxColumn)DGValta.Columns[1]).ValueMember = "Value";
-                        PredecirValor(item, DGValta.Rows[indiceFila].Cells[1], true);
+                        int indiceFila = grilla.Rows.Add();
+                        grilla.Rows[indiceFila].Cells[0].Value = item.Text;
+
+                        // 🔹 Crear comboCell específico por fila
+                        var comboCell = new DataGridViewComboBoxCell();
+
+                        BindingSource bs;
+                        switch (item.SubItems[1].Text.Trim().ToUpper())
+                        {
+                            case "DATE":
+                            case "DATETIME":
+                                bs = new BindingSource(Capas.CamposAbmFechas, null);
+                                break;
+                            case "TIME":
+                                bs = new BindingSource(Capas.CamposAbmHoras, null);
+                                break;
+                            default:
+                                bs = new BindingSource(Capas.CamposAbm, null);
+                                break;
+                        }
+
+                        comboCell.DataSource = bs;
+                        comboCell.DisplayMember = "Key";
+                        comboCell.ValueMember = "Value";
+
+                        // 🔹 Asignar el comboCell a la grilla
+                        grilla.Rows[indiceFila].Cells[1] = comboCell;
+
+                        // 🔹 Obtener valor predicho con tu método
+                        PredecirValor(item, comboCell, ABM);
+
+                        // 🔹 Validar que el valor exista en el DataSource
+                        string valorPredicho = comboCell.Value?.ToString();
+                        if (!string.IsNullOrEmpty(valorPredicho))
+                        {
+                            bool existe = bs.Cast<KeyValuePair<string, string>>()
+                                            .Any(x => x.Value == valorPredicho);
+
+                            if (!existe)
+                            {
+                                // fallback al primer valor
+                                var primero = bs.Cast<KeyValuePair<string, string>>().FirstOrDefault();
+                                if (!primero.Equals(default(KeyValuePair<string, string>)))
+                                    comboCell.Value = primero.Value;
+                            }
+                        }
+                        else
+                        {
+                            // si no hay valor, forzar el primero
+                            var primero = bs.Cast<KeyValuePair<string, string>>().FirstOrDefault();
+                            if (!primero.Equals(default(KeyValuePair<string, string>)))
+                                comboCell.Value = primero.Value;
+                        }
                     }
                 }
             }
-            if (TBCcamposABM.SelectedTab == TBPbaja)
-            {
-                foreach (ListViewItem item in LSVcampos.SelectedItems)
-                {
-                    var fila = Utilidades.BuscarFila(DGVbaja, item.Text);
-                    // Buscar fila por valor exacto en la primer celda
-                    if (fila == null)
-                    {
-                        int indiceFila = DGVbaja.Rows.Add();
-                        DGVbaja.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).DisplayMember = "Key";
-                        ((DataGridViewComboBoxColumn)DGVbaja.Columns[1]).ValueMember = "Value";
-                        PredecirValor(item, DGVbaja.Rows[indiceFila].Cells[1], true);
-                    }
-                }
-            }
-            if (TBCcamposABM.SelectedTab == TBPmodificacion)
-            {
-                foreach (ListViewItem item in LSVcampos.SelectedItems)
-                {
-                    var fila = Utilidades.BuscarFila(DGVmodificacion, item.Text);
-                    // Buscar fila por valor exacto en la primer celda
-                    if (fila == null)
-                    {
-                        int indiceFila = DGVmodificacion.Rows.Add();
-                        DGVmodificacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).DisplayMember = "Key";
-                        ((DataGridViewComboBoxColumn)DGVmodificacion.Columns[1]).ValueMember = "Value";
-                        PredecirValor(item, DGVmodificacion.Rows[indiceFila].Cells[1], true);
-                    }
-                }
-            }
-            if (TBCcamposABM.SelectedTab == TBPrecuperacion)
-            {
-                foreach (ListViewItem item in LSVcampos.SelectedItems)
-                {
-                    var fila = Utilidades.BuscarFila(DGVrecuperacion, item.Text);
-                    // Buscar fila por valor exacto en la primer celda
-                    if (fila == null)
-                    {
-                        int indiceFila = DGVrecuperacion.Rows.Add();
-                        DGVrecuperacion.Rows[indiceFila].Cells[0].Value = item.Text;
-                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DataSource = new BindingSource(Capas.CamposABM, null);
-                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).DisplayMember = "Key";
-                        ((DataGridViewComboBoxColumn)DGVrecuperacion.Columns[1]).ValueMember = "Value";
-                        PredecirValor(item, DGVrecuperacion.Rows[indiceFila].Cells[1], false);
-                    }
-                }
-            }
+        }
+
+        private void grilla_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.ThrowException = false;
         }
 
         private void PredecirValor(ListViewItem item, DataGridViewCell celda, bool ABM)
@@ -3145,59 +3175,43 @@ namespace Capibara
 
             if (campo.StartsWith("FECHA") || campo.StartsWith("FECH") || campo.StartsWith("FEC") || campo.StartsWith("FE") || campo.StartsWith("F"))
             {
-                celda.Value = Capas.CamposABM[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
+                celda.Value = Capas.CamposAbmFechas[ABM ? "FECHA ACTUAL" : "FECHA POR DEFECTO"];
             }
             if (campo.StartsWith("USUARIO") || campo.StartsWith("USU") || campo.StartsWith("USER") || campo.StartsWith("USR") || campo.StartsWith("US") || campo.StartsWith("U"))
             {
-                celda.Value = Capas.CamposABM[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposAbm[ABM ? "USUARIO MAGIC" : "CADENA VACÍA"];
             }
             if (campo.StartsWith("HORA") || campo.StartsWith("HOR") || campo.StartsWith("HO") || campo.StartsWith("H"))
             {
-                celda.Value = Capas.CamposABM[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
+                celda.Value = Capas.CamposAbmHoras[ABM ? "HORA ACTUAL" : "HORA POR DEFECTO"];
             }
             if (campo.StartsWith("CODIGO") || campo.StartsWith("CODIG") || campo.StartsWith("CODI") || campo.StartsWith("COD") || campo.StartsWith("CO") || campo.StartsWith("C"))
             {
-                celda.Value = Capas.CamposABM[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
+                celda.Value = Capas.CamposAbm[ABM ? "CÓDIGO BAJA" : "CÓDIGO 0"];
             }
             if (campo.StartsWith("MOTIVO") || campo.StartsWith("MOTIV") || campo.StartsWith("MOTI") || campo.StartsWith("MOT") || campo.StartsWith("MO") || campo.StartsWith("M"))
             {
-                celda.Value = Capas.CamposABM[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
+                celda.Value = Capas.CamposAbm[ABM ? "MOTIVO BAJA" : "CADENA VACÍA"];
             }
         }
 
         private void BTNquitarCampo_Click(object sender, EventArgs e)
         {
-            if (TBCcamposABM.SelectedTab == TBPalta)
+            QuitarCampo(TBPalta, DGValta);
+            QuitarCampo(TBPbaja, DGVbaja);
+            QuitarCampo(TBPmodificacion, DGVmodificacion);
+            QuitarCampo(TBPrecuperacion, DGVrecuperacion);
+        }
+
+        private void QuitarCampo(TabPage tab, DataGridView grilla)
+        {
+            if (TBCcamposABM.SelectedTab == tab)
             {
-                foreach (DataGridViewRow fila in DGValta.SelectedRows)
+                foreach (DataGridViewRow fila in grilla.SelectedRows)
                 {
-                    DGValta.Rows.Remove(fila);
+                    grilla.Rows.Remove(fila);
                 }
-                DGValta.Refresh();
-            }
-            if (TBCcamposABM.SelectedTab == TBPbaja)
-            {
-                foreach (DataGridViewRow fila in DGVbaja.SelectedRows)
-                {
-                    DGVbaja.Rows.Remove(fila);
-                }
-                DGVbaja.Refresh();
-            }
-            if (TBCcamposABM.SelectedTab == TBPmodificacion)
-            {
-                foreach (DataGridViewRow fila in DGVmodificacion.SelectedRows)
-                {
-                    DGVmodificacion.Rows.Remove(fila);
-                }
-                DGVmodificacion.Refresh();
-            }
-            if (TBCcamposABM.SelectedTab == TBPrecuperacion)
-            {
-                foreach (DataGridViewRow fila in DGVrecuperacion.SelectedRows)
-                {
-                    DGVrecuperacion.Rows.Remove(fila);
-                }
-                DGVrecuperacion.Refresh();
+                grilla.Refresh();
             }
         }
 

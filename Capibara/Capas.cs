@@ -126,15 +126,23 @@ namespace Capibara
             {typeof(ulong),     "number = 0;"}
         };
 
-        static public Dictionary<string, string> CamposABM = new Dictionary<string, string>
+        static public Dictionary<string, string> CamposAbm = new Dictionary<string, string>
         {
-            { "FECHA ACTUAL", "DateTime.Now;"},
-            { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
             { "USUARIO MAGIC",  "Config.UsuarioMagic;" },
             { "CÓDIGO BAJA",  "codigoBaja;" },
             { "MOTIVO BAJA", "motivoBaja;" },
             { "CÓDIGO 0", "0;" },
             { "CADENA VACÍA", "string.Empty;" },
+        };
+
+        static public Dictionary<string, string> CamposAbmFechas = new Dictionary<string, string>
+        {
+            { "FECHA ACTUAL", "DateTime.Now;"},
+            { "FECHA POR DEFECTO", "new DateTime(1900, 1, 1);" },
+        };
+
+        static public Dictionary<string, string> CamposAbmHoras = new Dictionary<string, string>
+        {
             { "HORA ACTUAL", "DateTime.Now.TimeOfDay;" },
             { "HORA POR DEFECTO", "TimeSpan.Zero;"}
         };
