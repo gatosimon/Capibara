@@ -3,7 +3,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data.Odbc;
 using System.IO;
@@ -285,10 +284,11 @@ namespace Capibara
                 {
                     Ejecutar datos = EstablecerConexion();
                     datos.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
-                    ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
-                    DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
 
-                    DataSet DS = DB2.ObtenerDataSet();
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                    DB2base.OpenConnection();
+                    DataSet DS = DB2base.DataSet(datos.Consulta);
+                    DB2base.CloseConnection();
 
                     int i = 0;
                     foreach (DataColumn columna in DS.Tables[0].Columns)
@@ -337,16 +337,13 @@ namespace Capibara
                 try
                 {
                     string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
                     string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", capas.camposTabla) + " FROM " + tabla;
-
-                    DataSet DS = new DataSet();
-                    using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
-                    {
-                        DA.Fill(DS);
-                    }
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    SQLbase.OpenConnection();
+                    DataSet DS = SQLbase.DataSet(query);
 
                     int i = 0;
                     foreach (DataColumn columna in DS.Tables[0].Columns)
@@ -383,6 +380,7 @@ namespace Capibara
                             i++;
                         }
                     }
+                    SQLbase.CloseConnection();
                 }
                 catch (Exception ex)
                 {
@@ -870,8 +868,8 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
-            if(!DB2)Repositories.AppendLine("using System.Text;");
-            Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");    
+            if (!DB2) Repositories.AppendLine("using System.Text;");
+            Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Repositories.AppendLine();
             Repositories.AppendLine($"namespace { espacioDeNombres }.{ Capas.REPOSITORIES }");
@@ -2020,7 +2018,7 @@ namespace Capibara
             WaitCursor();
             if (TXTpathCapas.Text.Trim().Length > 0)
             {
-                if (TXTnombreAmigable.Text.Trim().Length == 0) 
+                if (TXTnombreAmigable.Text.Trim().Length == 0)
                 {
                     CustomMessageBox.Show("Indique un 'nombre amigable' para la carpeta en el proyecto!", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
@@ -2029,7 +2027,7 @@ namespace Capibara
                     if (ComprobarClaves())
                     {
                         generarDesdeConsulta = false;
-                        GuardarConfiguracion(); 
+                        GuardarConfiguracion();
                     }
                 }
             }
@@ -2130,25 +2128,20 @@ namespace Capibara
                     CMBbases.Items.Clear();
 
                     string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=master;Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database=master;Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
 
                     try
                     {
-                        using (SqlConnection connection = new SqlConnection(connectionString))
+                        DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                        SQLbase.OpenConnection();
+
+                        string query = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC"; // Solo bases "online"
+                        IDataReader reader = SQLbase.DataReader(query);
+                        while (reader.Read())
                         {
-                            connection.Open();
-
-                            string query = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC"; // Solo bases "online"
-
-                            using (SqlCommand command = new SqlCommand(query, connection))
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    CMBbases.Items.Add(reader.GetString(0));
-                                }
-                            }
+                            CMBbases.Items.Add(reader.GetString(0));
                         }
+                        SQLbase.CloseConnection();
                     }
                     catch (Exception ex)
                     {
@@ -2205,15 +2198,16 @@ namespace Capibara
                     try
                     {
                         Ejecutar datos = EstablecerConexion();
-                        //ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLCOUNT Columnas FROM SYSIBM.SYSTABLES WHERE TYPE = 'T' AND CREATOR = 'DB2ADMIN' ORDER BY Nombre", datos.ObtenerConexion());
-                        ComandoDB2 Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre", datos.ObtenerConexion());
+                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                        DB2base.OpenConnection();
+                        IDataReader consulta = DB2base.DataReader("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre");
 
-                        while (Db2.HayRegistros())
+                        while (consulta.Read())
                         {
-                            capas.tablasBase.Add(Db2.CampoStr("Nombre"));
-                            CMBtablas.Items.Add(Db2.CampoStr("Nombre"));
+                            capas.tablasBase.Add(consulta.GetString(0));
+                            CMBtablas.Items.Add(consulta.GetString(0));
                         }
-                        Db2.Cerrar();
+                        DB2base.CloseConnection();
                     }
                     catch (Exception ex)
                     {
@@ -2223,29 +2217,28 @@ namespace Capibara
                 else
                 {
                     string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
 
-                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    using (SQLbase.Connection)
                     {
                         try
                         {
-                            conn.Open();
+                            SQLbase.Connection.Open();
 
                             string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
                                 FROM INFORMATION_SCHEMA.TABLES 
                                 WHERE TABLE_TYPE = 'BASE TABLE'
                                 ORDER BY TABLE_SCHEMA, TABLE_NAME";
 
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
-                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            IDataReader reader = SQLbase.DataReader(query);
+
+                            while (reader.Read())
                             {
-                                while (reader.Read())
-                                {
-                                    string schema = reader.GetString(0);
-                                    string table = reader.GetString(1);
-                                    capas.tablasBase.Add($"{schema}.{table}");
-                                    CMBtablas.Items.Add($"{schema}.{table}");
-                                }
+                                string schema = reader.GetString(0);
+                                string table = reader.GetString(1);
+                                capas.tablasBase.Add($"{schema}.{table}");
+                                CMBtablas.Items.Add($"{schema}.{table}");
                             }
                         }
                         catch (Exception ex)
@@ -2282,7 +2275,8 @@ namespace Capibara
                     try
                     {
                         Ejecutar datos = EstablecerConexion();
-                        ComandoDB2 Db2 = null;
+                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                        DB2base.OpenConnection();
                         // GENERO DESDE UNA CONSULTA
                         if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
                         {
@@ -2304,40 +2298,34 @@ namespace Capibara
                             }
                             if (camposOk)
                             {
-                                Db2 = new ComandoDB2(consulta, datos.ObtenerConexion());
-                                Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
-                                Db2.HayRegistros();
+                                IDataReader Db2 = DB2base.DataReader(consulta);
+                                Db2.Read();
 
-                                using (var reader = Db2.ObtenerLector())
+                                using (Db2)
                                 {
-                                    CargarListViewDesdeEsquema(reader, true);
+                                    CargarListViewDesdeEsquema(Db2, true);
                                 }
-                                Db2.Cerrar();
                             }
                         }
                         else // GENERO DESDE UNA TABLA
                         {
-                            Db2 = new ComandoDB2("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'", datos.ObtenerConexion());
-                            Db2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
+                            IDataReader Db2 = DB2base.DataReader("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'");
 
-                            Db2.HayRegistros();
-                            OdbcDataReader reader = reader = Db2.ObtenerLector();
+                            Db2.Read();
                             do
                             {
-                                CargarListViewDesdeReader(reader);
+                                CargarListViewDesdeReader(Db2);
                             }
-                            while (Db2.HayRegistros());
-                            Db2.Cerrar();
+                            while (Db2.Read());
 
                             if (LSVcampos.Items.Count > 0)
                             {
-                                Db2 = new ComandoDB2("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')", datos.ObtenerConexion());
+                                Db2 = DB2base.DataReader("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')");
                                 List<string> claves = new List<string>();
-                                while (Db2.HayRegistros())
+                                while (Db2.Read())
                                 {
-                                    claves.Add(Db2.CampoStr("Clave"));
+                                    claves.Add(Db2.GetString(0));
                                 }
-                                Db2.Cerrar();
 
                                 if (claves.Count > 0)
                                 {
@@ -2359,6 +2347,7 @@ namespace Capibara
                                 }
                             }
                         }
+                        DB2base.CloseConnection();
                     }
                     catch (Exception ex)
                     {
@@ -2379,7 +2368,7 @@ namespace Capibara
                     try
                     {
                         string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                        string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                        string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
 
                         bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
 
@@ -2414,48 +2403,46 @@ namespace Capibara
                                                 + "WHERE t.name = @tabla "
                                                 + "ORDER BY c.column_id;";
 
-                            using (SqlConnection conn = new SqlConnection(connectionString))
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+
+                            if (consulta.Trim().Length == 0)
                             {
-                                if (consulta.Trim().Length == 0)
-                                {
-                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                                    tablaSeleccionada = partes[partes.Length - 1];
+                                string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                                tablaSeleccionada = partes[partes.Length - 1];
+                            }
+                            query = query.Replace("@tabla", $"'{tablaSeleccionada}'");
 
-                                    cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
-                                }
-
-                                try
+                            try
+                            {
+                                SQLbase.OpenConnection();
+                                IDataReader reader = SQLbase.DataReader(query);
+                                using (reader)
                                 {
-                                    conn.Open();
-                                    using (SqlDataReader reader = cmd.ExecuteReader())
+                                    // GENERO DESDE UNA CONSULTA
+                                    if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
                                     {
-                                        // GENERO DESDE UNA CONSULTA
-                                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
+                                        CargarListViewDesdeEsquema(reader, false);
+                                    }
+                                    else // GENERO DESDE UNA TABLA
+                                    {
+                                        while (reader.Read())
                                         {
-                                            CargarListViewDesdeEsquema(reader, false);
-                                        }
-                                        else // GENERO DESDE UNA TABLA
-                                        {
-                                            while (reader.Read())
-                                            {
-                                                CargarListViewDesdeReader(reader);
-                                            }
+                                            CargarListViewDesdeReader(reader);
                                         }
                                     }
-                                    conn.Close();
                                 }
-                                catch (Exception ex)
+                                SQLbase.CloseConnection();
+                            }
+                            catch (Exception ex)
+                            {
+                                var error = ex.InnerException.Message ?? ex.Message;
+                                if (consulta.Trim().Length > 0)
                                 {
-                                    var error = ex.InnerException.Message ?? ex.Message;
-                                    if (consulta.Trim().Length > 0)
-                                    {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
-                                    else
-                                    {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                else
+                                {
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }
                             }
 
@@ -2467,38 +2454,33 @@ namespace Capibara
                                 query = "SELECT KU.COLUMN_NAME Nombre "
                                     + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
                                     + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
-                                    + "WHERE TC.TABLE_NAME = @tabla AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                                    + $"WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
 
-                                using (SqlConnection conn = new SqlConnection(connectionString))
-                                using (SqlCommand cmd = new SqlCommand(query, conn))
+                                try
                                 {
-                                    cmd.Parameters.AddWithValue("@tabla", tablaSeleccionada);
-
-                                    try
+                                    SQLbase.OpenConnection();
+                                    IDataReader reader = SQLbase.DataReader(query);
+                                    using (reader)
                                     {
-                                        conn.Open();
-                                        using (SqlDataReader reader = cmd.ExecuteReader())
+                                        while (reader.Read())
                                         {
-                                            while (reader.Read())
-                                            {
-                                                var nombre = reader["Nombre"].ToString().ToUpper();
+                                            var nombre = reader["Nombre"].ToString().ToUpper();
 
-                                                foreach (ListViewItem item in LSVcampos.Items)
+                                            foreach (ListViewItem item in LSVcampos.Items)
+                                            {
+                                                if (item.SubItems[0].Text.ToUpper() == nombre)
                                                 {
-                                                    if (item.SubItems[0].Text.ToUpper() == nombre)
-                                                    {
-                                                        item.Checked = true;
-                                                    }
+                                                    item.Checked = true;
                                                 }
                                             }
                                         }
-                                        conn.Close();
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        var error = ex.InnerException.Message ?? ex.Message;
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    }
+                                    SQLbase.CloseConnection();
+                                }
+                                catch (Exception ex)
+                                {
+                                    var error = ex.InnerException.Message ?? ex.Message;
+                                    CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
                             }
                         }
@@ -2593,10 +2575,10 @@ namespace Capibara
                 {
                     Ejecutar datos = EstablecerConexion();
                     datos.Consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
-                    ComandoDB2 DB2 = new ComandoDB2(datos.Consulta, datos.ObtenerConexion());
-                    DB2.Conexion = new System.Data.Odbc.OdbcConnection(datos.ObtenerConexion());
-
-                    DS = DB2.ObtenerDataSet();
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                    DB2base.OpenConnection();
+                    DS = DB2base.DataSet(datos.Consulta);
+                    DB2base.CloseConnection();
                 }
                 catch (Exception ex)
                 {
@@ -2608,16 +2590,16 @@ namespace Capibara
                 try
                 {
                     string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = @"Data Source=SQL" + servidor + @"\" + servidor + "; Initial Catalog=" + CMBbases.Items[CMBbases.SelectedIndex].ToString() + ";Persist Security Info=True;User ID=usuario;Password=ci?r0ba;MultipleActiveResultSets=True";
+                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
                     string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
 
-                    DS = new DataSet();
-                    using (SqlDataAdapter DA = new SqlDataAdapter(query, connectionString))
-                    {
-                        DA.Fill(DS);
-                    }
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    SQLbase.OpenConnection();
+                    DS = SQLbase.DataSet(query);
+                    SQLbase.CloseConnection();
                 }
                 catch (Exception ex)
                 {
@@ -2899,10 +2881,7 @@ namespace Capibara
                     ListarNameSpaces();
                     desplegarCombo = isActivated && !CHKinsertarEnProyecto.Checked;
                     CargarSolucionPorCarpetas();
-                    if (desplegarCombo)
-                    {
-                        CMBnamespaces.DroppedDown = true;
-                    }
+                    CMBnamespaces.DroppedDown = desplegarCombo;
                     desplegarCombo = true;
                 }
                 catch (Exception ex)
@@ -3445,7 +3424,7 @@ namespace Capibara
                 ActualizarGlobalAsax();
 
                 // Refrescar Combo y TreeView
-                CargarComboyTreeView(); 
+                CargarComboyTreeView();
             }
         }
 
@@ -3597,7 +3576,7 @@ namespace Capibara
                     idx++;
                     lineas.Insert(idx, $"                    .As<{capas.TABLA}ServiceInterface>()");
                     idx++;
-                    lineas.Insert(idx, $"                    .InstancePerRequest();"); 
+                    lineas.Insert(idx, $"                    .InstancePerRequest();");
                 }
             }
             File.WriteAllLines(pathGlobalAsax, lineas);

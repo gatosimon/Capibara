@@ -252,7 +252,6 @@
     <Compile Include="CustomMessageBox.Designer.cs">
       <DependentUpon>CustomMessageBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ComandoDB2.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Configuracion.cs" />
     <Compile Include="FRMcapibara.cs">
@@ -379,6 +378,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\TF.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DataLayer\DataLayer.csproj">
+      <Project>{e638a9f6-0826-48fe-842b-badb1b521e06}</Project>
+      <Name>DataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
