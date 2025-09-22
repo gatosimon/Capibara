@@ -278,16 +278,16 @@ namespace Capibara
 
             bool consultaOk = true;
 
+            StringConnection stringConnection = DefinirStringConnection();
             if (RDBdb2.Checked)
             {
                 try
                 {
-                    Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    stringConnection.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
 
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                     DB2base.OpenConnection();
-                    DataSet DS = DB2base.DataSet(datos.Consulta);
+                    DataSet DS = DB2base.DataSet(stringConnection.Consulta);
                     DB2base.CloseConnection();
 
                     int i = 0;
@@ -336,12 +336,10 @@ namespace Capibara
             {
                 try
                 {
-                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
                     string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", capas.camposTabla) + " FROM " + tabla;
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                     SQLbase.OpenConnection();
                     DataSet DS = SQLbase.DataSet(query);
 
@@ -2127,12 +2125,10 @@ namespace Capibara
                 {
                     CMBbases.Items.Clear();
 
-                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database=master;Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
-
+                    StringConnection stringConnection = DefinirStringConnection();
                     try
                     {
-                        DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                        DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                         SQLbase.OpenConnection();
 
                         string query = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC"; // Solo bases "online"
@@ -2170,18 +2166,19 @@ namespace Capibara
             CamposTabla();
         }
 
-        private Ejecutar EstablecerConexion()
+        private StringConnection DefinirStringConnection()
         {
-            Ejecutar datos = new Ejecutar();
+            StringConnection stringConnection = new StringConnection();
             try
             {
-                datos.BaseDeDatos = CMBbases.Items[CMBbases.SelectedIndex].ToString();
-                datos.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
+                    stringConnection.TipoConexion = RDBdb2.Checked ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
+                    stringConnection.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                    stringConnection.BaseDeDatos = CMBbases.Items[CMBbases.SelectedIndex].ToString();
             }
-            catch (Exception)
+            catch (Exception err)
             {
             }
-            return datos;
+            return stringConnection;
         }
 
         private void TablasBase()
@@ -2193,12 +2190,12 @@ namespace Capibara
                 LBLtablaSeleccionada.Text = string.Empty;
                 LSVcampos.Items.Clear();
                 capas.tablasBase = new List<string>();
+                StringConnection stringConnection = DefinirStringConnection();
                 if (RDBdb2.Checked)
                 {
                     try
                     {
-                        Ejecutar datos = EstablecerConexion();
-                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                         DB2base.OpenConnection();
                         IDataReader consulta = DB2base.DataReader("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre");
 
@@ -2216,10 +2213,7 @@ namespace Capibara
                 }
                 else
                 {
-                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
-
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                     using (SQLbase.Connection)
                     {
                         try
@@ -2269,13 +2263,13 @@ namespace Capibara
                 LBLtablaSeleccionada.Text = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString()) + ":";
                 LSVcampos.Items.Clear();
                 string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+                StringConnection stringConnection = DefinirStringConnection();
                 // BASE DE DATOS DB2
                 if (RDBdb2.Checked)
                 {
                     try
                     {
-                        Ejecutar datos = EstablecerConexion();
-                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                         DB2base.OpenConnection();
                         // GENERO DESDE UNA CONSULTA
                         if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
@@ -2367,9 +2361,6 @@ namespace Capibara
                 {
                     try
                     {
-                        string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                        string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
-
                         bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
 
                         if (overlay.IsDisposed && generarDesdeConsulta && !comienzaConSelectTop)
@@ -2403,7 +2394,7 @@ namespace Capibara
                                                 + "WHERE t.name = @tabla "
                                                 + "ORDER BY c.column_id;";
 
-                            DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                            DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
 
                             if (consulta.Trim().Length == 0)
                             {
@@ -2569,15 +2560,15 @@ namespace Capibara
             List<string> columnasError = new List<string>();
             DataSet DS = null;
 
+            StringConnection stringConnection = DefinirStringConnection();
             if (RDBdb2.Checked)
             {
                 try
                 {
-                    Ejecutar datos = EstablecerConexion();
-                    datos.Consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(datos.ObtenerConexion()));
+                    stringConnection.Consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                     DB2base.OpenConnection();
-                    DS = DB2base.DataSet(datos.Consulta);
+                    DS = DB2base.DataSet(stringConnection.Consulta);
                     DB2base.CloseConnection();
                 }
                 catch (Exception ex)
@@ -2589,14 +2580,11 @@ namespace Capibara
             {
                 try
                 {
-                    string servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    string connectionString = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database={CMBbases.Items[CMBbases.SelectedIndex].ToString()};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
-
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
                     string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
 
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(connectionString));
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
                     SQLbase.OpenConnection();
                     DS = SQLbase.DataSet(query);
                     SQLbase.CloseConnection();
@@ -2691,7 +2679,6 @@ namespace Capibara
             WaitCursor();
             try
             {
-                //SPCbak2.Panel2Collapsed = !RDBdb2.Checked;
                 if (RDBdb2.Checked)
                 {
                     CHKtryOrIf.Visible = RDBdb2.Checked;
@@ -2822,7 +2809,6 @@ namespace Capibara
         {
             try
             {
-                //int min = (SPCseparador.Height / 2) > SPCseparador.Panel1MinSize ? Convert.ToInt32(SPCseparador.Height / 2) : SPCseparador.Panel1MinSize;
                 int min = SPCseparador.Panel1MinSize;
                 int max = Math.Max(min, SPCseparador.Height - SPCseparador.Panel2MinSize - SPCseparador.SplitterWidth);
 
@@ -3391,12 +3377,9 @@ namespace Capibara
 
                 if (existe == null)
                 {
-                    //if (!pathCompleto.EndsWith(parte))
-                    {
-                        existe = nodoActual.Nodes.Add(parte);
-                        existe.ImageKey = existe.SelectedImageKey = pathCompleto.EndsWith(parte) ? FILE : FOLDER_CLOSE;
-                        existe.Tag = pathCompleto.Substring(0, pathCompleto.IndexOf(parte) + parte.Length);
-                    }
+                    existe = nodoActual.Nodes.Add(parte);
+                    existe.ImageKey = existe.SelectedImageKey = pathCompleto.EndsWith(parte) ? FILE : FOLDER_CLOSE;
+                    existe.Tag = pathCompleto.Substring(0, pathCompleto.IndexOf(parte) + parte.Length);
                 }
 
                 nodoActual = existe;
@@ -3411,7 +3394,6 @@ namespace Capibara
                 if (string.IsNullOrEmpty(CarpetaDestino))
                     return;
 
-                //string carpetaSeleccionada = $@"{TRVsolucion.SelectedNode.Tag.ToString()}\";
                 string carpetaCapas = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
