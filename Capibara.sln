@@ -9,6 +9,8 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CapibaraInstaller", "Capiba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapibaraInstallerActions", "CapibaraInstallerActions\CapibaraInstallerActions.csproj", "{861009A0-6AA1-4318-B0FF-2F7497AC3D18}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "..\DataLayer\DataLayer.csproj", "{E638A9F6-0826-48FE-842B-BADB1B521E06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,26 @@ Global
 		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x64.Build.0 = Release|Any CPU
 		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x86.ActiveCfg = Release|Any CPU
 		{861009A0-6AA1-4318-B0FF-2F7497AC3D18}.Release|x86.Build.0 = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|x64.Build.0 = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Debug|x86.Build.0 = Debug|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|ARM.Build.0 = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|ARM64.Build.0 = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x64.ActiveCfg = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x64.Build.0 = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x86.ActiveCfg = Release|Any CPU
+		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

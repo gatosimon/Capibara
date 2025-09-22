@@ -1264,7 +1264,6 @@ namespace Capibara
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRMcapibara_FormClosing);
             this.Shown += new System.EventHandler(this.FRMcapibara_Shown);
             this.Resize += new System.EventHandler(this.FRMgeneradorDeCapas_Resize);
-            this.Validated += new System.EventHandler(this.FRMcapibara_Validated);
             this.SPCseparador.Panel1.ResumeLayout(false);
             this.SPCseparador.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).EndInit();

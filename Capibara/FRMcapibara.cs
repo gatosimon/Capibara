@@ -32,6 +32,7 @@ namespace Capibara
         private string pathGlobalAsax = string.Empty;
         private bool generarDesdeConsulta = false;
         private bool desplegarCombo = false;
+        private bool isActivated = false;
 
         Configuracion configuracion;
 
@@ -44,6 +45,7 @@ namespace Capibara
             InitializeComponent();
             capas = new Capas(this);
             configuracion = Configuracion.Cargar();
+            desplegarCombo = false;
             overlay = new WaitOverlay(this);
             Utilidades.IniciarDeteccionDispositivos(this);
             Utilidades.ReproducirIntro();
@@ -71,6 +73,7 @@ namespace Capibara
                     InicializarIndices();
 
                     CursorDefault();
+                    isActivated = true;
                 }));
             });
         }
@@ -78,11 +81,6 @@ namespace Capibara
         private void FRMgeneradorDeCapas_Resize(object sender, EventArgs e)
         {
             ForzarSeparacionClase();
-        }
-
-        private void FRMcapibara_Validated(object sender, EventArgs e)
-        {
-            desplegarCombo = true;
         }
 
         private void FRMcapibara_FormClosing(object sender, FormClosingEventArgs e)
@@ -972,8 +970,8 @@ namespace Capibara
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                     Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
-                    Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
-                    Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) }\";");
+                    Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
+                    Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t#region UPDATE");
 
@@ -1068,8 +1066,8 @@ namespace Capibara
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
                         Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
                         Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
-                        Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(" AND ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
-                        Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) }\";");
+                        Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
+                        Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                         Repositories.AppendLine();
                         Repositories.AppendLine("\t\t\t\t#region UPDATE");
 
@@ -1184,7 +1182,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\t\t{");
                     string instancia = char.ToLower(nombreDeClase[0]) + tipoClase.Substring(1);
                     Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } { instancia } = new { tipoClase }();");
-                    Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
+                    Repositories.AppendLine($"\t\t\t\t\tResultado = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
                     Repositories.AppendLine("\t\t\t\t};");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\tSQLconsulta.CerrarConexion();");
@@ -2899,7 +2897,7 @@ namespace Capibara
                     WaitCursor();
 
                     ListarNameSpaces();
-                    desplegarCombo = !CHKinsertarEnProyecto.Checked;
+                    desplegarCombo = isActivated && !CHKinsertarEnProyecto.Checked;
                     CargarSolucionPorCarpetas();
                     if (desplegarCombo)
                     {
@@ -3426,8 +3424,6 @@ namespace Capibara
             }
         }
 
-        TfsHelper tfs = null;
-
         private void CapibararProyecto()
         {
             if (CHKinsertarEnProyecto.Checked)
@@ -3440,7 +3436,6 @@ namespace Capibara
                 string carpetaCapas = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
-                tfs = new TfsHelper(Path.Combine(Path.GetDirectoryName(OFDlistarDeSolucion.FileName), pathProyecto));
                 CopiarDirectorio(capas.pathCarpetaClase, carpetaCapas);
 
                 // Agregar al proyecto
@@ -3460,7 +3455,7 @@ namespace Capibara
             if (!Directory.Exists(directorioDestino))
             {
                 Directory.CreateDirectory(directorioDestino);
-                tfs.AddIfNotInTfs(directorioDestino);
+                //TfsHelper.AgregarAFuente(directorioDestino);
             }
 
             // Copiar todos los archivos
@@ -3469,7 +3464,7 @@ namespace Capibara
                 string nombreArchivo = Path.GetFileName(archivo);
                 string archivoDestino = Path.Combine(directorioDestino, nombreArchivo);
                 File.Copy(archivo, archivoDestino, sobreescribir);
-                tfs.AddIfNotInTfs(archivoDestino);
+                //TfsHelper.AgregarAFuente(archivoDestino);
             }
 
             // Copiar recursivamente los subdirectorios

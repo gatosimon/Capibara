@@ -229,5 +229,15 @@ namespace Capibara.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Byte[].
+        /// </summary>
+        internal static byte[] TF {
+            get {
+                object obj = ResourceManager.GetObject("TF", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
