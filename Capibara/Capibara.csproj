@@ -380,7 +380,7 @@
     <None Include="Resources\TF.exe" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DataLayer\DataLayer.csproj">
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
       <Project>{e638a9f6-0826-48fe-842b-badb1b521e06}</Project>
       <Name>DataLayer</Name>
     </ProjectReference>

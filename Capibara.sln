@@ -9,7 +9,7 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CapibaraInstaller", "Capiba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapibaraInstallerActions", "CapibaraInstallerActions\CapibaraInstallerActions.csproj", "{861009A0-6AA1-4318-B0FF-2F7497AC3D18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "..\DataLayer\DataLayer.csproj", "{E638A9F6-0826-48FE-842B-BADB1B521E06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{E638A9F6-0826-48FE-842B-BADB1B521E06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
