@@ -455,14 +455,24 @@ namespace Capibara
                     resultado += ArmarGlobal();
                     resultado += "\r\n";
 
-                    if (CHKtypeScript.Checked)
+                    if (CHKclaseTypeScript.Checked)
                     {
-                        resultado += ArmarTypeScript(camposConsulta);
+                        resultado += ArmarClaseTypeScript(camposConsulta);
                         resultado += "\r\n";
                     }
                     else
                     {
-                        ArmarTypeScript(camposConsulta);
+                        ArmarClaseTypeScript(camposConsulta);
+                    }
+
+                    if (CHKgenerarAbm.Checked)
+                    {
+                        resultado += ArmarABM(camposConsulta);
+                        resultado += "\r\n";
+                    }
+                    else
+                    {
+                        ArmarClaseTypeScript(camposConsulta);
                     }
 
                     Utilidades.ReproducirSplash();
@@ -481,6 +491,8 @@ namespace Capibara
         }
 
         #region ARMADO DE CAPAS
+
+        #region BACK
 
         private string ArmarControllers(List<DataColumn> claves)
         {
@@ -1945,7 +1957,11 @@ namespace Capibara
             return Global.ToString();
         }
 
-        private string ArmarTypeScript(List<DataColumn> columnas)
+        #endregion
+
+        #region FRONT
+
+        private string ArmarClaseTypeScript(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
             StringBuilder TypeSript = new StringBuilder();
@@ -1962,22 +1978,67 @@ namespace Capibara
             TypeSript.AppendLine("}");
 
             // Elimino cualquier version anterior de la capa
-            if (CHKtypeScript.Checked)
+            try
+            {
+                if (File.Exists(capas.pathClaseTypeScript))
+                {
+                    File.Delete(capas.pathClaseTypeScript);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            if (CHKclaseTypeScript.Checked)
             {
                 try
                 {
-                    string pathTypeScript = TXTpathCapas.Text + @"\" + capas.TABLA + @"\TypeScript\";
-                    string pathClaseTypeScript = pathTypeScript + capas.TABLA + ".ts";
-                    if (!Directory.Exists(pathTypeScript))
+                    if (!Directory.Exists(capas.pathTypeScript))
                     {
-                        Directory.CreateDirectory(pathTypeScript);
-                    }
-                    if (File.Exists(pathClaseTypeScript))
-                    {
-                        File.Delete(pathClaseTypeScript);
+                        Directory.CreateDirectory(capas.pathTypeScript);
                     }
 
-                    StreamWriter clase = new StreamWriter(pathClaseTypeScript);
+                    StreamWriter clase = new StreamWriter(capas.pathClaseTypeScript);
+                    clase.Write(TypeSript.ToString());
+                    clase.Flush();
+                    clase.Close();
+                }
+                catch (Exception err)
+                {
+                    CustomMessageBox.Show(err.Message);
+                }
+            }
+
+            return TypeSript.ToString();
+        }
+
+        private string ArmarABM(List<DataColumn> columnas)
+        {
+            string nombreDeClase = capas.TABLA;
+            StringBuilder TypeSript = new StringBuilder();
+
+            TypeSript.AppendLine($"export class { nombreDeClase }{{");
+            TypeSript.AppendLine($"\tconstructor(init?: Partial<{ nombreDeClase }>) {{");
+            TypeSript.AppendLine("\t\tObject.assign(this, init);");
+            TypeSript.AppendLine("\t}");
+
+            foreach (var columna in columnas)
+            {
+                TypeSript.AppendLine($"\tpublic { columna.ColumnName }: { capas.PropiedadesTS[columna.DataType]}");
+            }
+            TypeSript.AppendLine("}");
+
+            // Elimino cualquier version anterior de la capa
+            if (CHKclaseTypeScript.Checked)
+            {
+                try
+                {
+                    if (File.Exists(capas.pathClaseTypeScript))
+                    {
+                        File.Delete(capas.pathClaseTypeScript);
+                    }
+
+                    StreamWriter clase = new StreamWriter(capas.pathClaseTypeScript);
                     clase.Write(TypeSript.ToString());
                     clase.Flush();
                     clase.Close();
@@ -1987,7 +2048,7 @@ namespace Capibara
                 }
             }
 
-            if (CHKtypeScript.Checked)
+            if (CHKclaseTypeScript.Checked)
             {
                 try
                 {
@@ -2010,7 +2071,11 @@ namespace Capibara
 
             return TypeSript.ToString();
         }
+
         #endregion
+
+        #endregion
+
         private void GenerarDesdeTabla()
         {
             WaitCursor();
@@ -2150,8 +2215,9 @@ namespace Capibara
                 }
                 CMBbases.Refresh();
             }
-            catch (Exception)
+            catch (Exception err)
             {
+                Console.WriteLine(err.Message);
             }
         }
 
@@ -2173,7 +2239,7 @@ namespace Capibara
             {
                     stringConnection.TipoConexion = RDBdb2.Checked ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
                     stringConnection.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    stringConnection.BaseDeDatos = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                    stringConnection.BaseDeDatos = CMBbases.SelectedIndex == -1 ? string.Empty : CMBbases.Items[CMBbases.SelectedIndex].ToString() ?? string.Empty;
             }
             catch (Exception err)
             {

@@ -22,7 +22,7 @@ namespace Capibara
             {typeof(double),    "double"},
             {typeof(Guid),      "Guid"},
             {typeof(int),       "int"},			//                                                                      Int32
-            {typeof(Int16),     "short" },        // "short"}, GONZA PIDIO ESTO SI REVIENTA OTRA VEZ ES ES SU CULPA		Int16s
+            {typeof(Int16),     "int" },        // "short"}, GONZA PIDIO ESTO SI REVIENTA OTRA VEZ ES ES SU CULPA		Int16s AHORA LO VOLVI A CAMBIAR, PERO ESTA VEZ A int PORQUE OOOOTRA VEZ LO PIDIO EL GONZA
             {typeof(Int64),     "long"},		//                                                                      Int64
             {typeof(Object),    ERROR},
             {typeof(SByte),     "double"},

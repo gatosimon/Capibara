@@ -82,7 +82,7 @@ namespace Capibara
             this.CHKinsertarEnProyecto = new System.Windows.Forms.CheckBox();
             this.TBPfront = new System.Windows.Forms.TabPage();
             this.GPBFront = new System.Windows.Forms.GroupBox();
-            this.CHKtypeScript = new System.Windows.Forms.CheckBox();
+            this.CHKclaseTypeScript = new System.Windows.Forms.CheckBox();
             this.TBPconsulta = new System.Windows.Forms.TabPage();
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
             this.BTNobtenerEstructura = new System.Windows.Forms.Button();
@@ -121,6 +121,7 @@ namespace Capibara
             this.TXTnombreAmigable = new System.Windows.Forms.TextBox();
             this.LBLnombreCarpetaClase = new System.Windows.Forms.Label();
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
+            this.CHKgenerarAbm = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -589,7 +590,7 @@ namespace Capibara
             // 
             this.SPCbak2.Panel2.Controls.Add(this.GPBajustes);
             this.SPCbak2.Size = new System.Drawing.Size(358, 209);
-            this.SPCbak2.SplitterDistance = 166;
+            this.SPCbak2.SplitterDistance = 165;
             this.SPCbak2.TabIndex = 4;
             // 
             // GPBmetodos
@@ -606,7 +607,7 @@ namespace Capibara
             this.GPBmetodos.Location = new System.Drawing.Point(0, 0);
             this.GPBmetodos.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
             this.GPBmetodos.Name = "GPBmetodos";
-            this.GPBmetodos.Size = new System.Drawing.Size(166, 209);
+            this.GPBmetodos.Size = new System.Drawing.Size(165, 209);
             this.GPBmetodos.TabIndex = 4;
             this.GPBmetodos.TabStop = false;
             this.GPBmetodos.Text = "METODOS";
@@ -700,7 +701,7 @@ namespace Capibara
             this.GPBajustes.Location = new System.Drawing.Point(0, 0);
             this.GPBajustes.Margin = new System.Windows.Forms.Padding(20, 3, 3, 3);
             this.GPBajustes.Name = "GPBajustes";
-            this.GPBajustes.Size = new System.Drawing.Size(188, 209);
+            this.GPBajustes.Size = new System.Drawing.Size(189, 209);
             this.GPBajustes.TabIndex = 20;
             this.GPBajustes.TabStop = false;
             this.GPBajustes.Text = "AJUSTES";
@@ -762,7 +763,8 @@ namespace Capibara
             // GPBFront
             // 
             this.GPBFront.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.GPBFront.Controls.Add(this.CHKtypeScript);
+            this.GPBFront.Controls.Add(this.CHKgenerarAbm);
+            this.GPBFront.Controls.Add(this.CHKclaseTypeScript);
             this.GPBFront.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GPBFront.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GPBFront.Location = new System.Drawing.Point(3, 3);
@@ -771,19 +773,18 @@ namespace Capibara
             this.GPBFront.TabIndex = 1;
             this.GPBFront.TabStop = false;
             // 
-            // CHKtypeScript
+            // CHKclaseTypeScript
             // 
-            this.CHKtypeScript.AutoSize = true;
-            this.CHKtypeScript.Checked = true;
-            this.CHKtypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKtypeScript.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CHKtypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKtypeScript.Location = new System.Drawing.Point(3, 19);
-            this.CHKtypeScript.Name = "CHKtypeScript";
-            this.CHKtypeScript.Size = new System.Drawing.Size(98, 187);
-            this.CHKtypeScript.TabIndex = 0;
-            this.CHKtypeScript.Text = "TypeScript";
-            this.CHKtypeScript.UseVisualStyleBackColor = true;
+            this.CHKclaseTypeScript.AutoSize = true;
+            this.CHKclaseTypeScript.Checked = true;
+            this.CHKclaseTypeScript.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKclaseTypeScript.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKclaseTypeScript.Location = new System.Drawing.Point(6, 19);
+            this.CHKclaseTypeScript.Name = "CHKclaseTypeScript";
+            this.CHKclaseTypeScript.Size = new System.Drawing.Size(62, 20);
+            this.CHKclaseTypeScript.TabIndex = 0;
+            this.CHKclaseTypeScript.Text = "Clase";
+            this.CHKclaseTypeScript.UseVisualStyleBackColor = true;
             // 
             // TBPconsulta
             // 
@@ -1235,6 +1236,19 @@ namespace Capibara
             this.CMBnamespaces.TabIndex = 7;
             this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
             // 
+            // CHKgenerarAbm
+            // 
+            this.CHKgenerarAbm.AutoSize = true;
+            this.CHKgenerarAbm.Checked = true;
+            this.CHKgenerarAbm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKgenerarAbm.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKgenerarAbm.Location = new System.Drawing.Point(6, 53);
+            this.CHKgenerarAbm.Name = "CHKgenerarAbm";
+            this.CHKgenerarAbm.Size = new System.Drawing.Size(111, 20);
+            this.CHKgenerarAbm.TabIndex = 1;
+            this.CHKgenerarAbm.Text = "Generar ABM";
+            this.CHKgenerarAbm.UseVisualStyleBackColor = true;
+            // 
             // FRMcapibara
             // 
             this.ClientSize = new System.Drawing.Size(1186, 749);
@@ -1396,7 +1410,7 @@ namespace Capibara
         private System.Windows.Forms.CheckBox CHKinsertarEnProyecto;
         private System.Windows.Forms.TabPage TBPfront;
         private System.Windows.Forms.GroupBox GPBFront;
-        private System.Windows.Forms.CheckBox CHKtypeScript;
+        private System.Windows.Forms.CheckBox CHKclaseTypeScript;
         private System.Windows.Forms.TabPage TBPconsulta;
         private System.Windows.Forms.GroupBox GBPaPartirDeConsulta;
         private System.Windows.Forms.Button BTNobtenerEstructura;
@@ -1410,6 +1424,7 @@ namespace Capibara
         private System.Windows.Forms.ToolStripMenuItem TSMorigenDeDatosSQL;
         private System.Windows.Forms.SplitContainer SPCexploradorDeSolucion;
         private System.Windows.Forms.Label LBLseleccionesTRV;
+        private System.Windows.Forms.CheckBox CHKgenerarAbm;
     }
 }
 
