@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 
 namespace DataLayer
 {
@@ -425,7 +425,7 @@ namespace DataLayer
             int i = 0;
 
             IDataReader reader = DataReader(sql, parameters);
-            
+
             reader.Read();
             do
             {
@@ -434,7 +434,7 @@ namespace DataLayer
                 ds.Tables.Add(tabla);
                 i++;
             }
-            while (!reader.IsClosed && reader.NextResult()) ;
+            while (!reader.IsClosed && reader.NextResult());
 
             return ds;
         }

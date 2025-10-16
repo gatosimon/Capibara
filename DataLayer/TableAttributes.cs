@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DataLayer
+﻿namespace DataLayer
 {
     /// <summary>
     /// Atributos de la tabla donde se guardan los objetos

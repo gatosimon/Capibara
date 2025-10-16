@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Capibara.CustomControls
@@ -39,7 +38,7 @@ namespace Capibara.CustomControls
                 Properties.Resources.Capibara04,
                 Properties.Resources.Capibara00,
             };
-            
+
             // Overlay transparente
             FormBorderStyle = FormBorderStyle.None;
             StartPosition = FormStartPosition.CenterScreen;

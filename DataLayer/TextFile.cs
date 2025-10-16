@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DataLayer
+﻿namespace DataLayer
 {
     /// <summary>
     /// Funciones y utilidades para el manejo de archivos de texto planos

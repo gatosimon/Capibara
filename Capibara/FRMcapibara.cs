@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Capibara.CustomControls;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Odbc;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Data.Odbc;
-using System.IO;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using Capibara.CustomControls;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Capibara
 {
@@ -2237,9 +2237,9 @@ namespace Capibara
             StringConnection stringConnection = new StringConnection();
             try
             {
-                    stringConnection.TipoConexion = RDBdb2.Checked ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
-                    stringConnection.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                    stringConnection.BaseDeDatos = CMBbases.SelectedIndex == -1 ? string.Empty : CMBbases.Items[CMBbases.SelectedIndex].ToString() ?? string.Empty;
+                stringConnection.TipoConexion = RDBdb2.Checked ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
+                stringConnection.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
+                stringConnection.BaseDeDatos = CMBbases.SelectedIndex == -1 ? string.Empty : CMBbases.Items[CMBbases.SelectedIndex].ToString() ?? string.Empty;
             }
             catch (Exception err)
             {
@@ -3653,7 +3653,7 @@ namespace Capibara
             {
                 if (Directory.Exists(e.Node.Tag.ToString()))
                 {
-                    CarpetaDestino = e.Node.Tag.ToString(); 
+                    CarpetaDestino = e.Node.Tag.ToString();
                 }
 
                 ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
@@ -3707,7 +3707,7 @@ namespace Capibara
                 if (TRVsolucion.SelectedNode == null) return;
                 if (Directory.Exists(TRVsolucion.SelectedNode.Tag.ToString()))
                 {
-                    CarpetaDestino = TRVsolucion.SelectedNode.Tag.ToString(); 
+                    CarpetaDestino = TRVsolucion.SelectedNode.Tag.ToString();
                 }
                 OrigenDeDatoSql = Utilidades.ObtenerClaseYEntidad(TRVsolucion.SelectedNode.Tag.ToString());
 

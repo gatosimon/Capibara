@@ -1,15 +1,14 @@
-﻿using System;
+﻿using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WMPLib;
-using System.Runtime.InteropServices;
-using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
-using System.Collections.Generic;
 
 namespace Capibara
 {
@@ -32,7 +31,7 @@ namespace Capibara
         /// - Separa palabras pegadas cuando hay mayúsculas en el medio.
         /// - Capitaliza la primera letra de cada palabra.
         /// </summary>
-        
+
         public static string FormatearTitulo(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -199,7 +198,7 @@ namespace Capibara
             FileAttributes attr = File.GetAttributes(path);
             return (attr & FileAttributes.Directory) == FileAttributes.Directory;
         }
-        
+
         public static string ObtenerClaseYEntidad(string rutaArchivo)
         {
             if (!File.Exists(rutaArchivo))

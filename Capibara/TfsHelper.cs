@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
-using Microsoft.TeamFoundation.Client;
+﻿using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
+using System;
+using System.IO;
 
 public static class TfsHelper
 {

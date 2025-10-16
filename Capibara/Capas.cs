@@ -213,7 +213,7 @@ namespace Capibara
         public List<string> tablasBase = new List<string>();
 
         public List<string> camposTabla = new List<string>();
-        
+
         public string TABLA = string.Empty;
 
         public string NombreTabla { get { return TABLA + MODEL + "." + MODELTABNAME; } }

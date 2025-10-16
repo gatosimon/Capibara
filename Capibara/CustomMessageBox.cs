@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WMPLib;
-using System.Runtime.InteropServices;
 
 namespace Capibara.CustomControls
 {
