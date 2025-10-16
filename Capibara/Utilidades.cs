@@ -213,7 +213,7 @@ namespace Capibara
                 string lineaTrim = linea.Trim();
 
                 // Buscar clase
-                if (nombreClase == null && lineaTrim.StartsWith("public static class"))
+                if (nombreClase == null && (lineaTrim.StartsWith("public static class") || lineaTrim.StartsWith("public class")))
                 {
                     var partes = lineaTrim.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     nombreClase = partes.Last(); // último token es el nombre de la clase

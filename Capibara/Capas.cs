@@ -18,7 +18,7 @@ namespace Capibara
             {typeof(char[]),    ERROR},
             {typeof(DateTime),  "DateTime"},
             {typeof(DBNull),    ERROR},
-            {typeof(decimal),   "double"},
+            {typeof(decimal),   "decimal"},
             {typeof(double),    "double"},
             {typeof(Guid),      "Guid"},
             {typeof(int),       "int"},			//                                                                      Int32

@@ -3651,7 +3651,10 @@ namespace Capibara
         {
             if (e.Node.Tag != null)
             {
-                CarpetaDestino = e.Node.Tag.ToString();
+                if (Directory.Exists(e.Node.Tag.ToString()))
+                {
+                    CarpetaDestino = e.Node.Tag.ToString(); 
+                }
 
                 ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
             }
@@ -3702,7 +3705,10 @@ namespace Capibara
             try
             {
                 if (TRVsolucion.SelectedNode == null) return;
-                CarpetaDestino = TRVsolucion.SelectedNode.Tag.ToString();
+                if (Directory.Exists(TRVsolucion.SelectedNode.Tag.ToString()))
+                {
+                    CarpetaDestino = TRVsolucion.SelectedNode.Tag.ToString(); 
+                }
                 OrigenDeDatoSql = Utilidades.ObtenerClaseYEntidad(TRVsolucion.SelectedNode.Tag.ToString());
 
                 ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
