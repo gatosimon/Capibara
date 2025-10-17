@@ -23,6 +23,7 @@ Global
 		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		Description = Herramienta de scaffolding para los sistemas de la Municipalidad de Rafaela
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C2192651-B19E-473B-817D-9A5CBB8CD466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

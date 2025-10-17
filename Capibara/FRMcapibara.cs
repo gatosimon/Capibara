@@ -2726,7 +2726,7 @@ namespace Capibara
                 if (RDBsql.Checked)
                 {
                     CMBservidor.Items.Clear();
-                    CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION" });
+                    CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION" });
                     if (CMBservidor.Items.Count > 0)
                     {
                         CMBservidor.SelectedIndex = 0;
@@ -2749,7 +2749,7 @@ namespace Capibara
                 {
                     CHKtryOrIf.Visible = RDBdb2.Checked;
                     CMBservidor.Items.Clear();
-                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
+                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" });
                     if (CMBservidor.Items.Count > 0)
                     {
                         CMBservidor.SelectedIndex = 0;

@@ -82,6 +82,7 @@ namespace Capibara
             this.CHKinsertarEnProyecto = new System.Windows.Forms.CheckBox();
             this.TBPfront = new System.Windows.Forms.TabPage();
             this.GPBFront = new System.Windows.Forms.GroupBox();
+            this.CHKgenerarAbm = new System.Windows.Forms.CheckBox();
             this.CHKclaseTypeScript = new System.Windows.Forms.CheckBox();
             this.TBPconsulta = new System.Windows.Forms.TabPage();
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
@@ -121,7 +122,6 @@ namespace Capibara
             this.TXTnombreAmigable = new System.Windows.Forms.TextBox();
             this.LBLnombreCarpetaClase = new System.Windows.Forms.Label();
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
-            this.CHKgenerarAbm = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -184,6 +184,7 @@ namespace Capibara
             this.CMBservidor.FormattingEnabled = true;
             this.CMBservidor.Items.AddRange(new object[] {
             "133.123.120.120",
+            "133.123.108.29",
             "SERVER04",
             "SERVER01"});
             this.CMBservidor.Location = new System.Drawing.Point(260, 19);
@@ -773,6 +774,19 @@ namespace Capibara
             this.GPBFront.TabIndex = 1;
             this.GPBFront.TabStop = false;
             // 
+            // CHKgenerarAbm
+            // 
+            this.CHKgenerarAbm.AutoSize = true;
+            this.CHKgenerarAbm.Checked = true;
+            this.CHKgenerarAbm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKgenerarAbm.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKgenerarAbm.Location = new System.Drawing.Point(6, 53);
+            this.CHKgenerarAbm.Name = "CHKgenerarAbm";
+            this.CHKgenerarAbm.Size = new System.Drawing.Size(111, 20);
+            this.CHKgenerarAbm.TabIndex = 1;
+            this.CHKgenerarAbm.Text = "Generar ABM";
+            this.CHKgenerarAbm.UseVisualStyleBackColor = true;
+            // 
             // CHKclaseTypeScript
             // 
             this.CHKclaseTypeScript.AutoSize = true;
@@ -1235,19 +1249,6 @@ namespace Capibara
             this.CMBnamespaces.Size = new System.Drawing.Size(254, 24);
             this.CMBnamespaces.TabIndex = 7;
             this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
-            // 
-            // CHKgenerarAbm
-            // 
-            this.CHKgenerarAbm.AutoSize = true;
-            this.CHKgenerarAbm.Checked = true;
-            this.CHKgenerarAbm.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKgenerarAbm.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKgenerarAbm.Location = new System.Drawing.Point(6, 53);
-            this.CHKgenerarAbm.Name = "CHKgenerarAbm";
-            this.CHKgenerarAbm.Size = new System.Drawing.Size(111, 20);
-            this.CHKgenerarAbm.TabIndex = 1;
-            this.CHKgenerarAbm.Text = "Generar ABM";
-            this.CHKgenerarAbm.UseVisualStyleBackColor = true;
             // 
             // FRMcapibara
             // 
