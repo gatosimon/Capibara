@@ -2983,26 +2983,31 @@ namespace Capibara
             // Buscar todos los proyectos .csproj en la solución
             foreach (var csproj in Directory.GetFiles(directorioSolucion, "*.csproj", SearchOption.AllDirectories))
             {
-                XDocument doc = XDocument.Load(csproj);
-                XNamespace ns = doc.Root.Name.Namespace;
-
-                // Tomamos todos los archivos incluidos en el proyecto
-                var includes = doc.Descendants(ns + "Compile")
-                                  .Select(e => (string)e.Attribute("Include"))
-                                  .Concat(doc.Descendants(ns + "Content")
-                                             .Select(e => (string)e.Attribute("Include")))
-                                  .Concat(doc.Descendants(ns + "EmbeddedResource")
-                                             .Select(e => (string)e.Attribute("Include")))
-                                  .Where(p => !string.IsNullOrWhiteSpace(p));
-
-                foreach (var include in includes)
+                try
                 {
-                    string decoded = Uri.UnescapeDataString(include); // 🔹 decodificar
-                    string carpeta = Path.GetDirectoryName(decoded);
-                    if (!string.IsNullOrEmpty(carpeta))
-                        resultado.Add(carpeta);
-                }
+                    XDocument doc = XDocument.Load(csproj);
+                    XNamespace ns = doc.Root.Name.Namespace;
 
+                    // Tomamos todos los archivos incluidos en el proyecto
+                    var includes = doc.Descendants(ns + "Compile")
+                                      .Select(e => (string)e.Attribute("Include"))
+                                      .Concat(doc.Descendants(ns + "Content")
+                                                 .Select(e => (string)e.Attribute("Include")))
+                                      .Concat(doc.Descendants(ns + "EmbeddedResource")
+                                                 .Select(e => (string)e.Attribute("Include")))
+                                      .Where(p => !string.IsNullOrWhiteSpace(p));
+
+                    foreach (var include in includes)
+                    {
+                        string decoded = Uri.UnescapeDataString(include); // 🔹 decodificar
+                        string carpeta = Path.GetDirectoryName(decoded);
+                        if (!string.IsNullOrEmpty(carpeta))
+                            resultado.Add(carpeta);
+                    }
+                }
+                catch (Exception err)
+                {
+                }
             }
 
             // Devolvemos solo carpetas únicas
