@@ -428,6 +428,7 @@ namespace Capibara
         {
             List<DataColumn> camposConsulta = new List<DataColumn>();
             int i = 0;
+            bool obtenerTodas = LSVcampos.CheckedItems.Count == 0;
             foreach (DataColumn columna in DS.Tables[0].Columns)
             {
                 // Si genero a partir de una Query
@@ -442,7 +443,18 @@ namespace Capibara
                         claves.Add(columna);
                     }
 
-                    camposConsulta.Add(columna);
+                    if (obtenerTodas)
+                    {
+                        camposConsulta.Add(columna);
+                    }
+                    else
+                    {
+                        ListViewItem item = LSVcampos.Items.Cast<ListViewItem>().FirstOrDefault(x => x.Text == columna.ColumnName && x.Checked);
+                        if (item != null)
+                        {
+                            camposConsulta.Add(columna);
+                        }
+                    }
 
                     if (capas.Tipo(columna) == Capas.ERROR)
                     {
@@ -2712,7 +2724,8 @@ namespace Capibara
                 if (RDBsql.Checked)
                 {
                     CMBservidor.Items.Clear();
-                    CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION" });
+                    //CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" }); LA primera es la de CABL
+                    CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" });
                     if (CMBservidor.Items.Count > 0)
                     {
                         CMBservidor.SelectedIndex = 0;

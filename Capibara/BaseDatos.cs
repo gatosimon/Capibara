@@ -25,7 +25,14 @@
                     stringConnection = $"Driver={{IBM DB2 ODBC DRIVER}};Database={BaseDeDatos};Hostname={Servidor};Port=50000; Protocol=TCPIP;Uid=db2admin;Pwd=db2admin;";
                     break;
                 case Motor.SQL:
-                    stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{Servidor}\{Servidor};Database={BaseDeDatos};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+                    if (Servidor.EndsWith("WEB"))
+                    {
+                        stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{Servidor.Replace("WEB", string.Empty)}\{Servidor};Database={BaseDeDatos};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+                    }
+                    else
+                    {
+                        stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{Servidor}\{Servidor};Database={BaseDeDatos};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+                    }
                     break;
             }
             return stringConnection;
