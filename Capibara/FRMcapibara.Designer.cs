@@ -185,7 +185,6 @@ namespace Capibara
             this.CMBservidor.FormattingEnabled = true;
             this.CMBservidor.Items.AddRange(new object[] {
             "133.123.120.120",
-            "133.123.108.29",
             "SERVER04",
             "SERVER01"});
             this.CMBservidor.Location = new System.Drawing.Point(260, 19);

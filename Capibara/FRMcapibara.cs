@@ -2748,7 +2748,9 @@ namespace Capibara
                 {
                     CHKtryOrIf.Visible = RDBdb2.Checked;
                     CMBservidor.Items.Clear();
-                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" });
+                    //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" }); el segundo es el de CABL
+                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
+
                     if (CMBservidor.Items.Count > 0)
                     {
                         CMBservidor.SelectedIndex = 0;

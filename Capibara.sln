@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapibaraInstallerActions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{E638A9F6-0826-48FE-842B-BADB1B521E06}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "InstaladorCapibara", "InstaladorCapibara\InstaladorCapibara.vdproj", "{900BC929-673F-441B-83CE-8F12D9AEBDF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,16 @@ Global
 		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x64.Build.0 = Release|Any CPU
 		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x86.ActiveCfg = Release|Any CPU
 		{E638A9F6-0826-48FE-842B-BADB1B521E06}.Release|x86.Build.0 = Release|Any CPU
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Debug|Any CPU.ActiveCfg = Debug
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Debug|ARM.ActiveCfg = Debug
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Debug|ARM64.ActiveCfg = Debug
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Debug|x64.ActiveCfg = Debug
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Debug|x86.ActiveCfg = Debug
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Release|Any CPU.ActiveCfg = Release
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Release|ARM.ActiveCfg = Release
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Release|ARM64.ActiveCfg = Release
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Release|x64.ActiveCfg = Release
+		{900BC929-673F-441B-83CE-8F12D9AEBDF6}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
