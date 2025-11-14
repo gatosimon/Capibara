@@ -2205,19 +2205,33 @@ namespace Capibara
             }
             catch (Exception err)
             {
-                Console.WriteLine(err.Message);
+                CustomMessageBox.Show($"ERROR EN EL CAMBIO DE SERVIDOR: {err.Message}");
             }
         }
 
         private void CMBbases_SelectedIndexChanged(object sender, EventArgs e)
         {
-            TablasBase();
+            try
+            {
+                TablasBase();
+            }
+            catch (Exception err)
+            {
+                CustomMessageBox.Show($"ERROR EN EL CAMBIO DE BASE: {err.Message}");
+            }
         }
 
         private void CMBtablas_SelectedIndexChanged(object sender, EventArgs e)
         {
-            generarDesdeConsulta = false;
-            CamposTabla();
+            try
+            {
+                generarDesdeConsulta = false;
+                CamposTabla();
+            }
+            catch (Exception err)
+            {
+                CustomMessageBox.Show($"ERROR EN EL CAMBIO DE TABLA: {err.Message}");
+            }
         }
 
         private StringConnection DefinirStringConnection()
@@ -2777,58 +2791,72 @@ namespace Capibara
 
         private void CMBtablas_TextUpdate(object sender, EventArgs e)
         {
-            string texto = CMBtablas.Text;
-
-            // ✅ 1. Filtrar caracteres no válidos (solo letras, números y _ $ # @)
-            if (!System.Text.RegularExpressions.Regex.IsMatch(texto, @"^[a-zA-Z0-9_@$#]*$"))
+            try
             {
-                return; // ignorar si el texto tiene caracteres inválidos
-            }
+                string texto = CMBtablas.Text;
 
-            // ✅ 2. Filtrar lista
-            List<string> filtrados = capas.tablasBase
-                .Where(item => item.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToList();
-
-            CMBtablas.BeginUpdate();
-            CMBtablas.Items.Clear();
-
-            if (desplegarCombo && filtrados.Count > 0)
-            {
-                CMBtablas.Items.AddRange(filtrados.ToArray());
-                CMBtablas.DroppedDown = true;
-                // ✅ 3. Restaurar texto 
-                CMBtablas.Text = texto;
-            }
-            else
-            {
-                // Si no hay resultados, no explota: opcionalmente podrías cerrar el desplegable
-                CMBtablas.SelectedIndex = -1; // evita el error
-                CMBtablas.Text = texto;
-                try
+                // ✅ 1. Filtrar caracteres no válidos (solo letras, números y _ $ # @)
+                if (!System.Text.RegularExpressions.Regex.IsMatch(texto, @"^[a-zA-Z0-9_@$#]*$"))
                 {
-                    CMBtablas.DroppedDown = false;
+                    return; // ignorar si el texto tiene caracteres inválidos
                 }
-                catch (Exception err)
-                {
-                }
-            }
-            CMBtablas.SelectionStart = texto.Length;
-            CMBtablas.SelectionLength = 0;
 
-            CMBtablas.EndUpdate();
+                // ✅ 2. Filtrar lista
+                List<string> filtrados = capas.tablasBase
+                    .Where(item => item.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
+
+                CMBtablas.BeginUpdate();
+                CMBtablas.Items.Clear();
+
+                if (desplegarCombo && filtrados.Count > 0)
+                {
+                    CMBtablas.Items.AddRange(filtrados.ToArray());
+                    CMBtablas.DroppedDown = true;
+                    // ✅ 3. Restaurar texto 
+                    CMBtablas.Text = texto;
+                }
+                else
+                {
+                    // Si no hay resultados, no explota: opcionalmente podrías cerrar el desplegable
+                    CMBtablas.SelectedIndex = -1; // evita el error
+                    CMBtablas.Text = texto;
+                    try
+                    {
+                        CMBtablas.DroppedDown = false;
+                    }
+                    catch (Exception err)
+                    {
+                    }
+                }
+                CMBtablas.SelectionStart = texto.Length;
+                CMBtablas.SelectionLength = 0;
+
+                CMBtablas.EndUpdate();
+            }
+            catch (Exception err)
+            {
+                CustomMessageBox.Show($"ERROR EN LA ACTUALIZACION DEL TEXTO DE TABLA: {err.Message}");
+            }
         }
 
         private void CMBtablas_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                CMBtablas.BeginUpdate();
-                CMBtablas.Items.Clear();
-                CMBtablas.Items.AddRange(capas.tablasBase.ToArray());
-                CMBtablas.Text = string.Empty;
-                CMBtablas.DroppedDown = true;
-                CMBtablas.EndUpdate();
+                try
+                {
+                    CMBtablas.BeginUpdate();
+                    CMBtablas.Items.Clear();
+                    CMBtablas.Items.AddRange(capas.tablasBase.ToArray());
+                    CMBtablas.Text = string.Empty;
+                    CMBtablas.DroppedDown = true;
+                    CMBtablas.EndUpdate();
+                }
+                catch (Exception err)
+                {
+                    CustomMessageBox.Show($"ERROR EN EL KEYDOWN DE TABLA: {err.Message}");
+                }
             }
         }
 

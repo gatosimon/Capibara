@@ -405,6 +405,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_31BBD78C47EC44C694E34D656350BEA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_355F42EED6F27BBDCA38522F401D8E27"
         "OwnerKey" = "8:_11A10FD64AE48023BD680FB5BA44B7BE"
         "MsmSig" = "8:_UNDEFINED"
@@ -701,12 +707,6 @@
         {
         "MsmKey" = "8:_77094890EB2AF3FBB0D86A0F35D4C768"
         "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_77C6C192AF104590886C8B38C21A872C"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1054,6 +1054,12 @@
         "Entry"
         {
         "MsmKey" = "8:_AD2380E393F5F05D3A3E7D4C0E2E989B"
+        "OwnerKey" = "8:_31BBD78C47EC44C694E34D656350BEA5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AD2380E393F5F05D3A3E7D4C0E2E989B"
         "OwnerKey" = "8:_71A1EE8B2BBE8A7A45B8DE67FE9EB2DC"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1180,6 +1186,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C70561C1E5974BF99F912D16CCE6FAA0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1427,6 +1439,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_31BBD78C47EC44C694E34D656350BEA5"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1822,6 +1840,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -1829,6 +1855,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_95E64E1C419245468269FAAB7CA19DDB"
+            {
+            "Name" = "8:Resultado principal from CapibaraInstallerActions (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_31BBD78C47EC44C694E34D656350BEA5"
+            "FileType" = "3:1"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_55E4E6E4_432F_4D0E_91AE_79E2DCD9CA80"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:/targetdir=\"[TARGETDIR]\\\""
+            }
         }
         "DefaultFeature"
         {
@@ -2720,26 +2760,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_77C6C192AF104590886C8B38C21A872C"
-            {
-            "SourcePath" = "8:..\\De todo\\Imagenes\\BannerBitmap.bmp"
-            "TargetName" = "8:BannerBitmap.bmp"
-            "Tag" = "8:"
-            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7BC3BC5353B776008B2F6255A8031BD8"
             {
             "AssemblyRegister" = "3:1"
@@ -3256,6 +3276,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C8E0F8FCA25B4A89A26CD101259298D2"
+            {
+            "SourcePath" = "8:..\\De todo\\Imagenes\\BannerBitmap.bmp"
+            "TargetName" = "8:BannerBitmap.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D04BE351823BEF7F5EF12B356286DA4A"
             {
             "AssemblyRegister" = "3:1"
@@ -3684,15 +3724,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Capibara"
-        "ProductCode" = "8:{8C7330B3-8FBF-4695-8C47-A70D28ABF0A6}"
-        "PackageCode" = "8:{2BFC2635-00AB-4114-BB26-3B4E042464CB}"
+        "ProductCode" = "8:{85580AEF-6BFB-4558-98E7-EDF9A0DC6245}"
+        "PackageCode" = "8:{BB30F00C-F50D-4F91-B6A8-3FFA7E14E27A}"
         "UpgradeCode" = "8:{A80B72B0-4E63-4A7E-A2E1-1EBACC21F1CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:Capibara"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -3861,7 +3901,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "UpdateText"
@@ -3906,7 +3946,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -3929,7 +3969,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -3978,7 +4018,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "InstallAllUsersVisible"
@@ -4023,7 +4063,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -4068,7 +4108,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -4095,7 +4135,7 @@
             "Attributes" = "3:1"
                 "Dialogs"
                 {
-                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_14C8A6CD648A4975A0B434511DD7F5AC"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_5E02D87C47E04064AF6342E3BA2048A0"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Pantalla de bienvenida"
@@ -4113,7 +4153,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -4162,7 +4202,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4185,7 +4225,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4217,7 +4257,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_77C6C192AF104590886C8B38C21A872C"
+                            "Value" = "8:_C8E0F8FCA25B4A89A26CD101259298D2"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -4265,6 +4305,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{C2192651-B19E-473B-817D-9A5CBB8CD466}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_31BBD78C47EC44C694E34D656350BEA5"
+            {
+            "SourcePath" = "8:..\\CapibaraInstallerActions\\obj\\Debug\\CapibaraInstallerActions.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{861009A0-6AA1-4318-B0FF-2F7497AC3D18}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
