@@ -244,6 +244,8 @@
     </Compile>
     <Compile Include="Capas.cs" />
     <Compile Include="BaseDatos.cs" />
+    <Compile Include="Conexion.cs" />
+    <Compile Include="ConexionesManager.cs" />
     <Compile Include="CustomMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -257,6 +259,12 @@
     </Compile>
     <Compile Include="FRMcapibara.Designer.cs">
       <DependentUpon>FRMcapibara.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FRMconexiones.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRMconexiones.Designer.cs">
+      <DependentUpon>FRMconexiones.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -276,6 +284,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRMcapibara.resx">
       <DependentUpon>FRMcapibara.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRMconexiones.resx">
+      <DependentUpon>FRMconexiones.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -88,12 +88,14 @@ namespace Capibara
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
             this.BTNobtenerEstructura = new System.Windows.Forms.Button();
             this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
+            this.BTNgenerarDesdeTabla = new Capibara.CustomControls.SplitButton();
             this.CMScapibarar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
             this.SPCclase = new System.Windows.Forms.SplitContainer();
             this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
             this.LSVcampos = new System.Windows.Forms.ListView();
+            this.IMLTabla = new System.Windows.Forms.ImageList(this.components);
             this.SPCparametros = new System.Windows.Forms.SplitContainer();
             this.BTNquitarCampo = new System.Windows.Forms.Button();
             this.BTNagregarCampo = new System.Windows.Forms.Button();
@@ -120,9 +122,8 @@ namespace Capibara
             this.TTPusarTryOrIf = new System.Windows.Forms.ToolTip(this.components);
             this.TXTnombreAmigable = new System.Windows.Forms.TextBox();
             this.LBLnombreCarpetaClase = new System.Windows.Forms.Label();
-            this.IMLTabla = new System.Windows.Forms.ImageList(this.components);
-            this.BTNgenerarDesdeTabla = new Capibara.CustomControls.SplitButton();
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
+            this.BTNconexiones = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -173,7 +174,7 @@ namespace Capibara
             // 
             this.LBLservidor.AutoSize = true;
             this.LBLservidor.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLservidor.Location = new System.Drawing.Point(171, 23);
+            this.LBLservidor.Location = new System.Drawing.Point(218, 23);
             this.LBLservidor.Name = "LBLservidor";
             this.LBLservidor.Size = new System.Drawing.Size(80, 16);
             this.LBLservidor.TabIndex = 0;
@@ -187,7 +188,7 @@ namespace Capibara
             "133.123.120.120",
             "SERVER04",
             "SERVER01"});
-            this.CMBservidor.Location = new System.Drawing.Point(260, 19);
+            this.CMBservidor.Location = new System.Drawing.Point(307, 19);
             this.CMBservidor.Name = "CMBservidor";
             this.CMBservidor.Size = new System.Drawing.Size(137, 24);
             this.CMBservidor.TabIndex = 2;
@@ -197,7 +198,7 @@ namespace Capibara
             // 
             this.CMBtablas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CMBtablas.FormattingEnabled = true;
-            this.CMBtablas.Location = new System.Drawing.Point(738, 19);
+            this.CMBtablas.Location = new System.Drawing.Point(785, 19);
             this.CMBtablas.Name = "CMBtablas";
             this.CMBtablas.Size = new System.Drawing.Size(298, 24);
             this.CMBtablas.TabIndex = 4;
@@ -209,7 +210,7 @@ namespace Capibara
             // 
             this.LBLtablas.AutoSize = true;
             this.LBLtablas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLtablas.Location = new System.Drawing.Point(665, 23);
+            this.LBLtablas.Location = new System.Drawing.Point(712, 23);
             this.LBLtablas.Name = "LBLtablas";
             this.LBLtablas.Size = new System.Drawing.Size(64, 16);
             this.LBLtablas.TabIndex = 4;
@@ -235,7 +236,7 @@ namespace Capibara
             "RRHH",
             "SISUS",
             "TRIBUTOS"});
-            this.CMBbases.Location = new System.Drawing.Point(535, 19);
+            this.CMBbases.Location = new System.Drawing.Point(582, 19);
             this.CMBbases.Name = "CMBbases";
             this.CMBbases.Size = new System.Drawing.Size(121, 24);
             this.CMBbases.TabIndex = 3;
@@ -245,7 +246,7 @@ namespace Capibara
             // 
             this.LBLbases.AutoSize = true;
             this.LBLbases.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLbases.Location = new System.Drawing.Point(406, 23);
+            this.LBLbases.Location = new System.Drawing.Point(453, 23);
             this.LBLbases.Name = "LBLbases";
             this.LBLbases.Size = new System.Drawing.Size(120, 16);
             this.LBLbases.TabIndex = 6;
@@ -849,6 +850,21 @@ namespace Capibara
             this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(921, 187);
             this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
             // 
+            // BTNgenerarDesdeTabla
+            // 
+            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
+            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
+            this.BTNgenerarDesdeTabla.TabIndex = 14;
+            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
+            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
+            // 
             // CMScapibarar
             // 
             this.CMScapibarar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -918,6 +934,12 @@ namespace Capibara
             this.LSVcampos.SmallImageList = this.IMLTabla;
             this.LSVcampos.TabIndex = 1;
             this.LSVcampos.UseCompatibleStateImageBehavior = false;
+            // 
+            // IMLTabla
+            // 
+            this.IMLTabla.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IMLTabla.ImageStream")));
+            this.IMLTabla.TransparentColor = System.Drawing.Color.Transparent;
+            this.IMLTabla.Images.SetKeyName(0, "key");
             // 
             // SPCparametros
             // 
@@ -1221,27 +1243,6 @@ namespace Capibara
             this.LBLnombreCarpetaClase.TabIndex = 21;
             this.LBLnombreCarpetaClase.Text = "NOMBRE AMIGABLE:";
             // 
-            // IMLTabla
-            // 
-            this.IMLTabla.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IMLTabla.ImageStream")));
-            this.IMLTabla.TransparentColor = System.Drawing.Color.Transparent;
-            this.IMLTabla.Images.SetKeyName(0, "key");
-            // 
-            // BTNgenerarDesdeTabla
-            // 
-            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
-            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
-            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
-            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
-            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
-            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
-            this.BTNgenerarDesdeTabla.TabIndex = 14;
-            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
-            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
-            // 
             // CMBnamespaces
             // 
             this.CMBnamespaces.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1257,9 +1258,20 @@ namespace Capibara
             this.CMBnamespaces.TabIndex = 7;
             this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
             // 
+            // BTNconexiones
+            // 
+            this.BTNconexiones.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNconexiones.Location = new System.Drawing.Point(179, 19);
+            this.BTNconexiones.Name = "BTNconexiones";
+            this.BTNconexiones.Size = new System.Drawing.Size(33, 24);
+            this.BTNconexiones.TabIndex = 2;
+            this.BTNconexiones.Text = "+";
+            this.BTNconexiones.UseVisualStyleBackColor = true;
+            // 
             // FRMcapibara
             // 
             this.ClientSize = new System.Drawing.Size(1186, 749);
+            this.Controls.Add(this.BTNconexiones);
             this.Controls.Add(this.TXTnombreAmigable);
             this.Controls.Add(this.LBLnombreCarpetaClase);
             this.Controls.Add(this.SPCseparador);
@@ -1434,6 +1446,7 @@ namespace Capibara
         private System.Windows.Forms.Label LBLseleccionesTRV;
         private System.Windows.Forms.CheckBox CHKgenerarAbm;
         private System.Windows.Forms.ImageList IMLTabla;
+        private System.Windows.Forms.Button BTNconexiones;
     }
 }
 
