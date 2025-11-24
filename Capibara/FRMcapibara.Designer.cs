@@ -31,10 +31,10 @@ namespace Capibara
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMcapibara));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LBLservidor = new System.Windows.Forms.Label();
             this.CMBservidor = new System.Windows.Forms.ComboBox();
             this.CMBtablas = new System.Windows.Forms.ComboBox();
@@ -123,7 +123,11 @@ namespace Capibara
             this.TXTnombreAmigable = new System.Windows.Forms.TextBox();
             this.LBLnombreCarpetaClase = new System.Windows.Forms.Label();
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
-            this.BTNconexiones = new System.Windows.Forms.Button();
+            this.BTNnueva = new System.Windows.Forms.Button();
+            this.BTNeliminar = new System.Windows.Forms.Button();
+            this.BTNeditar = new System.Windows.Forms.Button();
+            this.CMBconexion = new System.Windows.Forms.ComboBox();
+            this.LBLconexion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -174,7 +178,7 @@ namespace Capibara
             // 
             this.LBLservidor.AutoSize = true;
             this.LBLservidor.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLservidor.Location = new System.Drawing.Point(218, 23);
+            this.LBLservidor.Location = new System.Drawing.Point(549, 11);
             this.LBLservidor.Name = "LBLservidor";
             this.LBLservidor.Size = new System.Drawing.Size(80, 16);
             this.LBLservidor.TabIndex = 0;
@@ -188,7 +192,7 @@ namespace Capibara
             "133.123.120.120",
             "SERVER04",
             "SERVER01"});
-            this.CMBservidor.Location = new System.Drawing.Point(307, 19);
+            this.CMBservidor.Location = new System.Drawing.Point(624, 11);
             this.CMBservidor.Name = "CMBservidor";
             this.CMBservidor.Size = new System.Drawing.Size(137, 24);
             this.CMBservidor.TabIndex = 2;
@@ -198,9 +202,9 @@ namespace Capibara
             // 
             this.CMBtablas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CMBtablas.FormattingEnabled = true;
-            this.CMBtablas.Location = new System.Drawing.Point(785, 19);
+            this.CMBtablas.Location = new System.Drawing.Point(957, 19);
             this.CMBtablas.Name = "CMBtablas";
-            this.CMBtablas.Size = new System.Drawing.Size(298, 24);
+            this.CMBtablas.Size = new System.Drawing.Size(211, 24);
             this.CMBtablas.TabIndex = 4;
             this.CMBtablas.SelectedIndexChanged += new System.EventHandler(this.CMBtablas_SelectedIndexChanged);
             this.CMBtablas.TextUpdate += new System.EventHandler(this.CMBtablas_TextUpdate);
@@ -210,7 +214,7 @@ namespace Capibara
             // 
             this.LBLtablas.AutoSize = true;
             this.LBLtablas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLtablas.Location = new System.Drawing.Point(712, 23);
+            this.LBLtablas.Location = new System.Drawing.Point(867, 19);
             this.LBLtablas.Name = "LBLtablas";
             this.LBLtablas.Size = new System.Drawing.Size(64, 16);
             this.LBLtablas.TabIndex = 4;
@@ -236,7 +240,7 @@ namespace Capibara
             "RRHH",
             "SISUS",
             "TRIBUTOS"});
-            this.CMBbases.Location = new System.Drawing.Point(582, 19);
+            this.CMBbases.Location = new System.Drawing.Point(740, 19);
             this.CMBbases.Name = "CMBbases";
             this.CMBbases.Size = new System.Drawing.Size(121, 24);
             this.CMBbases.TabIndex = 3;
@@ -246,7 +250,7 @@ namespace Capibara
             // 
             this.LBLbases.AutoSize = true;
             this.LBLbases.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLbases.Location = new System.Drawing.Point(453, 23);
+            this.LBLbases.Location = new System.Drawing.Point(621, 27);
             this.LBLbases.Name = "LBLbases";
             this.LBLbases.Size = new System.Drawing.Size(120, 16);
             this.LBLbases.TabIndex = 6;
@@ -275,7 +279,7 @@ namespace Capibara
             // 
             this.RDBsql.AutoSize = true;
             this.RDBsql.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RDBsql.Location = new System.Drawing.Point(15, 21);
+            this.RDBsql.Location = new System.Drawing.Point(515, 17);
             this.RDBsql.Name = "RDBsql";
             this.RDBsql.Size = new System.Drawing.Size(52, 20);
             this.RDBsql.TabIndex = 0;
@@ -288,7 +292,7 @@ namespace Capibara
             this.RDBdb2.AutoSize = true;
             this.RDBdb2.Checked = true;
             this.RDBdb2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RDBdb2.Location = new System.Drawing.Point(93, 21);
+            this.RDBdb2.Location = new System.Drawing.Point(564, 27);
             this.RDBdb2.Name = "RDBdb2";
             this.RDBdb2.Size = new System.Drawing.Size(51, 20);
             this.RDBdb2.TabIndex = 1;
@@ -1041,26 +1045,26 @@ namespace Capibara
             // CampoAlta
             // 
             this.CampoAlta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.CampoAlta.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.CampoAlta.DefaultCellStyle = dataGridViewCellStyle13;
             this.CampoAlta.HeaderText = "CAMPO";
             this.CampoAlta.Name = "CampoAlta";
             // 
             // VinculoAlta
             // 
             this.VinculoAlta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.VinculoAlta.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.VinculoAlta.DefaultCellStyle = dataGridViewCellStyle14;
             this.VinculoAlta.HeaderText = "VINCULAR";
             this.VinculoAlta.Name = "VinculoAlta";
             // 
@@ -1094,26 +1098,26 @@ namespace Capibara
             // CampoBaja
             // 
             this.CampoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.CampoBaja.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.CampoBaja.DefaultCellStyle = dataGridViewCellStyle15;
             this.CampoBaja.HeaderText = "CAMPO";
             this.CampoBaja.Name = "CampoBaja";
             // 
             // VinculoBaja
             // 
             this.VinculoBaja.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            this.VinculoBaja.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle16.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            this.VinculoBaja.DefaultCellStyle = dataGridViewCellStyle16;
             this.VinculoBaja.HeaderText = "VINCULAR";
             this.VinculoBaja.Name = "VinculoBaja";
             // 
@@ -1258,20 +1262,71 @@ namespace Capibara
             this.CMBnamespaces.TabIndex = 7;
             this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
             // 
-            // BTNconexiones
+            // BTNnueva
             // 
-            this.BTNconexiones.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNconexiones.Location = new System.Drawing.Point(179, 19);
-            this.BTNconexiones.Name = "BTNconexiones";
-            this.BTNconexiones.Size = new System.Drawing.Size(33, 24);
-            this.BTNconexiones.TabIndex = 2;
-            this.BTNconexiones.Text = "+";
-            this.BTNconexiones.UseVisualStyleBackColor = true;
+            this.BTNnueva.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNnueva.Location = new System.Drawing.Point(242, 18);
+            this.BTNnueva.Name = "BTNnueva";
+            this.BTNnueva.Size = new System.Drawing.Size(83, 24);
+            this.BTNnueva.TabIndex = 2;
+            this.BTNnueva.Text = "&Nueva";
+            this.BTNnueva.UseVisualStyleBackColor = true;
+            this.BTNnueva.Click += new System.EventHandler(this.BTNnueva_Click);
+            // 
+            // BTNeliminar
+            // 
+            this.BTNeliminar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNeliminar.Location = new System.Drawing.Point(329, 18);
+            this.BTNeliminar.Name = "BTNeliminar";
+            this.BTNeliminar.Size = new System.Drawing.Size(83, 24);
+            this.BTNeliminar.TabIndex = 22;
+            this.BTNeliminar.Text = "&Eliminar";
+            this.BTNeliminar.UseVisualStyleBackColor = true;
+            this.BTNeliminar.Click += new System.EventHandler(this.BTNeliminar_Click);
+            // 
+            // BTNeditar
+            // 
+            this.BTNeditar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNeditar.Location = new System.Drawing.Point(421, 18);
+            this.BTNeditar.Name = "BTNeditar";
+            this.BTNeditar.Size = new System.Drawing.Size(83, 24);
+            this.BTNeditar.TabIndex = 23;
+            this.BTNeditar.Text = "E&ditar";
+            this.BTNeditar.UseVisualStyleBackColor = true;
+            this.BTNeditar.Click += new System.EventHandler(this.BTNeditar_Click);
+            // 
+            // CMBconexion
+            // 
+            this.CMBconexion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CMBconexion.FormattingEnabled = true;
+            this.CMBconexion.Items.AddRange(new object[] {
+            "133.123.120.120",
+            "SERVER04",
+            "SERVER01"});
+            this.CMBconexion.Location = new System.Drawing.Point(108, 19);
+            this.CMBconexion.Name = "CMBconexion";
+            this.CMBconexion.Size = new System.Drawing.Size(137, 24);
+            this.CMBconexion.TabIndex = 24;
+            this.CMBconexion.SelectedIndexChanged += new System.EventHandler(this.CMBconexion_SelectedIndexChanged);
+            // 
+            // LBLconexion
+            // 
+            this.LBLconexion.AutoSize = true;
+            this.LBLconexion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLconexion.Location = new System.Drawing.Point(12, 23);
+            this.LBLconexion.Name = "LBLconexion";
+            this.LBLconexion.Size = new System.Drawing.Size(83, 16);
+            this.LBLconexion.TabIndex = 25;
+            this.LBLconexion.Text = "CONEXIÓN:";
             // 
             // FRMcapibara
             // 
             this.ClientSize = new System.Drawing.Size(1186, 749);
-            this.Controls.Add(this.BTNconexiones);
+            this.Controls.Add(this.LBLconexion);
+            this.Controls.Add(this.CMBconexion);
+            this.Controls.Add(this.BTNeditar);
+            this.Controls.Add(this.BTNeliminar);
+            this.Controls.Add(this.BTNnueva);
             this.Controls.Add(this.TXTnombreAmigable);
             this.Controls.Add(this.LBLnombreCarpetaClase);
             this.Controls.Add(this.SPCseparador);
@@ -1446,7 +1501,11 @@ namespace Capibara
         private System.Windows.Forms.Label LBLseleccionesTRV;
         private System.Windows.Forms.CheckBox CHKgenerarAbm;
         private System.Windows.Forms.ImageList IMLTabla;
-        private System.Windows.Forms.Button BTNconexiones;
+        private System.Windows.Forms.Button BTNnueva;
+        private System.Windows.Forms.Button BTNeliminar;
+        private System.Windows.Forms.Button BTNeditar;
+        private System.Windows.Forms.ComboBox CMBconexion;
+        private System.Windows.Forms.Label LBLconexion;
     }
 }
 

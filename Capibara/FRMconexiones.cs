@@ -17,6 +17,12 @@ namespace Capibara
 
         public Conexion ConexionActual = null;
 
+        public FRMconexiones()
+        {
+            InitializeComponent();
+            InicializarMotores();
+        }
+
         public FRMconexiones(Conexion conexion)
         {
             InitializeComponent();
@@ -24,166 +30,292 @@ namespace Capibara
             ConexionActual = conexion;
             InicializarDatosConexion();
         }
-        // ------------------------------------------------------------
-        // Inicializa el combo con los motores
-        // ------------------------------------------------------------
+
         private void InicializarMotores()
         {
             motores = Enum.GetValues(typeof(TipoMotor))
                 .Cast<TipoMotor>()
                 .ToDictionary(m => m, m => m.ToString().Replace("_", " "));
 
-            CMBmotor.DataSource = motores.ToList();
-            CMBmotor.DisplayMember = "Value";
-            CMBmotor.ValueMember = "Key";
-            CMBmotor.SelectedIndex = 0;
+            var lista = motores
+                .Select(x => new { Key = x.Key, Value = x.Value })
+                .ToList();
+
+            cmbMotor.DataSource = lista;
+            cmbMotor.DisplayMember = "Value";
+            cmbMotor.ValueMember = "Key";
+
+            if (cmbMotor.Items.Count > 0)
+                cmbMotor.SelectedIndex = 0;
         }
+
         private void InicializarDatosConexion()
         {
             if (ConexionActual != null)
             {
-                TXTnombre.Text = ConexionActual.Nombre;
-                CMBmotor.SelectedValue = ConexionActual.Motor;
-                TXTservidor.Text = ConexionActual.Servidor;
-                TXTusuario.Text = ConexionActual.Usuario;
-                TXTcontraseña.Text = ConexionActual.Contrasena;
+                txtNombre.Text = ConexionActual.Nombre;
+                cmbMotor.SelectedValue = ConexionActual.Motor;
+                txtServidor.Text = ConexionActual.Servidor;
+
+                try
+                {
+                    cmbBaseDatos.SelectedItem = ConexionActual.BaseDatos;
+                }
+                catch
+                {
+                }
+
+                txtBaseDatos.Text = ConexionActual.BaseDatos;
+                txtUsuario.Text = ConexionActual.Usuario;
+                txtContrasena.Text = ConexionActual.Contrasena;
             }
         }
 
-        private void FRMconexiones_Load(object sender, EventArgs e)
+        private void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (ConexionActual == null)
+                ConexionActual = new Conexion();
 
+            ConexionActual.Nombre = txtNombre.Text.Trim();
+            ConexionActual.Motor = (TipoMotor)cmbMotor.SelectedValue;
+            ConexionActual.Servidor = txtServidor.Text.Trim();
+            ConexionActual.BaseDatos = cmbBaseDatos.Visible
+                ? (cmbBaseDatos.Text ?? string.Empty).Trim()
+                : (txtBaseDatos.Text ?? string.Empty).Trim();
+            ConexionActual.Usuario = txtUsuario.Text.Trim();
+            ConexionActual.Contrasena = txtContrasena.Text;
+
+            var conexiones = ConexionesManager.Cargar();
+            conexiones[ConexionActual.Nombre] = ConexionActual;
+            ConexionesManager.Guardar(conexiones);
+
+            // Si querés, acá podés asignar la conexión actual al formulario principal.
+            // MainForm.ConexionActual = ConexionActual;
+
+            MessageBox.Show("Conexión guardada correctamente.", "Éxito",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Close();
         }
 
-        private void CMBmotor_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var seleccionado = ((KeyValuePair<TipoMotor, string>)CMBmotor.SelectedItem).Key;
-
-            // DB2: usa combo
-            if (seleccionado == TipoMotor.DB2)
-            {
-                ConexionActual.BaseDatos = ConexionesManager.BasesDB2;
-            }
-        }
-
-        private void Control_Leave(object sender, EventArgs e)
+        private void cmbMotor_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                if (!string.IsNullOrEmpty(TXTnombre.Text) && !string.IsNullOrEmpty(TXTservidor.Text) && !string.IsNullOrEmpty(TXTusuario.Text) && !string.IsNullOrEmpty(TXTcontraseña.Text) && CMBmotor.SelectedIndex > -1)
+                if (cmbMotor.SelectedValue == null)
+                    return;
+
+                var motor = (TipoMotor)cmbMotor.SelectedValue;
+                var seleccionado = motor.ToString();
+
+                // DB2: combo de bases
+                if (motor == TipoMotor.DB2)
                 {
-                    var motor = (TipoMotor)CMBmotor.SelectedValue;
+                    cmbBaseDatos.Visible = true;
+                    cmbBaseDatos.Items.Clear();
+                    cmbBaseDatos.Items.AddRange(ConexionesManager.BasesDB2);
+                    if (cmbBaseDatos.Items.Count > 0)
+                        cmbBaseDatos.SelectedIndex = 0;
 
-                    if (motor != TipoMotor.MS_SQL)
-                        return;
+                    txtBaseDatos.Visible = false;
+                    txtBaseDatos.Enabled = false;
+                    cmbBaseDatos.Enabled = true;
+                }
+                else
+                {
+                    cmbBaseDatos.Visible = false;
+                    txtBaseDatos.Visible = true;
+                    txtBaseDatos.Enabled = true;
+                    cmbBaseDatos.Enabled = false;
+                }
 
-                    string stringConnection =
-                        $@"Driver={{ODBC Driver 17 for SQL Server}};
-                        Server=SQL{TXTservidor.Text.Trim()}\{TXTservidor.Text.Trim()};
-                        Database=;
-                        Uid={TXTusuario.Text.Trim()};
-                        Pwd={TXTcontraseña.Text};
-                        TrustServerCertificate=yes;";
+                //// SQLite: botón de búsqueda y sin usuario/contraseña/base
+                //if (motor == TipoMotor.SQLite)
+                //{
+                //    btnBuscarBase.Enabled = true;
 
-                    try
+                //    lblUsuario.Visible = false;
+                //    txtUsuario.Visible = false;
+
+                //    lblContrasena.Visible = false;
+                //    txtContrasena.Visible = false;
+
+                //    lblBaseDatos.Visible = false;
+                //    cmbBaseDatos.Visible = false;
+                //    txtBaseDatos.Visible = false;
+                //}
+                //else
+                {
+                    btnBuscarBase.Enabled = false;
+
+                    lblUsuario.Visible = true;
+                    txtUsuario.Visible = true;
+
+                    lblContrasena.Visible = true;
+                    txtContrasena.Visible = true;
+
+                    lblBaseDatos.Visible = true;
+
+                    //if (motor == TipoMotor.POSTGRES)
+                    //{
+                    //    cmbBaseDatos.Visible = false;
+                    //    txtBaseDatos.Visible = true;
+                    //}
+                    //else
                     {
-                        using (var c = new OdbcConnection(stringConnection))
-                        {
-                            c.Open();
-                            ConexionActual.BaseDatos = new string[] { };
-                            List<string> basesDeDatos = new List<string>();
-
-                            OdbcCommand cmd = c.CreateCommand();
-                            cmd.CommandText = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC";
-
-                            var reader = cmd.ExecuteReader();
-
-                            while (reader.Read())
-                            {
-                                basesDeDatos.Add(reader.GetString(0));
-                            }
-                            ConexionActual.BaseDatos = basesDeDatos.ToArray();
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Error al obtener bases de datos. Verifique usuario y contraseña.",
-                            "ATENCIÓN!!!");
+                        cmbBaseDatos.Visible = (motor == TipoMotor.DB2);
+                        txtBaseDatos.Visible = !cmbBaseDatos.Visible;
                     }
                 }
             }
             catch { }
         }
 
-        private void BTNguardar_Click(object sender, EventArgs e)
+        private void txtContrasena_Leave(object sender, EventArgs e)
         {
-            if (ConexionActual == null)
-                ConexionActual = new Conexion();
+            if (cmbMotor.SelectedValue == null)
+                return;
 
-            ConexionActual.Nombre = TXTnombre.Text.Trim();
-            ConexionActual.Motor = (TipoMotor)CMBmotor.SelectedValue;
-            ConexionActual.Servidor = TXTservidor.Text.Trim();
-            ConexionActual.Usuario = TXTusuario.Text.Trim();
-            ConexionActual.Contrasena = TXTcontraseña.Text;
 
-            var conexiones = ConexionesManager.Cargar();
-            conexiones[ConexionActual.Nombre] = ConexionActual;
-            ConexionesManager.Guardar(conexiones);
+            var motor = (TipoMotor)cmbMotor.SelectedValue;
+            if (motor != TipoMotor.MS_SQL)
+                return;
 
-            MessageBox.Show("Conexión guardada correctamente.",
-                "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            string servidor = txtServidor.Text.Trim();
+            string usuario = txtUsuario.Text.Trim();
+            string contrasena = txtContrasena.Text;
 
-            Close();
-        }
+            if (string.IsNullOrWhiteSpace(servidor) ||
+                string.IsNullOrWhiteSpace(usuario) ||
+                string.IsNullOrWhiteSpace(contrasena))
+                return;
 
-        private void BTNeliminar_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void BTNcancelar_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void BTNprobar_Click(object sender, EventArgs e)
-        {
             string stringConnection = string.Empty;
-            TipoMotor motor = (TipoMotor)CMBmotor.SelectedValue;
+            if (servidor.EndsWith("WEB"))
+            {
+                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor.Replace("WEB", string.Empty)}\{servidor};Database=;Uid={usuario};Pwd={contrasena};TrustServerCertificate=yes;";
+            }
+            else
+            {
+                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database=;Uid={usuario};Pwd={contrasena};TrustServerCertificate=yes;";
+            }
+
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                using (var c = new OdbcConnection(stringConnection))
+                {
+                    c.Open();
+                    cmbBaseDatos.Items.Clear();
+
+                    using (OdbcCommand cmd = c.CreateCommand())
+                    {
+                        cmd.CommandText =
+                            "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC";
+
+                        using (OdbcDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                cmbBaseDatos.Items.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+
+                    cmbBaseDatos.Visible = true;
+                    cmbBaseDatos.Enabled = true;
+                    txtBaseDatos.Visible = false;
+                    txtBaseDatos.Enabled = false;
+                }
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "Ocurrió un error al intentar obtener las bases de datos desde el servidor. Verifique el usuario y la contraseña.",
+                    "ATENCIÓN!!!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void btnBuscarBase_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.Title = "Seleccionar archivo";
+                dlg.Filter = "Bases SQLite (*.db)|*.db|Todos los archivos (*.*)|*.*";
+
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    string ruta = dlg.FileName;
+                    txtServidor.Text = ruta;
+                }
+            }
+        }
+
+        private void btnProbar_Click(object sender, EventArgs e)
+        {
+            if (cmbMotor.SelectedValue == null)
+                return;
+
+            string stringConnection = string.Empty;
+            var motor = (TipoMotor)cmbMotor.SelectedValue;
 
             switch (motor)
             {
                 case TipoMotor.MS_SQL:
-                    stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{TXTservidor.Text}\{TXTservidor.Text};Database={ConexionActual.BaseDatos[0]};Uid={TXTusuario.Text};Pwd={TXTcontraseña.Text};TrustServerCertificate=yes;";
+                    stringConnection =
+                        $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{txtServidor.Text}\{txtServidor.Text};Database={cmbBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};TrustServerCertificate=yes;";
                     break;
+
                 case TipoMotor.DB2:
-                    stringConnection = $"Driver={{IBM DB2 ODBC DRIVER}};Database={ConexionActual.BaseDatos[0]};Hostname={TXTservidor.Text};Port=50000; Protocol=TCPIP;Uid={TXTusuario.Text};Pwd={TXTcontraseña.Text};";
+                    stringConnection =
+                        $"Driver={{IBM DB2 ODBC DRIVER}};Database={cmbBaseDatos.Text};Hostname={txtServidor.Text};Port=50000; Protocol=TCPIP;Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
                     break;
-                default:
-                    break;
+
+                //case TipoMotor.POSTGRES:
+                //    stringConnection =
+                //        $"Driver={{PostgreSQL Unicode}};Server={txtServidor.Text};Port=5432;Database={txtBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
+                //    break;
+
+                //case TipoMotor.SQLite:
+                //    stringConnection =
+                //        $"Driver={{SQLite3 ODBC Driver}};Database={txtServidor.Text};";
+                //    break;
             }
 
             if (string.IsNullOrWhiteSpace(stringConnection))
             {
-                MessageBox.Show("El string de conexión está vacío", "Atención!!!");
+                MessageBox.Show("El string de conexión está vacío", "Atención!!!",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            Task.Run(() =>
+            try
             {
-                try
+                Cursor.Current = Cursors.WaitCursor;
+                btnProbar.Enabled = false;
+
+                using (var c = new OdbcConnection(stringConnection))
                 {
-                    using (var c = new OdbcConnection(stringConnection))
-                    {
-                        c.Open();
-                        MessageBox.Show("Conexión exitosa.");
-                    }
+                    c.Open();
+                    MessageBox.Show("Conexión exitosa.", "Información",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Conexión fallida: " + ex.Message);
-                }
-            });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Conexión fallida: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                btnProbar.Enabled = true;
+            }
         }
     }
 }

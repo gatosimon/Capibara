@@ -3749,5 +3749,78 @@ namespace Capibara
             }
             catch { }
         }
+
+        static public Conexion conexionActual = null;
+
+        private void BTNnueva_Click(object sender, EventArgs e)
+        {
+            FRMconexiones datosConexion = new FRMconexiones();
+            datosConexion.ShowDialog();
+            InicializarConexiones();
+            foreach (var item in CMBconexion.Items)
+            {
+                try
+                {
+                    if (conexionActual != null && ((Conexion)item).Nombre == conexionActual.Nombre)
+                    {
+                        CMBconexion.SelectedItem = item;
+                        break;
+                    }
+                }
+                catch (Exception err)
+                {
+
+                }
+            }
+        }
+        private void InicializarConexiones()
+        {
+            var conexiones = ConexionesManager.Cargar();
+            CMBconexion.DataSource = conexiones.Values.ToList();
+            CMBconexion.ValueMember = "Nombre";
+        }
+
+        private void BTNeliminar_Click(object sender, EventArgs e)
+        {
+            if (CMBconexion.SelectedItem is Conexion conexion)
+            {
+                conexionActual = conexion;
+                var conexiones = ConexionesManager.Cargar();
+                conexiones.Remove(conexionActual.Nombre);
+                ConexionesManager.Guardar(conexiones);
+                CMBconexion.DataSource = conexiones.Values.ToList();
+                CMBconexion.ValueMember = "Nombre";
+            }
+        }
+
+        private void BTNeditar_Click(object sender, EventArgs e)
+        {
+            FRMconexiones datosConexion = new FRMconexiones(conexionActual);
+            datosConexion.ShowDialog();
+            InicializarConexiones();
+            foreach (var item in CMBconexion.Items)
+            {
+                try
+                {
+                    if (conexionActual != null && ((Conexion)item).Nombre == conexionActual.Nombre)
+                    {
+                        CMBconexion.SelectedItem = item;
+                        break;
+                    }
+                }
+                catch (Exception err)
+                {
+
+                }
+            }
+        }
+
+        private void CMBconexion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CMBconexion.SelectedItem is Conexion conexion)
+            {
+                conexionActual = conexion;
+            }
+        }
     }
 }
