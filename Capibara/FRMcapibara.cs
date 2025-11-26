@@ -33,6 +33,7 @@ namespace Capibara
         private bool desplegarCombo = false;
         private bool isActivated = false;
         private bool cargarCampos = false;
+        Dictionary<string, Conexion> conexiones;
 
         Configuracion configuracion;
 
@@ -90,25 +91,36 @@ namespace Capibara
 
         private void CargarConfiguracion()
         {
-            configuracion = Configuracion.Cargar();
-            RDBsql.Checked = configuracion.SQL;
-            TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
-            TXTnombreAmigable.Text = configuracion.NombreAmigable;
-            CarpetaDestino = configuracion.CarpetaDestino;
-            OrigenDeDatoSql = configuracion.OrigenDeDatosMsSQL;
-            ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
-            TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
-            OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Path.GetDirectoryName(configuracion.PathSolucion) : string.Empty;
-            OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
-            CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
-            CHKinsertarEnProyecto.Checked = configuracion.InsertarEnProyecto;
+            try
+            {
+                //configuracion = Configuracion.Cargar();
+                InicializarConexiones();
+                if (configuracion.Conexion != null)
+                {
+                    ActualizarConeccionActual(configuracion.Conexion); 
+                }
+                else
+                {
+                }
+                TXTespacioDeNombres.Text = configuracion.UltimoNamespaceSeleccionado;
+                TXTnombreAmigable.Text = configuracion.NombreAmigable;
+                CarpetaDestino = configuracion.CarpetaDestino;
+                OrigenDeDatoSql = configuracion.OrigenDeDatosMsSQL;
+                ActualizarLabelSeleccionTRV(Path.GetFileName(CarpetaDestino), OrigenDeDatoSql);
+                TXTpathCapas.Text = configuracion.RutaPorDefectoResultados;
+                OFDlistarDeSolucion.InitialDirectory = configuracion.PathSolucion != null && configuracion.PathSolucion.Length > 0 ? Path.GetDirectoryName(configuracion.PathSolucion) : string.Empty;
+                OFDlistarDeSolucion.FileName = configuracion.PathSolucion;
+                CHKmostrarOverlayEnIicio.Checked = configuracion.MostrarOverlayEnInicio;
+                CHKinsertarEnProyecto.Checked = configuracion.InsertarEnProyecto;
 
-            CargarCamposAbmDesdeConfiguracion(configuracion.camposAlta, DGValta);
-            CargarCamposAbmDesdeConfiguracion(configuracion.camposBaja, DGVbaja);
-            CargarCamposAbmDesdeConfiguracion(configuracion.camposModificacion, DGVmodificacion);
-            CargarCamposAbmDesdeConfiguracion(configuracion.camposRecuperacion, DGVrecuperacion);
+                CargarCamposAbmDesdeConfiguracion(configuracion.camposAlta, DGValta);
+                CargarCamposAbmDesdeConfiguracion(configuracion.camposBaja, DGVbaja);
+                CargarCamposAbmDesdeConfiguracion(configuracion.camposModificacion, DGVmodificacion);
+                CargarCamposAbmDesdeConfiguracion(configuracion.camposRecuperacion, DGVrecuperacion);
 
-            CargarComboyTreeView();
+                CargarComboyTreeView();
+            }
+            catch { }
         }
 
         private void CargarCamposAbmDesdeConfiguracion(List<string[]> campos, DataGridView grilla)
@@ -167,13 +179,16 @@ namespace Capibara
 
         private void ActualizarLabelSeleccionTRV(string carpeta, string origenDatos)
         {
-            if (RDBsql.Checked)
+            if (conexionActual != null)
             {
-                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}\nORIGEN DE DATOS SQL:\n   {origenDatos}";
-            }
-            else
-            {
-                LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}";
+                if (conexionActual.Motor == TipoMotor.DB2)
+                {
+                    LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}\nORIGEN DE DATOS SQL:\n   {origenDatos}";
+                }
+                else
+                {
+                    LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}";
+                } 
             }
         }
 
@@ -185,9 +200,7 @@ namespace Capibara
 
                 CapibararProyecto();
 
-                configuracion.SQL = RDBsql.Checked;
-                configuracion.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
-                configuracion.Base = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                configuracion.Conexion = conexionActual;
                 configuracion.Tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
                 configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
@@ -227,18 +240,11 @@ namespace Capibara
         {
             SPCclase.Panel1MinSize = PANEL1_MIN;
 
-            int indice = CMBservidor.FindStringExact(configuracion.Servidor);
-            if (indice > -1 && CMBservidor.Items.Count > 0)
+            int indice = conexionActual != null ? CMBconexion.FindString(conexionActual.Nombre) : -1;
+            if (indice > -1 && CMBconexion.Items.Count > 0)
             {
-                CMBservidor.SelectedIndex = indice > -1 ? indice : 0;
-                CMBservidor.Text = CMBservidor.Items[CMBservidor.SelectedIndex].ToString();
-            }
-            
-            indice = CMBbases.FindStringExact(configuracion.Base);
-            if (indice > -1 && CMBbases.Items.Count > 0)
-            {
-                CMBbases.SelectedIndex = indice > -1 ? indice : 0;
-                CMBbases.Text = CMBbases.Items[CMBbases.SelectedIndex].ToString();
+                CMBconexion.SelectedIndex = indice > -1 ? indice : 0;
+                CMBconexion.Text = CMBconexion.Items[CMBconexion.SelectedIndex].ToString();
             }
 
             TXTgenerarAPartirDeConsulta.Text = configuracion.Consulta;
@@ -250,8 +256,10 @@ namespace Capibara
             LSVcampos.Columns.Add("Longitud", 70);
             LSVcampos.Columns.Add("Escala", 60);
             LSVcampos.Columns.Add("Acepta Nulos", 100);
-
-            indice = CMBtablas.FindStringExact(configuracion.Tabla);
+            
+            // Fuerzo a que tome el valor de la tabla guardada en la configuración o sino la primera de la primer conexión
+            indice = configuracion.Tabla.Trim().Length > 0 ? CMBtablas.FindStringExact(configuracion.Tabla) : 0;
+            CMBtablas.SelectedIndex = -1;
             cargarCampos = true;
             if (indice > -1 && CMBtablas.Items.Count > 0)
             {
@@ -282,7 +290,7 @@ namespace Capibara
             bool consultaOk = true;
 
             StringConnection stringConnection = DefinirStringConnection();
-            if (RDBdb2.Checked)
+            if (conexionActual.Motor == TipoMotor.DB2)
             {
                 try
                 {
@@ -484,7 +492,7 @@ namespace Capibara
 
         private string ArmarControllers(List<DataColumn> claves)
         {
-            bool DB2 = RDBdb2.Checked;
+            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
             string origen = DB2 ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
@@ -687,7 +695,7 @@ namespace Capibara
             Dto.AppendLine($"\tpublic class { nombreDeClase + Capas.DTO}");
             Dto.AppendLine("\t{");
 
-            newDto.AppendLine($"\t\tpublic { nombreDeClase + Capas.DTO } new{ nombreDeClase + Capas.DTO }({ nombreDeClase + (RDBsql.Checked ? string.Empty : Capas.MODEL) } modelo)");
+            newDto.AppendLine($"\t\tpublic { nombreDeClase + Capas.DTO } new{ nombreDeClase + Capas.DTO }({ nombreDeClase + (conexionActual.Motor == TipoMotor.DB2 ? string.Empty : Capas.MODEL) } modelo)");
             newDto.AppendLine("\t\t{");
 
             int i = 0;
@@ -847,7 +855,7 @@ namespace Capibara
 
         private string ArmarRepositories(List<DataColumn> columnas, List<DataColumn> claves)
         {
-            bool DB2 = RDBdb2.Checked;
+            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
             string origen = DB2 ? Capas.MODEL : string.Empty;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
@@ -1374,7 +1382,7 @@ namespace Capibara
 
         private string ArmarRepositoriesInterface(List<DataColumn> claves)
         {
-            bool DB2 = RDBdb2.Checked;
+            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
             string origen = DB2 ? Capas.MODEL : string.Empty;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
@@ -1462,7 +1470,7 @@ namespace Capibara
 
         private string ArmarService(List<DataColumn> columnas, List<DataColumn> claves)
         {
-            bool DB2 = RDBdb2.Checked;
+            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
             string origen = DB2 ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
@@ -1816,7 +1824,7 @@ namespace Capibara
 
         private string ArmarServiceInterface(List<DataColumn> claves)
         {
-            bool DB2 = RDBdb2.Checked;
+            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
             string origen = DB2 ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
@@ -2165,62 +2173,6 @@ namespace Capibara
             CursorDefault();
         }
 
-        private void CMBservidor_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (RDBdb2.Checked)
-                {
-                    CMBbases.Items.Clear();
-                    CMBbases.Items.AddRange(new object[] { "CONTABIL", "CONTAICD", "CONTAIMV", "CONTCBEL", "CONTIDS", "DOCUMENT", "GENERAL", "GIS", "HISTABM", "HISTORIC", "INFORMAT", "LICENCIA", "RRHH", "SISUS", "TRIBUTOS" });
-                }
-                else
-                {
-                    CMBbases.Items.Clear();
-
-                    StringConnection stringConnection = DefinirStringConnection();
-                    try
-                    {
-                        DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
-                        SQLbase.OpenConnection();
-
-                        string query = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC"; // Solo bases "online"
-                        IDataReader reader = SQLbase.DataReader(query);
-                        while (reader.Read())
-                        {
-                            CMBbases.Items.Add(reader.GetString(0));
-                        }
-                        SQLbase.CloseConnection();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-                }
-                if (CMBbases.Items.Count > 0)
-                {
-                    CMBbases.SelectedIndex = 0;
-                }
-                CMBbases.Refresh();
-            }
-            catch (Exception err)
-            {
-                CustomMessageBox.Show($"ERROR EN EL CAMBIO DE SERVIDOR: {err.Message}");
-            }
-        }
-
-        private void CMBbases_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                TablasBase();
-            }
-            catch (Exception err)
-            {
-                CustomMessageBox.Show($"ERROR EN EL CAMBIO DE BASE: {err.Message}");
-            }
-        }
-
         private void CMBtablas_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -2239,9 +2191,12 @@ namespace Capibara
             StringConnection stringConnection = new StringConnection();
             try
             {
-                stringConnection.TipoConexion = RDBdb2.Checked ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
-                stringConnection.Servidor = CMBservidor.Items[CMBservidor.SelectedIndex].ToString().ToUpper();
-                stringConnection.BaseDeDatos = CMBbases.SelectedIndex == -1 ? string.Empty : CMBbases.Items[CMBbases.SelectedIndex].ToString() ?? string.Empty;
+                if (conexionActual != null)
+                {
+                    stringConnection.TipoConexion = conexionActual.Motor == TipoMotor.DB2 ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
+                    stringConnection.Servidor = conexionActual.Servidor.ToUpper();
+                    stringConnection.BaseDeDatos = conexionActual.BaseDatos; 
+                }
             }
             catch (Exception err)
             {
@@ -2259,7 +2214,7 @@ namespace Capibara
                 LSVcampos.Items.Clear();
                 capas.tablasBase = new List<string>();
                 StringConnection stringConnection = DefinirStringConnection();
-                if (RDBdb2.Checked)
+                if (conexionActual.Motor == TipoMotor.DB2)
                 {
                     try
                     {
@@ -2276,7 +2231,7 @@ namespace Capibara
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        //throw ex;
                     }
                 }
                 else
@@ -2305,7 +2260,7 @@ namespace Capibara
                         }
                         catch (Exception ex)
                         {
-                            throw ex;
+                            //throw ex;
                         }
                     }
                 }
@@ -2335,7 +2290,7 @@ namespace Capibara
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
                     StringConnection stringConnection = DefinirStringConnection();
                     // BASE DE DATOS DB2
-                    if (RDBdb2.Checked)
+                    if (conexionActual.Motor == TipoMotor.DB2)
                     {
                         try
                         {
@@ -2638,7 +2593,7 @@ namespace Capibara
             DataSet DS = null;
 
             StringConnection stringConnection = DefinirStringConnection();
-            if (RDBdb2.Checked)
+            if (conexionActual.Motor == TipoMotor.DB2)
             {
                 try
                 {
@@ -2729,54 +2684,54 @@ namespace Capibara
             return resultado;
         }
 
-        private void RDBsql_CheckedChanged(object sender, EventArgs e)
-        {
-            WaitCursor();
-            try
-            {
-                CHKtryOrIf.Visible = !RDBsql.Checked;
-                if (RDBsql.Checked)
-                {
-                    CMBservidor.Items.Clear();
-                    //CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" }); LA primera es la de CABL
-                    CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" });
-                    if (CMBservidor.Items.Count > 0)
-                    {
-                        CMBservidor.SelectedIndex = 0;
-                    }
-                    CMBservidor.Refresh();
-                }
-            }
-            catch (Exception)
-            {
-            }
-            CursorDefault();
-        }
+        //private void RDBsql_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    WaitCursor();
+        //    try
+        //    {
+        //        CHKtryOrIf.Visible = !RDBsql.Checked;
+        //        if (RDBsql.Checked)
+        //        {
+        //            CMBservidor.Items.Clear();
+        //            //CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" }); LA primera es la de CABL
+        //            CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" });
+        //            if (CMBservidor.Items.Count > 0)
+        //            {
+        //                CMBservidor.SelectedIndex = 0;
+        //            }
+        //            CMBservidor.Refresh();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //    CursorDefault();
+        //}
 
-        private void RDBdb2_CheckedChanged(object sender, EventArgs e)
-        {
-            WaitCursor();
-            try
-            {
-                if (RDBdb2.Checked)
-                {
-                    CHKtryOrIf.Visible = RDBdb2.Checked;
-                    CMBservidor.Items.Clear();
-                    //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" }); el segundo es el de CABL
-                    CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
+        //private void RDBdb2_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    WaitCursor();
+        //    try
+        //    {
+        //        if (RDBdb2.Checked)
+        //        {
+        //            CHKtryOrIf.Visible = RDBdb2.Checked;
+        //            CMBservidor.Items.Clear();
+        //            //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" }); el segundo es el de CABL
+        //            CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
 
-                    if (CMBservidor.Items.Count > 0)
-                    {
-                        CMBservidor.SelectedIndex = 0;
-                    }
-                    CMBservidor.Refresh();
-                }
-            }
-            catch (Exception)
-            {
-            }
-            CursorDefault();
-        }
+        //            if (CMBservidor.Items.Count > 0)
+        //            {
+        //                CMBservidor.SelectedIndex = 0;
+        //            }
+        //            CMBservidor.Refresh();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //    CursorDefault();
+        //}
 
         private void BTNdirectorioCapas_Click(object sender, EventArgs e)
         {
@@ -3756,71 +3711,95 @@ namespace Capibara
         {
             FRMconexiones datosConexion = new FRMconexiones();
             datosConexion.ShowDialog();
+            ConexionesManager.Guardar(conexiones);
             InicializarConexiones();
-            foreach (var item in CMBconexion.Items)
-            {
-                try
-                {
-                    if (conexionActual != null && ((Conexion)item).Nombre == conexionActual.Nombre)
-                    {
-                        CMBconexion.SelectedItem = item;
-                        break;
-                    }
-                }
-                catch (Exception err)
-                {
-
-                }
-            }
-        }
-        private void InicializarConexiones()
-        {
-            var conexiones = ConexionesManager.Cargar();
-            CMBconexion.DataSource = conexiones.Values.ToList();
-            CMBconexion.ValueMember = "Nombre";
         }
 
         private void BTNeliminar_Click(object sender, EventArgs e)
         {
-            if (CMBconexion.SelectedItem is Conexion conexion)
+            try
             {
-                conexionActual = conexion;
-                var conexiones = ConexionesManager.Cargar();
-                conexiones.Remove(conexionActual.Nombre);
+                string nombreConeccion = string.Copy(conexionActual.Nombre);
+                conexiones.Remove(nombreConeccion);
+                conexionActual = null;
                 ConexionesManager.Guardar(conexiones);
-                CMBconexion.DataSource = conexiones.Values.ToList();
-                CMBconexion.ValueMember = "Nombre";
+                InicializarConexiones();
+                CustomMessageBox.Show($"Se eliminó correctamente la conección: {nombreConeccion}");
+            }
+            catch (Exception err)
+            {
+                CustomMessageBox.Show($"Ocurrió un error al eliminar la conección: {err.Message}");
             }
         }
 
         private void BTNeditar_Click(object sender, EventArgs e)
         {
+            string nombreConexionActual = string.Copy(conexionActual.Nombre);
             FRMconexiones datosConexion = new FRMconexiones(conexionActual);
             datosConexion.ShowDialog();
-            InicializarConexiones();
-            foreach (var item in CMBconexion.Items)
+            if (!conexiones.ContainsKey(conexionActual.Nombre) && nombreConexionActual != conexionActual.Nombre)
             {
-                try
-                {
-                    if (conexionActual != null && ((Conexion)item).Nombre == conexionActual.Nombre)
-                    {
-                        CMBconexion.SelectedItem = item;
-                        break;
-                    }
-                }
-                catch (Exception err)
-                {
+                conexiones.Add(conexionActual.Nombre, conexionActual);
+            }
+            else
+            {
+                conexiones[nombreConexionActual] = conexionActual;
+            }
+            ConexionesManager.Guardar(conexiones);
+            InicializarConexiones();
+        }
 
-                }
+        private void InicializarConexiones()
+        {
+            conexiones = ConexionesManager.Cargar();
+
+            CMBconexion.Items.Clear();
+            CMBconexion.Items.AddRange(conexiones.Keys.ToArray());
+
+            string nombreConexion = conexiones.First().Key;
+            // Seleccionar conexión guardada
+            if (conexionActual != null)
+            {
+                nombreConexion = conexionActual.Nombre;
+            }
+            var item = conexiones[nombreConexion];
+            if (item != null)
+            {
+                // Fuerzo la seleccion de la conexion definida
+                CMBconexion.SelectedIndex = 0;
+                CMBconexion.SelectedIndex = -1;
+                CMBconexion.SelectedItem = item;
+                CMBconexion.Text = nombreConexion;
+                CMBconexion.Refresh();
             }
         }
 
         private void CMBconexion_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (CMBconexion.SelectedItem is Conexion conexion)
+            if (CMBconexion.SelectedItem != null)
             {
-                conexionActual = conexion;
+                ActualizarConeccionActual(conexiones[CMBconexion.SelectedItem.ToString()]);
+
+                try
+                {
+                    desplegarCombo = true;
+                    TablasBase();
+                }
+                catch (Exception err)
+                {
+                    CustomMessageBox.Show($"ERROR EN EL CAMBIO DE BASE: {err.Message}");
+                }
             }
+        }
+
+        private void ActualizarConeccionActual(Conexion conexion)
+        {
+            try
+            {
+                conexionActual = configuracion.Conexion = conexion;
+                LBLbaseDeDatos.Text = conexionActual != null ? conexionActual.BaseDatos : string.Empty;
+            }
+            catch { }
         }
     }
 }

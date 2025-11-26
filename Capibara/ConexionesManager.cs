@@ -7,31 +7,99 @@ namespace Capibara
 {
     public static class ConexionesManager
     {
+        public static List<Conexion> ConexionesBasicas = null;
+
         public static string[] BasesDB2 = new string[] { "CONTABIL", "CONTAICD", "CONTAIMV", "CONTCBEL", "CONTIDS", "DOCUMENT", "GENERAL", "GIS", "HISTABM", "HISTORIC", "INFORMAT", "LICENCIA", "RRHH", "SISUS", "TRIBUTOS" };
 
         private static readonly string ArchivoXml = "conexiones.xml";
 
         public static Dictionary<string, Conexion> Cargar()
         {
-            if (!File.Exists(ArchivoXml))
-                return new Dictionary<string, Conexion>();
-
-            try
+            #region CONEXIONES BASICAS
+            List<Conexion> ConexionesBase = new List<Conexion>();
+            ConexionesBase.Add(new Conexion()
             {
-                using (var fs = new FileStream(ArchivoXml, FileMode.Open))
+                BaseDatos = "TRIBUTOS",
+                Contrasena = "db2admin",
+                Motor = TipoMotor.DB2,
+                Nombre = "133.123.120.120",
+                Servidor = "133.123.120.120",
+                Usuario = "db2admin"
+            });
+            ConexionesBase.Add(new Conexion()
+            {
+                BaseDatos = "TRIBUTOS",
+                Contrasena = "db2admin",
+                Motor = TipoMotor.DB2,
+                Nombre = "SERVER04",
+                Servidor = "SERVER04",
+                Usuario = "db2admin"
+            });
+            ConexionesBase.Add(new Conexion()
+            {
+                BaseDatos = "TRIBUTOS",
+                Contrasena = "db2admin",
+                Motor = TipoMotor.DB2,
+                Nombre = "SERVER01",
+                Servidor = "SERVER01",
+                Usuario = "db2admin"
+            });
+            ConexionesBase.Add(new Conexion()
+            {
+                BaseDatos = string.Empty,
+                Contrasena = "ci?r0ba",
+                Motor = TipoMotor.MS_SQL,
+                Nombre = "DESARROLLO",
+                Servidor = "DESARROLLO",
+                Usuario = "usuario"
+            });
+            ConexionesBase.Add(new Conexion()
+            {
+                BaseDatos = string.Empty,
+                Contrasena = "ci?r0ba",
+                Motor = TipoMotor.MS_SQL,
+                Nombre = "PRODUCCION",
+                Servidor = "PRODUCCION",
+                Usuario = "usuario"
+            });
+            ConexionesBase.Add(new Conexion()
+            {
+                BaseDatos = string.Empty,
+                Contrasena = "ci?r0ba",
+                Motor = TipoMotor.MS_SQL,
+                Nombre = "DESARROLLOWEB",
+                Servidor = "DESARROLLOWEB",
+                Usuario = "usuario"
+            }); 
+            #endregion
+
+            Dictionary<string, Conexion> resultado = new Dictionary<string, Conexion>();
+            if (File.Exists(ArchivoXml))
+            {
+                try
                 {
-                    var serializer = new XmlSerializer(typeof(List<Conexion>));
-                    var lista = (List<Conexion>)serializer.Deserialize(fs);
-                    var dict = new Dictionary<string, Conexion>();
-                    foreach (var c in lista)
-                        dict[c.Nombre] = c;
-                    return dict;
+                    using (var fs = new FileStream(ArchivoXml, FileMode.Open))
+                    {
+                        var serializer = new XmlSerializer(typeof(List<Conexion>));
+                        var lista = (List<Conexion>)serializer.Deserialize(fs);
+                        foreach (var c in lista)
+                            resultado[c.Nombre] = c;
+                    }
+                }
+                catch
+                {
                 }
             }
-            catch
+
+            foreach (Conexion conexion in ConexionesBase)
             {
-                return new Dictionary<string, Conexion>();
+                if (!resultado.ContainsKey(conexion.Nombre))
+                {
+                    resultado.Add(conexion.Nombre, conexion);
+                }
             }
+
+            return resultado;
         }
 
         public static void Guardar(Dictionary<string, Conexion> conexiones)

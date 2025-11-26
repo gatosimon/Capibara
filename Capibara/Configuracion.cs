@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capibara;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -7,9 +8,7 @@ using System.Xml.Serialization;
 public class Configuracion
 {
     public string PathSolucion { get; set; } = string.Empty;
-    public bool SQL { get; set; } = false;
-    public string Servidor { get; set; } = string.Empty;
-    public string Base { get; set; } = string.Empty;
+    public Conexion Conexion { get; set; } = null;
     public string Tabla { get; set; } = string.Empty;
     public string Consulta { get; set; } = string.Empty;
     public List<string[]> camposAlta { get; set; } = new List<string[]>();
@@ -21,7 +20,7 @@ public class Configuracion
     public string CarpetaDestino { get; set; } = string.Empty;
     public string OrigenDeDatosMsSQL { get; set; } = string.Empty;
     public string RutaPorDefectoResultados { get; set; } = @"C:\Temp\";
-    public bool MostrarOverlayEnInicio { get; set; } = true;
+    public bool MostrarOverlayEnInicio { get; set; } = false;
     public bool InsertarEnProyecto { get; set; } = true;
     public Configuracion()
     {

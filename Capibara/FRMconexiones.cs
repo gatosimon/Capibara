@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Capibara.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -79,9 +80,8 @@ namespace Capibara
             ConexionActual.Nombre = txtNombre.Text.Trim();
             ConexionActual.Motor = (TipoMotor)cmbMotor.SelectedValue;
             ConexionActual.Servidor = txtServidor.Text.Trim();
-            ConexionActual.BaseDatos = cmbBaseDatos.Visible
-                ? (cmbBaseDatos.Text ?? string.Empty).Trim()
-                : (txtBaseDatos.Text ?? string.Empty).Trim();
+            //ConexionActual.BaseDatos = cmbBaseDatos.Visible ? (cmbBaseDatos.Text ?? string.Empty).Trim()  : (txtBaseDatos.Text ?? string.Empty).Trim();
+            ConexionActual.BaseDatos = (cmbBaseDatos.Text ?? string.Empty).Trim();
             ConexionActual.Usuario = txtUsuario.Text.Trim();
             ConexionActual.Contrasena = txtContrasena.Text;
 
@@ -92,7 +92,7 @@ namespace Capibara
             // Si querés, acá podés asignar la conexión actual al formulario principal.
             // MainForm.ConexionActual = ConexionActual;
 
-            MessageBox.Show("Conexión guardada correctamente.", "Éxito",
+            CustomMessageBox.Show("Conexión guardada correctamente.", "Éxito",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
         }
@@ -110,62 +110,36 @@ namespace Capibara
                 // DB2: combo de bases
                 if (motor == TipoMotor.DB2)
                 {
-                    cmbBaseDatos.Visible = true;
+                    //cmbBaseDatos.Visible = true;
                     cmbBaseDatos.Items.Clear();
                     cmbBaseDatos.Items.AddRange(ConexionesManager.BasesDB2);
                     if (cmbBaseDatos.Items.Count > 0)
                         cmbBaseDatos.SelectedIndex = 0;
 
-                    txtBaseDatos.Visible = false;
-                    txtBaseDatos.Enabled = false;
-                    cmbBaseDatos.Enabled = true;
+                    //txtBaseDatos.Visible = false;
+                    //txtBaseDatos.Enabled = false;
+                    //cmbBaseDatos.Enabled = true;
                 }
-                else
-                {
-                    cmbBaseDatos.Visible = false;
-                    txtBaseDatos.Visible = true;
-                    txtBaseDatos.Enabled = true;
-                    cmbBaseDatos.Enabled = false;
-                }
-
-                //// SQLite: botón de búsqueda y sin usuario/contraseña/base
-                //if (motor == TipoMotor.SQLite)
-                //{
-                //    btnBuscarBase.Enabled = true;
-
-                //    lblUsuario.Visible = false;
-                //    txtUsuario.Visible = false;
-
-                //    lblContrasena.Visible = false;
-                //    txtContrasena.Visible = false;
-
-                //    lblBaseDatos.Visible = false;
-                //    cmbBaseDatos.Visible = false;
-                //    txtBaseDatos.Visible = false;
-                //}
                 //else
-                {
-                    btnBuscarBase.Enabled = false;
+                //{
+                //    cmbBaseDatos.Visible = false;
+                //    txtBaseDatos.Visible = true;
+                //    txtBaseDatos.Enabled = true;
+                //    cmbBaseDatos.Enabled = false;
+                //}
 
-                    lblUsuario.Visible = true;
-                    txtUsuario.Visible = true;
 
-                    lblContrasena.Visible = true;
-                    txtContrasena.Visible = true;
+                btnBuscarBase.Enabled = false;
 
-                    lblBaseDatos.Visible = true;
+                lblUsuario.Visible = true;
+                txtUsuario.Visible = true;
 
-                    //if (motor == TipoMotor.POSTGRES)
-                    //{
-                    //    cmbBaseDatos.Visible = false;
-                    //    txtBaseDatos.Visible = true;
-                    //}
-                    //else
-                    {
-                        cmbBaseDatos.Visible = (motor == TipoMotor.DB2);
-                        txtBaseDatos.Visible = !cmbBaseDatos.Visible;
-                    }
-                }
+                lblContrasena.Visible = true;
+                txtContrasena.Visible = true;
+
+                //lblBaseDatos.Visible = true;
+                //cmbBaseDatos.Visible = (motor == TipoMotor.DB2);
+                //txtBaseDatos.Visible = !cmbBaseDatos.Visible;
             }
             catch { }
         }
@@ -175,10 +149,15 @@ namespace Capibara
             if (cmbMotor.SelectedValue == null)
                 return;
 
-
             var motor = (TipoMotor)cmbMotor.SelectedValue;
             if (motor != TipoMotor.MS_SQL)
+            {
+                cmbBaseDatos.Items.Clear();
+                cmbBaseDatos.Items.AddRange(ConexionesManager.BasesDB2);
+                if (cmbBaseDatos.Items.Count > 0)
+                    cmbBaseDatos.SelectedIndex = 0;
                 return;
+            }
 
             string servidor = txtServidor.Text.Trim();
             string usuario = txtUsuario.Text.Trim();
@@ -229,7 +208,7 @@ namespace Capibara
             }
             catch
             {
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     "Ocurrió un error al intentar obtener las bases de datos desde el servidor. Verifique el usuario y la contraseña.",
                     "ATENCIÓN!!!",
                     MessageBoxButtons.OK,
@@ -275,21 +254,11 @@ namespace Capibara
                     stringConnection =
                         $"Driver={{IBM DB2 ODBC DRIVER}};Database={cmbBaseDatos.Text};Hostname={txtServidor.Text};Port=50000; Protocol=TCPIP;Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
                     break;
-
-                //case TipoMotor.POSTGRES:
-                //    stringConnection =
-                //        $"Driver={{PostgreSQL Unicode}};Server={txtServidor.Text};Port=5432;Database={txtBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
-                //    break;
-
-                //case TipoMotor.SQLite:
-                //    stringConnection =
-                //        $"Driver={{SQLite3 ODBC Driver}};Database={txtServidor.Text};";
-                //    break;
             }
 
             if (string.IsNullOrWhiteSpace(stringConnection))
             {
-                MessageBox.Show("El string de conexión está vacío", "Atención!!!",
+                CustomMessageBox.Show("El string de conexión está vacío", "Atención!!!",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -302,13 +271,13 @@ namespace Capibara
                 using (var c = new OdbcConnection(stringConnection))
                 {
                     c.Open();
-                    MessageBox.Show("Conexión exitosa.", "Información",
+                    CustomMessageBox.Show("Conexión exitosa.", "Información",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Conexión fallida: " + ex.Message, "Error",
+                CustomMessageBox.Show("Conexión fallida: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

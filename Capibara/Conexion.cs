@@ -25,7 +25,7 @@ namespace Capibara
 
     public enum TipoMotor
     {
-        MS_SQL,
-        DB2
+        DB2,
+        MS_SQL
     }
 }

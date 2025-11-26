@@ -112,7 +112,7 @@ namespace Capibara
             // 
             this.txtServidor.Location = new System.Drawing.Point(120, 72);
             this.txtServidor.Name = "txtServidor";
-            this.txtServidor.Size = new System.Drawing.Size(391, 23);
+            this.txtServidor.Size = new System.Drawing.Size(426, 23);
             this.txtServidor.TabIndex = 5;
             // 
             // btnBuscarBase
@@ -124,6 +124,7 @@ namespace Capibara
             this.btnBuscarBase.TabIndex = 6;
             this.btnBuscarBase.Text = "...";
             this.btnBuscarBase.UseVisualStyleBackColor = true;
+            this.btnBuscarBase.Visible = false;
             this.btnBuscarBase.Click += new System.EventHandler(this.btnBuscarBase_Click);
             // 
             // lblUsuario
@@ -184,7 +185,6 @@ namespace Capibara
             this.cmbBaseDatos.Name = "cmbBaseDatos";
             this.cmbBaseDatos.Size = new System.Drawing.Size(426, 24);
             this.cmbBaseDatos.TabIndex = 13;
-            this.cmbBaseDatos.Visible = false;
             // 
             // btnGuardar
             // 
