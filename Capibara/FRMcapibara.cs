@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -2717,8 +2718,8 @@ namespace Capibara
         //        {
         //            CHKtryOrIf.Visible = RDBdb2.Checked;
         //            CMBservidor.Items.Clear();
-        //            //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER04", "SERVER01" }); el segundo es el de CABL
-        //            CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER04", "SERVER01" });
+        //            //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER01" }); el segundo es el de CABL
+        //            CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER01" });
 
         //            if (CMBservidor.Items.Count > 0)
         //            {
@@ -3749,12 +3750,24 @@ namespace Capibara
             InicializarConexiones();
         }
 
+        public class ColoredItem
+        {
+            public string Texto { get; set; }
+            public Color ColorFondo { get; set; }
+            public Color ColorTexto { get; set; }
+            public override string ToString() => Texto;
+        }
+
         private void InicializarConexiones()
         {
             conexiones = ConexionesManager.Cargar();
 
             CMBconexion.Items.Clear();
-            CMBconexion.Items.AddRange(conexiones.Keys.ToArray());
+            foreach (Conexion conexion in conexiones.Values)
+            {
+                CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = conexion.Motor == TipoMotor.DB2 ? Color.Gold : Color.DodgerBlue, ColorTexto = conexion.Motor == TipoMotor.DB2 ? Color.Black : Color.White });
+            }
+            //CMBconexion.Items.AddRange(conexiones.Keys.ToArray());
 
             string nombreConexion = conexiones.First().Key;
             // Seleccionar conexión guardada
@@ -3800,6 +3813,35 @@ namespace Capibara
                 LBLbaseDeDatos.Text = conexionActual != null ? conexionActual.BaseDatos : string.Empty;
             }
             catch { }
+        }
+
+        private void CMBconexion_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            var item = (ColoredItem)CMBconexion.Items[e.Index];
+
+            // Si está seleccionado, conviene respetar el highlight para que no quede ilegible
+            Color fondo = (e.State & DrawItemState.Selected) == DrawItemState.Selected
+                ? SystemColors.Highlight
+                : item.ColorFondo;
+
+            Color texto = (e.State & DrawItemState.Selected) == DrawItemState.Selected
+                ? Color.White
+                : item.ColorTexto;
+
+            using (Brush backBrush = new SolidBrush(fondo))
+            {
+                e.Graphics.FillRectangle(backBrush, e.Bounds);
+            }
+
+            // Texto en negro o el que quieras
+            using (Brush textBrush = new SolidBrush(texto))
+            {
+                e.Graphics.DrawString(item.Texto, e.Font, textBrush, e.Bounds);
+            }
+
+            e.DrawFocusRectangle();
         }
     }
 }

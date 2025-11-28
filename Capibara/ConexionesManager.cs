@@ -22,7 +22,7 @@ namespace Capibara
                 BaseDatos = "TRIBUTOS",
                 Contrasena = "db2admin",
                 Motor = TipoMotor.DB2,
-                Nombre = "133.123.120.120",
+                Nombre = "DB2 - DESARROLLO",
                 Servidor = "133.123.120.120",
                 Usuario = "db2admin"
             });
@@ -31,43 +31,34 @@ namespace Capibara
                 BaseDatos = "TRIBUTOS",
                 Contrasena = "db2admin",
                 Motor = TipoMotor.DB2,
-                Nombre = "SERVER04",
-                Servidor = "SERVER04",
-                Usuario = "db2admin"
-            });
-            ConexionesBase.Add(new Conexion()
-            {
-                BaseDatos = "TRIBUTOS",
-                Contrasena = "db2admin",
-                Motor = TipoMotor.DB2,
-                Nombre = "SERVER01",
+                Nombre = "DB2 - PRODUCCION",
                 Servidor = "SERVER01",
                 Usuario = "db2admin"
             });
             ConexionesBase.Add(new Conexion()
             {
-                BaseDatos = string.Empty,
+                BaseDatos = "TRIBUTOS",
                 Contrasena = "ci?r0ba",
                 Motor = TipoMotor.MS_SQL,
-                Nombre = "DESARROLLO",
+                Nombre = "SQL - DESARROLLO",
                 Servidor = "DESARROLLO",
                 Usuario = "usuario"
             });
             ConexionesBase.Add(new Conexion()
             {
-                BaseDatos = string.Empty,
+                BaseDatos = "TRIBUTOS",
                 Contrasena = "ci?r0ba",
                 Motor = TipoMotor.MS_SQL,
-                Nombre = "PRODUCCION",
+                Nombre = "SQL - PRODUCCION",
                 Servidor = "PRODUCCION",
                 Usuario = "usuario"
             });
             ConexionesBase.Add(new Conexion()
             {
-                BaseDatos = string.Empty,
+                BaseDatos = "rafaelagovar",
                 Contrasena = "ci?r0ba",
                 Motor = TipoMotor.MS_SQL,
-                Nombre = "DESARROLLOWEB",
+                Nombre = "SQL - DESARROLLOWEB",
                 Servidor = "DESARROLLOWEB",
                 Usuario = "usuario"
             }); 

@@ -1156,12 +1156,14 @@ namespace Capibara
             // 
             this.CMBconexion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.CMBconexion.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.CMBconexion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CMBconexion.FormattingEnabled = true;
             this.CMBconexion.Location = new System.Drawing.Point(7, 19);
             this.CMBconexion.Name = "CMBconexion";
             this.CMBconexion.Size = new System.Drawing.Size(333, 24);
             this.CMBconexion.TabIndex = 0;
+            this.CMBconexion.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.CMBconexion_DrawItem);
             this.CMBconexion.SelectedIndexChanged += new System.EventHandler(this.CMBconexion_SelectedIndexChanged);
             // 
             // GPBconexion
