@@ -2417,21 +2417,25 @@ namespace Capibara
 
                             if (camposOk)
                             {
-                                string query = (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0) ? consulta : $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos "
-                                                    + "FROM sys.columns c "
-                                                    + "JOIN sys.types ty ON c.user_type_id = ty.user_type_id "
-                                                    + "JOIN sys.tables t ON c.object_id = t.object_id "
-                                                    + "WHERE t.name = @tabla "
-                                                    + "ORDER BY c.column_id;";
-
-                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
-
+                                string esquema = string.Empty;
                                 if (consulta.Trim().Length == 0)
                                 {
                                     string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                                     tablaSeleccionada = partes[partes.Length - 1];
+                                    esquema = partes[0];
                                 }
-                                query = query.Replace("@tabla", $"'{tablaSeleccionada}'");
+
+                                string query = (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0) ? consulta : 
+                                    $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos, SCHEMA_NAME(t.schema_id) AS Esquema
+                                       FROM sys.columns c 
+                                       JOIN sys.types ty 
+                                       ON c.user_type_id = ty.user_type_id 
+                                       JOIN sys.tables t 
+                                       ON c.object_id = t.object_id 
+                                       WHERE t.name = '{tablaSeleccionada}' AND SCHEMA_NAME(t.schema_id) = '{esquema}'
+                                       ORDER BY c.column_id;";
+
+                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
 
                                 try
                                 {
@@ -2679,7 +2683,11 @@ namespace Capibara
 
             if (!resultado)
             {
-                CustomMessageBox.Show("La tabla seleccionada debe contener una clave. \n\nAgréguela en su motor de base datos o seleccione al menos el checkbox de uno de sus campos en la lista.", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                resultado = LSVcampos.CheckedItems.Count > 0;
+                if (!resultado)
+                {
+                    CustomMessageBox.Show("La tabla seleccionada debe contener una clave. \n\nAgréguela en su motor de base datos o seleccione al menos el checkbox de uno de sus campos en la lista.", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand); 
+                }
             }
 
             return resultado;
