@@ -689,14 +689,14 @@ namespace Capibara
             Dto.AppendLine("using System.Web;");
             Dto.AppendLine("using Newtonsoft.Json;");
             Dto.AppendLine("using System.ComponentModel.DataAnnotations;");
-            Dto.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
+            Dto.AppendLine($"using {espacioDeNombres}.{Capas.MODEL};");
             Dto.AppendLine();
-            Dto.AppendLine($"namespace { espacioDeNombres }.{ Capas.DTO}");
+            Dto.AppendLine($"namespace {espacioDeNombres}.{Capas.DTO}");
             Dto.AppendLine("{");
-            Dto.AppendLine($"\tpublic class { nombreDeClase + Capas.DTO}");
+            Dto.AppendLine($"\tpublic class {nombreDeClase}{Capas.DTO}");
             Dto.AppendLine("\t{");
 
-            newDto.AppendLine($"\t\tpublic { nombreDeClase + Capas.DTO } new{ nombreDeClase + Capas.DTO }({ nombreDeClase + (conexionActual.Motor == TipoMotor.DB2 ? string.Empty : Capas.MODEL) } modelo)");
+            newDto.AppendLine($"\t\tpublic {nombreDeClase}{Capas.DTO} new{nombreDeClase}{Capas.DTO}({nombreDeClase}{(conexionActual.Motor == TipoMotor.MS_SQL ? string.Empty : Capas.MODEL)} modelo)");
             newDto.AppendLine("\t\t{");
 
             int i = 0;
