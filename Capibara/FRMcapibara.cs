@@ -531,7 +531,11 @@ namespace Capibara
             #region ALTA
             if (CHKalta.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> alta{ nombreDeClase }([FromBody] { tipoClase } nuevo{ origen })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -547,7 +551,11 @@ namespace Capibara
             #region BAJA
             if (CHKbaja.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpGet, Route(\"baja\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpGet, Route(\"baja\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> baja{ nombreDeClase }({ camposFromUri }, [FromUri] int codigoBaja, [FromUri] string motivoBaja)");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -558,12 +566,16 @@ namespace Capibara
                 Controller.AppendLine("\t\t}");
                 Controller.AppendLine();
             }
-            #endregion
+#endregion
 
             #region MODIFICACION
             if (CHKmodificacion.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> modificacion{ nombreDeClase }([FromBody] { tipoClase } nuevo{ origen })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -579,7 +591,11 @@ namespace Capibara
             #region BUSCAR POR ID
             if (CHKobtenerPorId.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> obtenerPorId({ camposFromUri })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -603,7 +619,11 @@ namespace Capibara
             #region TODOS
             if (CHKtodos.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpGet, Route(\"todos\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpGet, Route(\"todos\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine("\t\tpublic async Task<Respuesta> obtenerTodos()");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -626,7 +646,11 @@ namespace Capibara
             #region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
+                Controller.AppendLine("\t\t#if DEBUG");
+                Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\")]");
+                Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\"), ControlarPermisos]");
+                Controller.AppendLine("\t\t#endif");
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> recuperar{ nombreDeClase }({ camposFromUri })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -884,7 +908,7 @@ namespace Capibara
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
 
-            #region ALTA
+#region ALTA
             if (CHKalta.Checked)
             {
                 if (DB2)
@@ -961,9 +985,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region BAJA
+#region BAJA
             if (CHKbaja.Checked)
             {
                 if (DB2)
@@ -1054,9 +1078,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region MODIFICAR
+#region MODIFICAR
             if (CHKmodificacion.Checked)
             {
                 if (DB2)
@@ -1149,9 +1173,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region OBTENER POR ID
+#region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
                 if (DB2)
@@ -1220,9 +1244,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region TODOS
+#region TODOS
             if (CHKtodos.Checked)
             {
                 if (DB2)
@@ -1264,9 +1288,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region RECUPERAR
+#region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
                 if (DB2)
@@ -1342,7 +1366,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t}");
                 }
             }
-            #endregion
+#endregion
 
             Repositories.AppendLine("\t}");
             Repositories.AppendLine("}");
@@ -1503,7 +1527,7 @@ namespace Capibara
             Service.AppendLine("\t\t}");
             Service.AppendLine();
 
-            #region ALTA
+#region ALTA
             if (CHKalta.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
@@ -1584,9 +1608,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region BAJA
+#region BAJA
             if (CHKbaja.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ columnasClaveTipo }, int codigoBaja, string motivoBaja)");
@@ -1632,9 +1656,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region MODIFICACION
+#region MODIFICACION
             if (CHKmodificacion.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
@@ -1677,9 +1701,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region OBTENER POR ID
+#region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
                 Service.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClaveTipo })");
@@ -1706,9 +1730,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region TODOS
+#region TODOS
             if (CHKtodos.Checked)
             {
                 Service.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
@@ -1737,9 +1761,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-            #endregion
+#endregion
 
-            #region RECUPERACION
+#region RECUPERACION
             if (CHKrecuperacion.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ columnasClaveTipo })");
@@ -1784,7 +1808,7 @@ namespace Capibara
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
             }
-            #endregion
+#endregion
 
             Service.AppendLine("\t}");
             Service.AppendLine("}");
@@ -1954,9 +1978,9 @@ namespace Capibara
             return Global.ToString();
         }
 
-        #endregion
+#endregion
 
-        #region FRONT
+#region FRONT
 
         private string ArmarClaseTypeScript(List<DataColumn> columnas)
         {
@@ -2069,9 +2093,9 @@ namespace Capibara
             return TypeSript.ToString();
         }
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
         private void GenerarDesdeTabla()
         {
