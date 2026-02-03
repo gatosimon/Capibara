@@ -497,9 +497,9 @@ namespace Capibara
             string origen = DB2 ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
-            string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
+            string nombreClasePrimeraMinuscula = $"{nombreDeClase[0].ToString().ToLower()}{nombreDeClase.Substring(1)}";
             string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
-            string camposFromUri = string.Join(", ", (from c in claves select "[FromUri] " + capas.Tipo(c) + " " + c.ColumnName).ToList());
+            string camposFromUri = string.Join(", ", (from c in claves select $"[FromUri] {capas.Tipo(c)} {c.ColumnName}").ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
 
@@ -519,12 +519,12 @@ namespace Capibara
             Controller.AppendLine($"\t[RoutePrefix(\"{ Utilidades.FormatearCadena(TXTnombreAmigable.Text).ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
             Controller.AppendLine();
-            Controller.AppendLine($"\tpublic class { nombreDeClase + Capas.CONTROLLER } : ApiController");
+            Controller.AppendLine($"\tpublic class {nombreDeClase}{Capas.CONTROLLER} : ApiController");
             Controller.AppendLine("\t{");
-            Controller.AppendLine($"\t\tprivate readonly {nombreDeClase + Capas.SERVICE_INTERFACE } _{ nombreClasePrimeraMinuscula + Capas.SERVICE };");
-            Controller.AppendLine($"\t\tpublic { nombreDeClase + Capas.CONTROLLER }({nombreDeClase + Capas.SERVICE_INTERFACE } { nombreClasePrimeraMinuscula + Capas.SERVICE })");
+            Controller.AppendLine($"\t\tprivate readonly {nombreDeClase}{Capas.SERVICE_INTERFACE} _{nombreClasePrimeraMinuscula}{Capas.SERVICE};");
+            Controller.AppendLine($"\t\tpublic {nombreDeClase}{Capas.CONTROLLER}({nombreDeClase}{Capas.SERVICE_INTERFACE} {nombreClasePrimeraMinuscula}{Capas.SERVICE})");
             Controller.AppendLine("\t\t{");
-            Controller.AppendLine($"\t\t\t_{ nombreClasePrimeraMinuscula + Capas.SERVICE } = { nombreClasePrimeraMinuscula + Capas.SERVICE } ?? throw new ArgumentNullException(nameof({ nombreClasePrimeraMinuscula + Capas.SERVICE }));");
+            Controller.AppendLine($"\t\t\t_{nombreClasePrimeraMinuscula}{Capas.SERVICE} = {nombreClasePrimeraMinuscula}{Capas.SERVICE} ?? throw new ArgumentNullException(nameof({nombreClasePrimeraMinuscula}{Capas.SERVICE}));");
             Controller.AppendLine("\t\t}");
             Controller.AppendLine();
 
@@ -536,11 +536,11 @@ namespace Capibara
                 Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\"), ControlarPermisos]");
                 Controller.AppendLine("\t\t#endif");
-                Controller.AppendLine($"\t\tpublic async Task<Respuesta> alta{ nombreDeClase }([FromBody] { tipoClase } nuevo{ origen })");
+                Controller.AppendLine($"\t\tpublic async Task<Respuesta> alta{nombreDeClase}([FromBody] {tipoClase} nuevo{origen})");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine($"\t\t\trta.Resultado = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.alta{ nombreDeClase }(nuevo{ origen });");
+                Controller.AppendLine($"\t\t\trta.Resultado = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.alta{nombreDeClase}(nuevo{origen});");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -556,17 +556,17 @@ namespace Capibara
                 Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpGet, Route(\"baja\"), ControlarPermisos]");
                 Controller.AppendLine("\t\t#endif");
-                Controller.AppendLine($"\t\tpublic async Task<Respuesta> baja{ nombreDeClase }({ camposFromUri }, [FromUri] int codigoBaja, [FromUri] string motivoBaja)");
+                Controller.AppendLine($"\t\tpublic async Task<Respuesta> baja{nombreDeClase}({camposFromUri}, [FromUri] int codigoBaja, [FromUri] string motivoBaja)");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine($"\t\t\trta.Resultado = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.baja{ nombreDeClase }({ camposClave }, codigoBaja, motivoBaja);");
+                Controller.AppendLine($"\t\t\trta.Resultado = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.baja{nombreDeClase}({camposClave}, codigoBaja, motivoBaja);");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
                 Controller.AppendLine();
             }
-#endregion
+            #endregion
 
             #region MODIFICACION
             if (CHKmodificacion.Checked)
@@ -576,11 +576,11 @@ namespace Capibara
                 Controller.AppendLine("\t\t#else");
                 Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\"), ControlarPermisos]");
                 Controller.AppendLine("\t\t#endif");
-                Controller.AppendLine($"\t\tpublic async Task<Respuesta> modificacion{ nombreDeClase }([FromBody] { tipoClase } nuevo{ origen })");
+                Controller.AppendLine($"\t\tpublic async Task<Respuesta> modificacion{nombreDeClase}([FromBody] {tipoClase} nuevo{origen})");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine($"\t\t\trta.Resultado = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.modificacion{ nombreDeClase }(nuevo{ origen });");
+                Controller.AppendLine($"\t\t\trta.Resultado = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.modificacion{nombreDeClase}(nuevo{origen});");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -599,7 +599,7 @@ namespace Capibara
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> obtenerPorId({ camposFromUri })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
-                Controller.AppendLine($"\t\t\t{ tipoClase } solicitado = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.obtenerPorId({ camposClave });");
+                Controller.AppendLine($"\t\t\t{tipoClase} solicitado = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.obtenerPorId({camposClave});");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\tif (solicitado != null)");
                 Controller.AppendLine("\t\t\t{");
@@ -607,7 +607,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine("\t\t\telse");
                 Controller.AppendLine("\t\t\t{");
-                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\"No se halló {{ { capas.NombreTabla } }}\");");
+                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\"No se halló {{ {capas.NombreTabla} }}\");");
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
@@ -627,14 +627,14 @@ namespace Capibara
                 Controller.AppendLine("\t\tpublic async Task<Respuesta> obtenerTodos()");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
-                Controller.AppendLine($"\t\t\tList <{ tipoClase }> { nombreDeClase.ToLower() } = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.obtenerTodos();");
+                Controller.AppendLine($"\t\t\tList <{tipoClase}> {nombreDeClase.ToLower()} = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.obtenerTodos();");
                 Controller.AppendLine($"\t\t\tif ({ nombreDeClase.ToLower() } != null)");
                 Controller.AppendLine("\t\t\t{");
-                Controller.AppendLine($"\t\t\t\trta.Resultado = { nombreDeClase.ToLower() };");
+                Controller.AppendLine($"\t\t\t\trta.Resultado = {nombreDeClase.ToLower()};");
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine("\t\t\telse");
                 Controller.AppendLine("\t\t\t{");
-                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\" - No existe {{ { capas.NombreTabla } }} que responda a la consulta indicada.\");");
+                Controller.AppendLine($"\t\t\t\trta.AgregarMensajeDeError($\" - No existe {{ {capas.NombreTabla} }} que responda a la consulta indicada.\");");
                 Controller.AppendLine("\t\t\t}");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
@@ -655,7 +655,7 @@ namespace Capibara
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
                 Controller.AppendLine();
-                Controller.AppendLine($"\t\t\trta.Resultado = _{ nombreClasePrimeraMinuscula + Capas.SERVICE }.recuperar{ nombreDeClase }({ camposClave });");
+                Controller.AppendLine($"\t\t\trta.Resultado = _{nombreClasePrimeraMinuscula}{Capas.SERVICE}.recuperar{nombreDeClase}({camposClave});");
                 Controller.AppendLine();
                 Controller.AppendLine("\t\t\treturn rta;");
                 Controller.AppendLine("\t\t}");
@@ -820,17 +820,17 @@ namespace Capibara
                 if (claves.Count > nroOrdenClave && claves[nroOrdenClave].ColumnName == columna.ColumnName)
                 {
                     Modelo.AppendLine("\t\t[Key]");
-                    Modelo.AppendLine($"\t\t[Column(Order = { nroOrdenClave.ToString() })]");
+                    Modelo.AppendLine($"\t\t[Column(Order = {nroOrdenClave})]");
                     nroOrdenClave++;
                 }
                 //Si es un array de byte en realidad es un booleano.
                 if (columna.DataType.Name == "Byte[]")
                 {
-                    Modelo.AppendLine("\t\tpublic bool " + columna.ColumnName + " { get;  set; }");
+                    Modelo.AppendLine($"\t\tpublic bool {columna.ColumnName} {{ get;  set; }}");
                 }
                 else
                 {
-                    Modelo.AppendLine("\t\tpublic " + capas.Tipo(columna) + " " + columna.ColumnName + " { get;  set; }");
+                    Modelo.AppendLine($"\t\tpublic {capas.Tipo(columna)} {columna.ColumnName} {{ get;  set; }}");
                 }
 
                 nroOrdenColumna++;
@@ -908,7 +908,7 @@ namespace Capibara
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
 
-#region ALTA
+            #region ALTA
             if (CHKalta.Checked)
             {
                 if (DB2)
@@ -985,9 +985,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-#endregion
+            #endregion
 
-#region BAJA
+            #region BAJA
             if (CHKbaja.Checked)
             {
                 if (DB2)
@@ -1078,9 +1078,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-#endregion
+            #endregion
 
-#region MODIFICAR
+            #region MODIFICAR
             if (CHKmodificacion.Checked)
             {
                 if (DB2)
@@ -1173,9 +1173,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-#endregion
+            #endregion
 
-#region OBTENER POR ID
+            #region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
                 if (DB2)
@@ -1244,9 +1244,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-#endregion
+            #endregion
 
-#region TODOS
+            #region TODOS
             if (CHKtodos.Checked)
             {
                 if (DB2)
@@ -1288,9 +1288,9 @@ namespace Capibara
                 }
                 Repositories.AppendLine();
             }
-#endregion
+            #endregion
 
-#region RECUPERAR
+            #region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
                 if (DB2)
@@ -1366,7 +1366,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t}");
                 }
             }
-#endregion
+            #endregion
 
             Repositories.AppendLine("\t}");
             Repositories.AppendLine("}");
@@ -1527,7 +1527,7 @@ namespace Capibara
             Service.AppendLine("\t\t}");
             Service.AppendLine();
 
-#region ALTA
+            #region ALTA
             if (CHKalta.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
@@ -1608,9 +1608,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-#endregion
+            #endregion
 
-#region BAJA
+            #region BAJA
             if (CHKbaja.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ columnasClaveTipo }, int codigoBaja, string motivoBaja)");
@@ -1656,9 +1656,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-#endregion
+            #endregion
 
-#region MODIFICACION
+            #region MODIFICACION
             if (CHKmodificacion.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
@@ -1701,9 +1701,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-#endregion
+            #endregion
 
-#region OBTENER POR ID
+            #region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
                 Service.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClaveTipo })");
@@ -1730,9 +1730,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-#endregion
+            #endregion
 
-#region TODOS
+            #region TODOS
             if (CHKtodos.Checked)
             {
                 Service.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
@@ -1761,9 +1761,9 @@ namespace Capibara
                 Service.AppendLine("\t\t}");
                 Service.AppendLine();
             }
-#endregion
+            #endregion
 
-#region RECUPERACION
+            #region RECUPERACION
             if (CHKrecuperacion.Checked)
             {
                 Service.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ columnasClaveTipo })");
@@ -1808,7 +1808,7 @@ namespace Capibara
                 Service.AppendLine("\t\t\treturn respuesta;");
                 Service.AppendLine("\t\t}");
             }
-#endregion
+            #endregion
 
             Service.AppendLine("\t}");
             Service.AppendLine("}");
@@ -1978,9 +1978,9 @@ namespace Capibara
             return Global.ToString();
         }
 
-#endregion
+        #endregion
 
-#region FRONT
+        #region FRONT
 
         private string ArmarClaseTypeScript(List<DataColumn> columnas)
         {
@@ -2093,9 +2093,9 @@ namespace Capibara
             return TypeSript.ToString();
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
         private void GenerarDesdeTabla()
         {
