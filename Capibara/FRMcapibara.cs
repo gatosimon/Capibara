@@ -832,6 +832,10 @@ namespace Capibara
                 {
                     Modelo.AppendLine($"\t\tpublic {capas.Tipo(columna)} {columna.ColumnName} {{ get;  set; }}");
                 }
+                Modelo.AppendLine("\t\t/// <summary>");
+                Modelo.AppendLine("\t\t/// NOMBRE REAL DEL CAMPO EN LA BASE DE DATOS");
+                Modelo.AppendLine("\t\t/// </summary>");
+                Modelo.AppendLine($"\t\tpublic string _{columna.ColumnName} {{ get {{ return \"{columna.ColumnName}\"; }}  set{{}} }}");
 
                 nroOrdenColumna++;
                 if (nroOrdenColumna < columnas.Count)
