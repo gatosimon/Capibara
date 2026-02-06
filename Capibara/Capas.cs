@@ -157,7 +157,7 @@ namespace Capibara
         public const string SERVICE = "Service";
         public const string SERVICE_INTERFACE = "ServiceInterface";
         public const string TYPESCRIPT = "TypeScript";
-        public const string MODELTABNAME = "MODELTABNAME";
+        public const string TABLE_NAME = "TABLE_NAME";
 
         public const string USUARIO_MAGIC_CLAVE = "USUARIO MAGIC";
         public const string USUARIO_MAGIC_VALOR = "Config.UsuarioMagic;";
@@ -216,7 +216,7 @@ namespace Capibara
 
         public string TABLA = string.Empty;
 
-        public string NombreTabla { get { return TABLA + MODEL + "." + MODELTABNAME; } }
+        public string NombreTabla { get { return TABLA + MODEL + "." + TABLE_NAME; } }
 
         public Capas(FRMcapibara formulario)
         {

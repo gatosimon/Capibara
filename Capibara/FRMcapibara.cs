@@ -810,7 +810,7 @@ namespace Capibara
             Modelo.AppendLine("\t\t/// <summary>");
             Modelo.AppendLine("\t\t/// NOMBRE INTERNO DE LA TABLA ASOCIADA AL MODELO");
             Modelo.AppendLine("\t\t/// </summary>");
-            Modelo.AppendLine($"\t\tpublic static readonly string { Capas.MODELTABNAME } = \"{ nombreDeClase }\";");
+            Modelo.AppendLine($"\t\tpublic static readonly string { Capas.TABLE_NAME } = \"{ nombreDeClase }\";");
             Modelo.AppendLine();
 
             int nroOrdenColumna = 0;
