@@ -835,7 +835,7 @@ namespace Capibara
                 Modelo.AppendLine("\t\t/// <summary>");
                 Modelo.AppendLine("\t\t/// NOMBRE REAL DEL CAMPO EN LA BASE DE DATOS");
                 Modelo.AppendLine("\t\t/// </summary>");
-                Modelo.AppendLine("\t\t/// [JsonIgnore]");
+                Modelo.AppendLine("\t\t[JsonIgnore]");
                 Modelo.AppendLine($"\t\tpublic string _{columna.ColumnName} {{ get {{ return \"{columna.ColumnName}\"; }}  set{{}} }}");
 
                 nroOrdenColumna++;
