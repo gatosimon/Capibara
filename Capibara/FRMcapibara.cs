@@ -799,6 +799,7 @@ namespace Capibara
             Modelo.AppendLine("using System.Collections.Generic;");
             Modelo.AppendLine("using System.Linq;");
             Modelo.AppendLine("using System.Web;");
+            Modelo.AppendLine("using Newtonsoft.Json;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations;");
             Modelo.AppendLine("using System.ComponentModel.DataAnnotations.Schema;");
             Modelo.AppendLine();
