@@ -78,6 +78,10 @@ namespace Capibara
                 StringBuilder palabraLimpia = new StringBuilder();
                 foreach (char c in palabra)
                 {
+                    if (c == '(')
+                    {
+                        break;
+                    }
                     if (char.IsLetterOrDigit(c))
                     {
                         palabraLimpia.Append(c);
@@ -115,7 +119,6 @@ namespace Capibara
                     }
                 }
             }
-
             return resultadoFinal.ToString();
         }
 

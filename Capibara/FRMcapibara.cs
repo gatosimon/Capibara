@@ -182,7 +182,7 @@ namespace Capibara
         {
             if (conexionActual != null)
             {
-                if (conexionActual.Motor == TipoMotor.DB2)
+                if (conexionActual.Motor == TipoMotor.MS_SQL)
                 {
                     LBLseleccionesTRV.Text = $"CARPETA SELECCIONADA:\n   {carpeta}\nORIGEN DE DATOS SQL:\n   {origenDatos}";
                 }
@@ -491,6 +491,27 @@ namespace Capibara
 
         #region BACK
 
+        public string espacioDeNombres 
+        { 
+            get 
+            {
+                if (_espacioDeNombres.Length == 0)
+                {
+                    if (TXTespacioDeNombres.Text.Trim().Length == 0)
+                    {
+                        _espacioDeNombres = $"{CMBnamespaces.SelectedText}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+                    }
+                    else
+                    {
+                        _espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+                    } 
+                }
+                return _espacioDeNombres; 
+            } 
+            set { } 
+        }
+        private string _espacioDeNombres = string.Empty;
+
         private string ArmarControllers(List<DataColumn> claves)
         {
             bool DB2 = conexionActual.Motor == TipoMotor.DB2;
@@ -498,7 +519,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = $"{nombreDeClase[0].ToString().ToLower()}{nombreDeClase.Substring(1)}";
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string camposFromUri = string.Join(", ", (from c in claves select $"[FromUri] {capas.Tipo(c)} {c.ColumnName}").ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
@@ -702,7 +723,7 @@ namespace Capibara
         private string ArmarDto(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Dto = new StringBuilder();
             StringBuilder newDto = new StringBuilder();
@@ -791,7 +812,7 @@ namespace Capibara
         private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
         {
             string nombreDeClase = capas.TABLA;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Modelo = new StringBuilder();
 
@@ -891,7 +912,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
             List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
@@ -1418,7 +1439,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder RepositoriesInterface = new StringBuilder();
@@ -1506,7 +1527,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", claves.Select(c => c.ColumnName));
             string columnasClaveTipo = string.Join(", ", claves.Select(c => capas.Tipo(c) + " " + c.ColumnName));
 
@@ -1860,7 +1881,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder ServiceInterface = new StringBuilder();
@@ -1945,7 +1966,7 @@ namespace Capibara
         {
             StringBuilder Global = new StringBuilder();
 
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             Global.AppendLine("***** AGREGAR USINGS *****");
             Global.AppendLine();
@@ -2208,6 +2229,7 @@ namespace Capibara
         {
             try
             {
+                _espacioDeNombres = string.Empty;
                 generarDesdeConsulta = false;
                 CamposTabla();
             }
@@ -2722,55 +2744,6 @@ namespace Capibara
 
             return resultado;
         }
-
-        //private void RDBsql_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    WaitCursor();
-        //    try
-        //    {
-        //        CHKtryOrIf.Visible = !RDBsql.Checked;
-        //        if (RDBsql.Checked)
-        //        {
-        //            CMBservidor.Items.Clear();
-        //            //CMBservidor.Items.AddRange(new object[] { "133.123.108.29", "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" }); LA primera es la de CABL
-        //            CMBservidor.Items.AddRange(new object[] { "DESARROLLO", "PRODUCCION", "DESARROLLOWEB" });
-        //            if (CMBservidor.Items.Count > 0)
-        //            {
-        //                CMBservidor.SelectedIndex = 0;
-        //            }
-        //            CMBservidor.Refresh();
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-        //    CursorDefault();
-        //}
-
-        //private void RDBdb2_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    WaitCursor();
-        //    try
-        //    {
-        //        if (RDBdb2.Checked)
-        //        {
-        //            CHKtryOrIf.Visible = RDBdb2.Checked;
-        //            CMBservidor.Items.Clear();
-        //            //CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "133.123.108.29", "SERVER01" }); el segundo es el de CABL
-        //            CMBservidor.Items.AddRange(new object[] { "133.123.120.120", "SERVER01" });
-
-        //            if (CMBservidor.Items.Count > 0)
-        //            {
-        //                CMBservidor.SelectedIndex = 0;
-        //            }
-        //            CMBservidor.Refresh();
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-        //    CursorDefault();
-        //}
 
         private void BTNdirectorioCapas_Click(object sender, EventArgs e)
         {
@@ -3612,7 +3585,7 @@ namespace Capibara
             {
                 idx--;
             }
-            string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string usingRepositories = $"using {espacioDeNombres}.Repositories;";
             string usingService = $"using {espacioDeNombres}.Service;";
 
@@ -3829,8 +3802,8 @@ namespace Capibara
         {
             if (CMBconexion.SelectedItem != null)
             {
+                _espacioDeNombres = string.Empty;
                 ActualizarConeccionActual(conexiones[CMBconexion.SelectedItem.ToString()]);
-
                 try
                 {
                     desplegarCombo = true;
