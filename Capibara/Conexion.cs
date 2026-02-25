@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace Capibara
 {
@@ -21,11 +22,209 @@ namespace Capibara
         {
             return $"Nombre={Nombre}; Motor={Motor}; Servidor={Servidor}; BaseDatos={BaseDatos}; Usuario={Usuario}; Contraseña={Contrasena}";
         }
+
+        public string StringConnection(bool baseDeDatos = true)
+        {
+            string stringConnection = string.Empty;
+            string driver = ObtenerNombreDriver(Motor);
+            switch (Motor)
+            {
+                case TipoMotor.MS_SQL:
+                    if (Servidor.EndsWith("WEB"))
+                    {
+                        stringConnection = $@"Driver={{{driver}}};Server=SQL{Servidor.Replace("WEB", string.Empty)}\{Servidor};Database=;Uid={Usuario};Pwd={Contrasena};TrustServerCertificate=yes;";
+                    }
+                    else
+                    {
+                        stringConnection = $@"Driver={{{driver}}};Server=SQL{Servidor}\{Servidor};{(baseDeDatos ? $"Database={BaseDatos};" : string.Empty)}Uid={Usuario};Pwd={Contrasena};TrustServerCertificate=yes;";
+                    }
+                    break;
+                case TipoMotor.DB2:
+                    stringConnection = $"Driver={{{driver}}};{(baseDeDatos ? $"Database={BaseDatos};" : string.Empty)}Hostname={Servidor};Port=50000; Protocol=TCPIP;Uid={Usuario};Pwd={Contrasena};";
+                    break;
+                case TipoMotor.POSTGRES:
+                    stringConnection = $"Driver={{{driver}}};Server={Servidor};Port=5432;Database={(baseDeDatos ? BaseDatos : "postgres")};Uid={Usuario};Pwd={Contrasena};";
+                    break;
+                case TipoMotor.SQLITE:
+                    stringConnection = $"Driver={{{driver}}};Database={Servidor};"; //"Data Source={conexionActual.Servidor};Version=3;";
+                    break;
+                default:
+                    break;
+            }
+            return stringConnection;
+        }
+
+        public static string ObtenerNombreDriver(TipoMotor motor)
+        {
+            string palabraClave = string.Empty;
+            switch (motor)
+            {
+                case TipoMotor.MS_SQL:
+                    palabraClave = "SQL Server";
+                    break;
+                case TipoMotor.DB2:
+                    palabraClave = "DB2";
+                    break;
+                case TipoMotor.POSTGRES:
+                    palabraClave = "PostgreSQL";
+                    break;
+                case TipoMotor.SQLITE:
+                    palabraClave = "SQLite";
+                    break;
+                default:
+                    palabraClave = string.Empty;
+                    break;
+            }
+            List<string> drivers = new List<string>();
+
+            // Los drivers de ODBC se encuentran en esta ruta del registro
+            string registroPath = @"SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers";
+
+            // Forzamos la apertura de la vista de 32 bits (RegistryView.Registry32)
+            using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            {
+                using (var rk = baseKey.OpenSubKey(registroPath))
+                {
+                    if (rk != null)
+                    {
+                        foreach (string name in rk.GetValueNames())
+                        {
+                            drivers.Add(name);
+                        }
+                    }
+                }
+            }
+            // Buscamos el que coincida con tu base de datos (ej: "PostgreSQL" o "IBM DB2")
+            string driver = drivers.FirstOrDefault(d => d.IndexOf(palabraClave, StringComparison.OrdinalIgnoreCase) >= 0).Trim();
+            if (driver.Length == 0)
+            {
+                CustomControls.CustomMessageBox.Show($"No se encontró un driver ODBC x86 para {driver}");
+            }
+            return driver;
+        }
     }
 
     public enum TipoMotor
     {
         DB2,
-        MS_SQL
+        MS_SQL,
+        POSTGRES,
+        SQLITE
     }
+
+    //public class StringConnection
+    //{
+    //    public string Servidor { get; set; }
+
+    //    public string BaseDeDatos { get; set; }
+
+    //    public string Usuario { get; set; }
+    //    public string Contraseña { get; set; }
+
+    //    public string Consulta { get; set; }
+
+    //    public TipoMotor TipoConexion { get; set; }
+
+    //    //public string Obtener()
+    //    //{
+    //    //    string stringConnection = string.Empty;
+    //    //    switch (TipoConexion)
+    //    //    {
+    //    //        case Motor.DB2:
+    //    //            stringConnection = $"Driver={{IBM DB2 ODBC DRIVER}};Database={BaseDeDatos};Hostname={Servidor};Port=50000; Protocol=TCPIP;Uid=db2admin;Pwd=db2admin;";
+    //    //            break;
+    //    //        case Motor.SQL:
+    //    //            if (Servidor.EndsWith("WEB"))
+    //    //            {
+    //    //                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{Servidor.Replace("WEB", string.Empty)}\{Servidor};Database={BaseDeDatos};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+    //    //            }
+    //    //            else
+    //    //            {
+    //    //                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{Servidor}\{Servidor};Database={BaseDeDatos};Uid=usuario;Pwd=ci?r0ba;TrustServerCertificate=yes;";
+    //    //            }
+    //    //            break;
+    //    //    }
+    //    //    return stringConnection;
+    //    //}
+
+    //    public string Obtener()
+    //    {
+    //        string stringConnection = string.Empty;
+    //        string driver = ObtenerNombreDriver(TipoConexion);
+    //        switch (TipoConexion)
+    //        {
+    //            case TipoMotor.MS_SQL:
+    //                if (Servidor.EndsWith("WEB"))
+    //                {
+    //                    stringConnection = $@"Driver={{{driver}}};Server=SQL{Servidor.Replace("WEB", string.Empty)}\{Servidor};Database=;Uid={Usuario};Pwd={Contraseña};TrustServerCertificate=yes;";
+    //                }
+    //                else
+    //                {
+    //                    stringConnection = $@"Driver={{{driver}}};Server=SQL{Servidor}\{Servidor};Database={BaseDeDatos};Uid={Usuario};Pwd={Contraseña};TrustServerCertificate=yes;";
+    //                }
+    //                break;
+    //            case TipoMotor.DB2:
+    //                stringConnection = $"Driver={{{driver}}};Database={BaseDeDatos};Hostname={Servidor};Port=50000; Protocol=TCPIP;Uid={Usuario};Pwd={Contraseña};";
+    //                break;
+    //            case TipoMotor.POSTGRES:
+    //                stringConnection = $"Driver={{{driver}}};Server={Servidor};Port=5432;Database={BaseDeDatos};Uid={Usuario};Pwd={Contraseña};";
+    //                break;
+    //            case TipoMotor.SQLITE:
+    //                stringConnection = $"Driver={{{driver}}};Database={Servidor};"; //"Data Source={conexionActual.Servidor};Version=3;";
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //        return stringConnection;
+    //    }
+
+    //    public static string ObtenerNombreDriver(TipoMotor motor)
+    //    {
+    //        string palabraClave = string.Empty;
+    //        switch (motor)
+    //        {
+    //            case TipoMotor.MS_SQL:
+    //                palabraClave = "SQL Server";
+    //                break;
+    //            case TipoMotor.DB2:
+    //                palabraClave = "DB2";
+    //                break;
+    //            case TipoMotor.POSTGRES:
+    //                palabraClave = "PostgreSQL";
+    //                break;
+    //            case TipoMotor.SQLITE:
+    //                palabraClave = "SQLite";
+    //                break;
+    //            default:
+    //                palabraClave = string.Empty;
+    //                break;
+    //        }
+    //        List<string> drivers = new List<string>();
+
+    //        // Los drivers de ODBC se encuentran en esta ruta del registro
+    //        string registroPath = @"SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers";
+
+    //        // Forzamos la apertura de la vista de 32 bits (RegistryView.Registry32)
+    //        using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+    //        {
+    //            using (var rk = baseKey.OpenSubKey(registroPath))
+    //            {
+    //                if (rk != null)
+    //                {
+    //                    foreach (string name in rk.GetValueNames())
+    //                    {
+    //                        drivers.Add(name);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        // Buscamos el que coincida con tu base de datos (ej: "PostgreSQL" o "IBM DB2")
+    //        string driver = drivers.FirstOrDefault(d => d.IndexOf(palabraClave, StringComparison.OrdinalIgnoreCase) >= 0).Trim();
+    //        if (driver.Length == 0)
+    //        {
+    //            CustomControls.CustomMessageBox.Show($"No se encontró un driver ODBC x86 para {driver}");
+    //        }
+    //        return driver;
+    //    }
+    //}
 }

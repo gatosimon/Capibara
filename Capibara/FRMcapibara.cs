@@ -290,16 +290,16 @@ namespace Capibara
 
             bool consultaOk = true;
 
-            StringConnection stringConnection = DefinirStringConnection();
+            //Conexion conexion = DefinirConexion();
             if (conexionActual.Motor == TipoMotor.DB2)
             {
                 try
                 {
-                    stringConnection.Consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
 
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     DB2base.OpenConnection();
-                    DataSet DS = DB2base.DataSet(stringConnection.Consulta);
+                    DataSet DS = DB2base.DataSet(consulta);
                     DB2base.CloseConnection();
                     camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
                 }
@@ -316,7 +316,7 @@ namespace Capibara
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
                     string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", capas.camposTabla) + " FROM " + tabla;
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     SQLbase.OpenConnection();
                     DataSet DS = SQLbase.DataSet(query);
 
@@ -2239,22 +2239,16 @@ namespace Capibara
             }
         }
 
-        private StringConnection DefinirStringConnection()
+        private Conexion DefinirConexion()
         {
-            StringConnection stringConnection = new StringConnection();
-            try
+            if (conexionActual != null)
             {
-                if (conexionActual != null)
-                {
-                    stringConnection.TipoConexion = conexionActual.Motor == TipoMotor.DB2 ? StringConnection.Motor.DB2 : StringConnection.Motor.SQL;
-                    stringConnection.Servidor = conexionActual.Servidor.ToUpper();
-                    stringConnection.BaseDeDatos = conexionActual.BaseDatos; 
-                }
+                return conexionActual;
             }
-            catch (Exception err)
+            else
             {
+                return new Conexion();
             }
-            return stringConnection;
         }
 
         private void TablasBase()
@@ -2266,57 +2260,84 @@ namespace Capibara
                 LBLtablaSeleccionada.Text = string.Empty;
                 LSVcampos.Items.Clear();
                 capas.tablasBase = new List<string>();
-                StringConnection stringConnection = DefinirStringConnection();
-                if (conexionActual.Motor == TipoMotor.DB2)
-                {
-                    try
-                    {
-                        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
-                        DB2base.OpenConnection();
-                        IDataReader consulta = DB2base.DataReader("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre");
+                string consultaTablas = string.Empty;
 
-                        while (consulta.Read())
-                        {
-                            capas.tablasBase.Add(consulta.GetString(0));
-                            CMBtablas.Items.Add(consulta.GetString(0));
-                        }
-                        DB2base.CloseConnection();
-                    }
-                    catch (Exception ex)
+                #region METODO VIEJO
+                //if (conexionActual.Motor == TipoMotor.DB2)
+                //{
+                //    try
+                //    {
+                //        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexion.StringConnection()));
+                //        DB2base.OpenConnection();
+                //        IDataReader consulta = DB2base.DataReader("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre");
+
+                //        while (consulta.Read())
+                //        {
+                //            capas.tablasBase.Add(consulta.GetString(0));
+                //            CMBtablas.Items.Add(consulta.GetString(0));
+                //        }
+                //        DB2base.CloseConnection();
+                //    }
+                //    catch (Exception error)
+                //    {
+                //        //CustomMessageBox.Show($"Ocurrió un error al intentar obtener las tablas de:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //    }
+                //}
+                //else
+                //{
+                //    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexion.StringConnection()));
+                //    using (SQLbase.Connection)
+                //    {
+                //        try
+                //        {
+                //            SQLbase.OpenConnection();
+
+                //            string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
+                //                FROM INFORMATION_SCHEMA.TABLES 
+                //                WHERE TABLE_TYPE = 'BASE TABLE'
+                //                ORDER BY TABLE_SCHEMA, TABLE_NAME";
+
+                //            IDataReader reader = SQLbase.DataReader(query);
+
+                //            while (reader.Read())
+                //            {
+                //                string schema = reader.GetString(0);
+                //                string table = reader.GetString(1);
+                //                capas.tablasBase.Add($"{schema}.{table}");
+                //                CMBtablas.Items.Add($"{schema}.{table}");
+                //            }
+                //        }
+                //        catch (Exception error)
+                //        {
+                //            //CustomMessageBox.Show($"Ocurrió un error al intentar obtener las tablas de:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //        }
+                //    }
+                //} 
+                #endregion
+
+                using (var conn = new OdbcConnection(conexionActual.StringConnection()))
+                {
+                    conn.Open();
+
+                    // Obtiene las tablas
+                    DataTable tablas = conn.GetSchema("Tables");
+
+                    // Filtrar SOLO las filas cuyo tipo sea "TABLE"
+                    DataRow[] tablasFiltradas = tablas.Select($"TABLE_TYPE = 'TABLE'");
+
+                    // Si querés seguir usando un DataTable:
+                    DataTable tablasSolo = tablasFiltradas.Length > 0 ? tablasFiltradas.CopyToDataTable() : tablas.Clone();
+
+                    foreach (DataRow tabla in tablasSolo.Rows)
                     {
-                        //throw ex;
+                        string schema = tabla["TABLE_SCHEM"].ToString();
+                        string nombreTabla = tabla["TABLE_NAME"].ToString();
+                        string tablaActual = (string.IsNullOrEmpty(schema) || conexionActual.Motor != TipoMotor.MS_SQL) ? nombreTabla : $"{schema}.{nombreTabla}";
+                        capas.tablasBase.Add(tablaActual);
+                        CMBtablas.Items.Add(tablaActual);
                     }
                 }
-                else
-                {
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
-                    using (SQLbase.Connection)
-                    {
-                        try
-                        {
-                            SQLbase.Connection.Open();
 
-                            string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
-                                FROM INFORMATION_SCHEMA.TABLES 
-                                WHERE TABLE_TYPE = 'BASE TABLE'
-                                ORDER BY TABLE_SCHEMA, TABLE_NAME";
-
-                            IDataReader reader = SQLbase.DataReader(query);
-
-                            while (reader.Read())
-                            {
-                                string schema = reader.GetString(0);
-                                string table = reader.GetString(1);
-                                capas.tablasBase.Add($"{schema}.{table}");
-                                CMBtablas.Items.Add($"{schema}.{table}");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            //throw ex;
-                        }
-                    }
-                }
                 LSVcampos.Refresh();
                 if (CMBtablas.Items.Count > 0)
                 {
@@ -2324,8 +2345,9 @@ namespace Capibara
                 }
                 CMBtablas.Refresh();
             }
-            catch (Exception)
+            catch (Exception error)
             {
+                //CustomMessageBox.Show($"Ocurrió un error al intentar conectar a la base:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2341,13 +2363,13 @@ namespace Capibara
                     LBLtablaSeleccionada.Text = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString()) + ":";
                     LSVcampos.Items.Clear();
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
-                    StringConnection stringConnection = DefinirStringConnection();
+                    //Conexion conexion = DefinirConexion();
                     // BASE DE DATOS DB2
                     if (conexionActual.Motor == TipoMotor.DB2)
                     {
                         try
                         {
-                            DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                            DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                             DB2base.OpenConnection();
                             // GENERO DESDE UNA CONSULTA
                             if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
@@ -2487,7 +2509,7 @@ namespace Capibara
                                        WHERE t.name = '{tablaSeleccionada}' AND SCHEMA_NAME(t.schema_id) = '{esquema}'
                                        ORDER BY c.column_id;";
 
-                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
 
                                 try
                                 {
@@ -2649,15 +2671,15 @@ namespace Capibara
             List<string> columnasError = new List<string>();
             DataSet DS = null;
 
-            StringConnection stringConnection = DefinirStringConnection();
+            //Conexion conexion = DefinirConexion();
             if (conexionActual.Motor == TipoMotor.DB2)
             {
                 try
                 {
-                    stringConnection.Consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                    string consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     DB2base.OpenConnection();
-                    DS = DB2base.DataSet(stringConnection.Consulta);
+                    DS = DB2base.DataSet(consulta);
                     DB2base.CloseConnection();
                 }
                 catch (Exception ex)
@@ -2673,7 +2695,7 @@ namespace Capibara
 
                     string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
 
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(stringConnection.Obtener()));
+                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     SQLbase.OpenConnection();
                     DS = SQLbase.DataSet(query);
                     SQLbase.CloseConnection();
@@ -3723,7 +3745,6 @@ namespace Capibara
         {
             FRMconexiones datosConexion = new FRMconexiones();
             datosConexion.ShowDialog();
-            ConexionesManager.Guardar(conexiones);
             InicializarConexiones();
         }
 
@@ -3776,9 +3797,22 @@ namespace Capibara
             CMBconexion.Items.Clear();
             foreach (Conexion conexion in conexiones.Values)
             {
-                CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = conexion.Motor == TipoMotor.DB2 ? Color.Gold : Color.DodgerBlue, ColorTexto = conexion.Motor == TipoMotor.DB2 ? Color.Black : Color.White });
+                switch (conexion.Motor)
+                {
+                    case TipoMotor.DB2:
+                        CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = Color.Gold , ColorTexto = Color.Black});
+                        break;
+                    case TipoMotor.MS_SQL:
+                        CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = Color.DodgerBlue, ColorTexto = Color.White });
+                        break;
+                    case TipoMotor.POSTGRES:
+                        CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = Color.Green, ColorTexto = Color.White });
+                        break;
+                    case TipoMotor.SQLITE:
+                        CMBconexion.Items.Add(new ColoredItem { Texto = conexion.Nombre, ColorFondo = Color.DarkViolet, ColorTexto = Color.White });
+                        break;
+                }
             }
-            //CMBconexion.Items.AddRange(conexiones.Keys.ToArray());
 
             string nombreConexion = conexiones.First().Key;
             // Seleccionar conexión guardada

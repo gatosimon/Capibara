@@ -1,13 +1,9 @@
 ﻿using Capibara.CustomControls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.Odbc;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Capibara
@@ -150,7 +146,7 @@ namespace Capibara
                 return;
 
             var motor = (TipoMotor)cmbMotor.SelectedValue;
-            if (motor != TipoMotor.MS_SQL)
+            if (motor == TipoMotor.DB2)
             {
                 cmbBaseDatos.Items.Clear();
                 cmbBaseDatos.Items.AddRange(ConexionesManager.BasesDB2);
@@ -158,59 +154,38 @@ namespace Capibara
                     cmbBaseDatos.SelectedIndex = 0;
                 return;
             }
+            Conexion stringConnection = new Conexion();
 
-            string servidor = txtServidor.Text.Trim();
-            string usuario = txtUsuario.Text.Trim();
-            string contrasena = txtContrasena.Text;
+            stringConnection.Servidor = txtServidor.Text.Trim();
+            stringConnection.Usuario = txtUsuario.Text.Trim();
+            stringConnection.Contrasena = txtContrasena.Text;
+            stringConnection.Motor = motor;
 
-            if (string.IsNullOrWhiteSpace(servidor) ||
-                string.IsNullOrWhiteSpace(usuario) ||
-                string.IsNullOrWhiteSpace(contrasena))
+            if (string.IsNullOrWhiteSpace(stringConnection.Servidor) ||
+                string.IsNullOrWhiteSpace(stringConnection.Usuario) ||
+                string.IsNullOrWhiteSpace(stringConnection.Contrasena))
                 return;
-
-            string stringConnection = string.Empty;
-            if (servidor.EndsWith("WEB"))
-            {
-                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor.Replace("WEB", string.Empty)}\{servidor};Database=;Uid={usuario};Pwd={contrasena};TrustServerCertificate=yes;";
-            }
-            else
-            {
-                stringConnection = $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{servidor}\{servidor};Database=;Uid={usuario};Pwd={contrasena};TrustServerCertificate=yes;";
-            }
 
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
-                using (var c = new OdbcConnection(stringConnection))
+                List<string> basesDeDatos = ObtenerBasesDeDatos(stringConnection.StringConnection(false), motor);
+
+                foreach (string baseDeDatos in basesDeDatos)
                 {
-                    c.Open();
-                    cmbBaseDatos.Items.Clear();
-
-                    using (OdbcCommand cmd = c.CreateCommand())
-                    {
-                        cmd.CommandText =
-                            "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC";
-
-                        using (OdbcDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                cmbBaseDatos.Items.Add(reader.GetString(0));
-                            }
-                        }
-                    }
-
-                    cmbBaseDatos.Visible = true;
-                    cmbBaseDatos.Enabled = true;
-                    txtBaseDatos.Visible = false;
-                    txtBaseDatos.Enabled = false;
+                    cmbBaseDatos.Items.Add(baseDeDatos);
                 }
+
+                cmbBaseDatos.Visible = true;
+                cmbBaseDatos.Enabled = true;
+                txtBaseDatos.Visible = false;
+                txtBaseDatos.Enabled = false;
             }
-            catch
+            catch(Exception err)
             {
                 CustomMessageBox.Show(
                     "Ocurrió un error al intentar obtener las bases de datos desde el servidor. Verifique el usuario y la contraseña.",
-                    "ATENCIÓN!!!",
+                    "ATENCIÓN!!! " + err.Message,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
@@ -218,6 +193,39 @@ namespace Capibara
             {
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        public List<string> ObtenerBasesDeDatos(string stringConnection, TipoMotor motor)
+        {
+            List<string> bases = new List<string>();
+            string sql = string.Empty;
+
+            switch (motor)
+            {
+                case TipoMotor.DB2:
+                    sql = "SELECT SCHEMANAME FROM SYSCAT.SCHEMATA";
+                    break;
+                case TipoMotor.MS_SQL:
+                    sql = "SELECT UPPER(name) FROM sys.databases WHERE state = 0 ORDER BY name ASC";
+                    break;
+                case TipoMotor.POSTGRES:
+                    sql = "SELECT datname FROM pg_database WHERE datistemplate = false";
+                    break;
+                case TipoMotor.SQLITE:
+                    sql = "PRAGMA database_list";
+                    break;
+            }
+
+            using (var conn = new OdbcConnection(stringConnection))
+            using (var cmd = new OdbcCommand(sql, conn))
+            {
+                conn.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                    bases.Add(reader[0].ToString());
+            }
+
+            return bases;
         }
 
         private void btnBuscarBase_Click(object sender, EventArgs e)
@@ -240,23 +248,46 @@ namespace Capibara
             if (cmbMotor.SelectedValue == null)
                 return;
 
-            string stringConnection = string.Empty;
             var motor = (TipoMotor)cmbMotor.SelectedValue;
+
+            Conexion stringConnection = new Conexion();
+            stringConnection.Servidor = txtServidor.Text;
+            stringConnection.Usuario = txtUsuario.Text;
+            stringConnection.BaseDatos = cmbBaseDatos.Text;
+            stringConnection.Contrasena = txtContrasena.Text;
+
+            //switch (motor)
+            //{
+            //    case TipoMotor.MS_SQL:
+            //        stringConnection =
+            //            $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{txtServidor.Text}\{txtServidor.Text};Database={cmbBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};TrustServerCertificate=yes;";
+            //        break;
+
+            //    case TipoMotor.DB2:
+            //        stringConnection =
+            //            $"Driver={{IBM DB2 ODBC DRIVER}};Database={cmbBaseDatos.Text};Hostname={txtServidor.Text};Port=50000; Protocol=TCPIP;Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
+            //        break;
+            //}
 
             switch (motor)
             {
-                case TipoMotor.MS_SQL:
-                    stringConnection =
-                        $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{txtServidor.Text}\{txtServidor.Text};Database={cmbBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};TrustServerCertificate=yes;";
-                    break;
-
                 case TipoMotor.DB2:
-                    stringConnection =
-                        $"Driver={{IBM DB2 ODBC DRIVER}};Database={cmbBaseDatos.Text};Hostname={txtServidor.Text};Port=50000; Protocol=TCPIP;Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
+                    stringConnection.Motor = TipoMotor.DB2;
+                    break;
+                case TipoMotor.MS_SQL:
+                    stringConnection.Motor = TipoMotor.MS_SQL;
+                    break;
+                case TipoMotor.POSTGRES:
+                    stringConnection.Motor = TipoMotor.POSTGRES;
+                    break;
+                case TipoMotor.SQLITE:
+                    stringConnection.Motor = TipoMotor.SQLITE;
+                    break;
+                default:
                     break;
             }
 
-            if (string.IsNullOrWhiteSpace(stringConnection))
+            if (string.IsNullOrWhiteSpace(stringConnection.StringConnection()))
             {
                 CustomMessageBox.Show("El string de conexión está vacío", "Atención!!!",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -268,7 +299,7 @@ namespace Capibara
                 Cursor.Current = Cursors.WaitCursor;
                 btnProbar.Enabled = false;
 
-                using (var c = new OdbcConnection(stringConnection))
+                using (var c = new OdbcConnection(stringConnection.StringConnection()))
                 {
                     c.Open();
                     CustomMessageBox.Show("Conexión exitosa.", "Información",

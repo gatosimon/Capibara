@@ -13,8 +13,6 @@ namespace DataLayer
 
         List<IDataReader> cursoresAbiertos = new List<IDataReader>();
 
-
-
         /// <summary>
         /// Constructor
         /// </summary>
