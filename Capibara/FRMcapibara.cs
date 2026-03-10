@@ -274,6 +274,8 @@ namespace Capibara
 
         private string Clase(string tabla, string consulta = "")
         {
+            capas.NOMBRE_AMIGABLE = Utilidades.FormatearCadena(TXTnombreAmigable.Text, false);
+
             if (consulta.Trim().Length > 0)
             {
                 tabla = "CONSULTA";
@@ -295,12 +297,13 @@ namespace Capibara
             {
                 try
                 {
-                    consulta = consulta.Trim().Length > 0 ? consulta : "SELECT " + string.Join(", ", capas.camposTabla) + " FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
+                    consulta = consulta.Trim().Length > 0 ? consulta : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} FETCH FIRST 1 ROW ONLY";
 
                     DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     DB2base.OpenConnection();
                     DataSet DS = DB2base.DataSet(consulta);
                     DB2base.CloseConnection();
+                    
                     camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
                 }
                 catch (Exception ex)
@@ -315,7 +318,7 @@ namespace Capibara
                 {
                     tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    string query = consulta.Trim().Length > 0 ? consulta : "SELECT TOP 1 " + string.Join(", ", capas.camposTabla) + " FROM " + tabla;
+                    string query = consulta.Trim().Length > 0 ? consulta : $"SELECT TOP 1 {string.Join(", ", capas.camposTabla)} FROM {tabla}";
                     DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                     SQLbase.OpenConnection();
                     DataSet DS = SQLbase.DataSet(query);
@@ -335,7 +338,7 @@ namespace Capibara
                 if (columnasError.Count > 0)
                 {
                     string columnas = string.Join("\r\n", columnasError);
-                    CustomMessageBox.Show("NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n" + columnas, CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                    CustomMessageBox.Show($"NO SE PUEDE PROCESAR LA SIGUIENTE TABLA DEBIDO A INCONSISTENCIAS CON LOS SIGUIENTES CAMPOS:\r\n\r\n{columnas}", CustomMessageBox.ATENCION, MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
                 else
                 {
@@ -438,6 +441,7 @@ namespace Capibara
             List<DataColumn> camposConsulta = new List<DataColumn>();
             int i = 0;
             bool obtenerTodas = LSVcampos.CheckedItems.Count == 0;
+            consulta = TXTgenerarAPartirDeConsulta.Text.Trim().Length > 0 ? consulta : string.Empty;
             foreach (DataColumn columna in DS.Tables[0].Columns)
             {
                 // Si genero a partir de una Query
@@ -499,12 +503,14 @@ namespace Capibara
                 {
                     if (TXTespacioDeNombres.Text.Trim().Length == 0)
                     {
-                        _espacioDeNombres = $"{CMBnamespaces.SelectedText}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+                        //_espacioDeNombres = $"{CMBnamespaces.SelectedText}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+                        _espacioDeNombres = $"{CMBnamespaces.SelectedText}.{capas.NOMBRE_AMIGABLE}";
                     }
                     else
                     {
-                        _espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
-                    } 
+                        //_espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+                        _espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{capas.NOMBRE_AMIGABLE}";
+                    }
                 }
                 return _espacioDeNombres; 
             } 
@@ -519,7 +525,6 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = $"{nombreDeClase[0].ToString().ToLower()}{nombreDeClase.Substring(1)}";
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string camposFromUri = string.Join(", ", (from c in claves select $"[FromUri] {capas.Tipo(c)} {c.ColumnName}").ToList());
             string camposClave = string.Join(", ", (from c in claves select c.ColumnName).ToList());
             StringBuilder Controller = new StringBuilder();
@@ -537,7 +542,8 @@ namespace Capibara
             Controller.AppendLine();
             Controller.AppendLine($"namespace { espacioDeNombres }.{ Capas.CONTROLLERS }");
             Controller.AppendLine("{");
-            Controller.AppendLine($"\t[RoutePrefix(\"{ Utilidades.FormatearCadena(TXTnombreAmigable.Text).ToLower() }\")]");
+            //Controller.AppendLine($"\t[RoutePrefix(\"{ Utilidades.FormatearCadena(TXTnombreAmigable.Text).ToLower() }\")]");
+            Controller.AppendLine($"\t[RoutePrefix(\"{ capas.NOMBRE_AMIGABLE.ToLower() }\")]");
             Controller.AppendLine("\t[EnableCors(origins: \" * \", headers: \" * \", methods: \" * \")]");
             Controller.AppendLine();
             Controller.AppendLine($"\tpublic class {nombreDeClase}{Capas.CONTROLLER} : ApiController");
@@ -723,7 +729,6 @@ namespace Capibara
         private string ArmarDto(List<DataColumn> columnas)
         {
             string nombreDeClase = capas.TABLA;
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Dto = new StringBuilder();
             StringBuilder newDto = new StringBuilder();
@@ -812,7 +817,6 @@ namespace Capibara
         private string ArmarModel(List<DataColumn> columnas, List<DataColumn> claves)
         {
             string nombreDeClase = capas.TABLA;
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             StringBuilder Modelo = new StringBuilder();
 
@@ -912,7 +916,6 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
             List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
@@ -1439,7 +1442,6 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder RepositoriesInterface = new StringBuilder();
@@ -1527,7 +1529,6 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", claves.Select(c => c.ColumnName));
             string columnasClaveTipo = string.Join(", ", claves.Select(c => capas.Tipo(c) + " " + c.ColumnName));
 
@@ -1881,7 +1882,6 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
 
             StringBuilder ServiceInterface = new StringBuilder();
@@ -1965,8 +1965,6 @@ namespace Capibara
         private string ArmarGlobal()
         {
             StringBuilder Global = new StringBuilder();
-
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
 
             Global.AppendLine("***** AGREGAR USINGS *****");
             Global.AppendLine();
@@ -2360,7 +2358,7 @@ namespace Capibara
                 capas.camposTabla = new List<string>();
                 try
                 {
-                    LBLtablaSeleccionada.Text = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString()) + ":";
+                    LBLtablaSeleccionada.Text = $"{(tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString())}:";
                     LSVcampos.Items.Clear();
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
                     //Conexion conexion = DefinirConexion();
@@ -2403,7 +2401,7 @@ namespace Capibara
                             }
                             else // GENERO DESDE UNA TABLA
                             {
-                                IDataReader Db2 = DB2base.DataReader("SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" + tablaSeleccionada + "'");
+                                IDataReader Db2 = DB2base.DataReader($"SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '{tablaSeleccionada}'");
 
                                 Db2.Read();
                                 do
@@ -2414,7 +2412,7 @@ namespace Capibara
 
                                 if (LSVcampos.Items.Count > 0)
                                 {
-                                    Db2 = DB2base.DataReader("SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '" + tablaSeleccionada + "' AND UNIQUERULE IN ('U')");
+                                    Db2 = DB2base.DataReader($"SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '{tablaSeleccionada}' AND UNIQUERULE IN ('U')");
                                     List<string> claves = new List<string>();
                                     while (Db2.Read())
                                     {
@@ -2453,11 +2451,11 @@ namespace Capibara
                             var error = ex.InnerException ?? ex;
                             if (consulta.Trim().Length > 0)
                             {
-                                CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             else
                             {
-                                CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
@@ -2537,11 +2535,11 @@ namespace Capibara
                                     var error = ex.InnerException.Message ?? ex.Message;
                                     if (consulta.Trim().Length > 0)
                                     {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                     else
                                     {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                 }
 
@@ -2550,10 +2548,10 @@ namespace Capibara
                                 {
                                     string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                                     tablaSeleccionada = partes[partes.Length - 1];
-                                    query = "SELECT KU.COLUMN_NAME Nombre "
-                                        + "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC "
-                                        + "INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME "
-                                        + $"WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                                    query = $@"SELECT KU.COLUMN_NAME Nombre 
+                                                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC 
+                                                INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME 
+                                                WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
 
                                     try
                                     {
@@ -2580,7 +2578,7 @@ namespace Capibara
                                     catch (Exception ex)
                                     {
                                         var error = ex.InnerException.Message ?? ex.Message;
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, "Ocurrió un error al intentar setear las claves primarias:\r\n" + error, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar setear las claves primarias:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     }
                                 }
                             }
@@ -2591,11 +2589,11 @@ namespace Capibara
                             var error = ex.InnerException ?? ex;
                             if (consulta.Trim().Length > 0)
                             {
-                                CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la consulta:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             else
                             {
-                                CustomMessageBox.Show("Ocurrió un error al intentar obtener la estructura de la tabla:\r\n" + tablaSeleccionada.ToUpper() + "\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
@@ -2609,7 +2607,7 @@ namespace Capibara
                 {
                     camposOk = false;
                     var error = ex.InnerException ?? ex;
-                    CustomMessageBox.Show("Ocurrió un error al intentar acceder a la base de datos:\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    CustomMessageBox.Show($"Ocurrió un error al intentar acceder a la base de datos:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 LSVcampos.Refresh();
                 LSVcampos.ResumeLayout();
@@ -2752,7 +2750,6 @@ namespace Capibara
 
         private bool ComprobarClaves()
         {
-            //bool resultado = LSVcampos.CheckedItems.Count > 0;
             bool resultado = LSVcampos.Items.Cast<ListViewItem>().Any(x => x.ImageKey == KEY);
 
             if (!resultado)
@@ -3483,7 +3480,8 @@ namespace Capibara
                 if (string.IsNullOrEmpty(CarpetaDestino))
                     return;
 
-                string carpetaCapas = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
+                //string carpetaCapas = $@"{Path.Combine(CarpetaDestino, Utilidades.FormatearCadena(TXTnombreAmigable.Text))} ({capas.TABLA})";
+                string carpetaCapas = $@"{Path.Combine(CarpetaDestino, capas.NOMBRE_AMIGABLE)} ({capas.TABLA})";
 
                 // Crear carpeta en el disco
                 CopiarDirectorio(capas.pathCarpetaClase, carpetaCapas);
@@ -3607,7 +3605,7 @@ namespace Capibara
             {
                 idx--;
             }
-            //string espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
+
             string usingRepositories = $"using {espacioDeNombres}.Repositories;";
             string usingService = $"using {espacioDeNombres}.Service;";
 

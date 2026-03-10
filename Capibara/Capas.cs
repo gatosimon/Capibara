@@ -7,7 +7,7 @@ namespace Capibara
 {
     public class Capas
     {
-        #region DICCIONARIOS Y CONSTANTES
+        #region DICCIONARIOS
 
         public Dictionary<Type, string> TIPOS = new Dictionary<Type, string>()
         {
@@ -147,6 +147,10 @@ namespace Capibara
             { HORA_POR_DEFECTO_CLAVE, HORA_POR_DEFECTO_VALOR }
         };
 
+        #endregion
+
+        #region CONSTANTES
+
         public const string ERROR = "ERROR";
         public const string CONTROLLER = "Controller";
         public const string CONTROLLERS = "Controllers";
@@ -178,14 +182,14 @@ namespace Capibara
         public const string HORA_POR_DEFECTO_CLAVE = "HORA POR DEFECTO";
         public const string HORA_POR_DEFECTO_VALOR = "TimeSpan.Zero;";
 
+        #endregion
+
         public enum TipoCampoAbm
         {
             FECHA,
             HORA,
             CADENA
         }
-
-        #endregion
 
         #region PATHS
 
@@ -204,7 +208,7 @@ namespace Capibara
         public string pathGlobal { get { return $@"{formulario.PathCapas}\AGREGAR AL GLOBAL.txt"; } }
         public string pathTypeScript { get { return $@"{pathCarpetaClase}\{Capas.TYPESCRIPT}\"; } }
         public string pathClaseTypeScript { get { return $@"{pathTypeScript}{TABLA}.ts"; } }
-        public string pathCarpetaClase { get { return $@"{formulario.PathCapas}\{TABLA}\"; } }
+        public string pathCarpetaClase { get { return $@"{formulario.PathCapas}\{NOMBRE_AMIGABLE} ({TABLA})\"; } }
 
         #endregion
 
@@ -215,6 +219,8 @@ namespace Capibara
         public List<string> camposTabla = new List<string>();
 
         public string TABLA = string.Empty;
+
+        public string NOMBRE_AMIGABLE = string.Empty;
 
         public string NombreTabla { get { return TABLA + MODEL + "." + TABLE_NAME; } }
 
