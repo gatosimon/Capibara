@@ -222,7 +222,7 @@ namespace Capibara
 
         public string NOMBRE_AMIGABLE = string.Empty;
 
-        public string NombreTabla { get { return TABLA + MODEL + "." + TABLE_NAME; } }
+        public string NombreTabla { get { return $"{TABLA}{MODEL}.{TABLE_NAME}"; } }
 
         public Capas(FRMcapibara formulario)
         {

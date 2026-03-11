@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Odbc;
 
 namespace DataLayer
 {
@@ -11,7 +12,7 @@ namespace DataLayer
     {
         private const string ANSI = "yyyyMMdd HH:mm:ss";
 
-        List<IDataReader> cursoresAbiertos = new List<IDataReader>();
+        List<OdbcDataReader> cursoresAbiertos = new List<OdbcDataReader>();
 
         /// <summary>
         /// Constructor
@@ -25,7 +26,7 @@ namespace DataLayer
         /// Constructor
         /// </summary>
         /// <param name="connection">conexion a la base de datos</param>
-        public DataBase(IDbConnection connection)
+        public DataBase(OdbcConnection connection)
         {
             Connection = connection;
         }
@@ -33,11 +34,11 @@ namespace DataLayer
         /// <summary>
         /// Conexion a la base de datos
         /// </summary>
-        internal IDbConnection _Connection;
+        internal OdbcConnection _Connection;
         /// <summary>
         /// Conexion a la base de datos
         /// </summary>
-        public IDbConnection Connection
+        public OdbcConnection Connection
         {
             get { return _Connection; }
             set { _Connection = value; }
@@ -46,11 +47,11 @@ namespace DataLayer
         /// <summary>
         /// DataAdapter para sincronizacion de DataSets
         /// </summary>
-        internal IDbDataAdapter _DataAdapter;
+        internal OdbcDataAdapter _DataAdapter;
         /// <summary>
         /// DataAdapter para sincronizacion de DataSets
         /// </summary>
-        public IDbDataAdapter DataAdapter
+        public OdbcDataAdapter DataAdapter
         {
             get { return _DataAdapter; }
             set { _DataAdapter = value; }
@@ -75,11 +76,11 @@ namespace DataLayer
         /// <summary>
         /// Transaccion actual en la que se ejecutan los comandos
         /// </summary>
-        IDbTransaction _Transaction;
+        OdbcTransaction _Transaction;
         /// <summary>
         /// Transaccion actual en la que se ejecutan los comandos
         /// </summary>
-        public IDbTransaction Transaction
+        public OdbcTransaction Transaction
         {
             get { return _Transaction; }
             set { _Transaction = value; }
@@ -127,7 +128,7 @@ namespace DataLayer
         {
             if (InTransaction)
             {
-                foreach (IDataReader cursor in cursoresAbiertos)
+                foreach (OdbcDataReader cursor in cursoresAbiertos)
                 {
                     try
                     {
@@ -149,7 +150,7 @@ namespace DataLayer
         {
             if (InTransaction)
             {
-                foreach (IDataReader cursor in cursoresAbiertos)
+                foreach (OdbcDataReader cursor in cursoresAbiertos)
                 {
                     try
                     {
@@ -168,10 +169,10 @@ namespace DataLayer
         /// Crea un objeto Parameter para ejecutar con los metodos Query, DataReader, NonQuery y Scalar
         /// </summary>
         /// <returns></returns>
-        public IDbDataParameter Parameter()
+        public OdbcParameter Parameter()
         {
-            IDbCommand CommandInterno = Connection.CreateCommand();
-            IDbDataParameter Resultado = CommandInterno.CreateParameter();
+            OdbcCommand CommandInterno = Connection.CreateCommand();
+            OdbcParameter Resultado = CommandInterno.CreateParameter();
             return Resultado;
         }
 
@@ -180,9 +181,9 @@ namespace DataLayer
         /// </summary>
         /// <param name="name">nombre del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name)
+        public OdbcParameter Parameter(string name)
         {
-            IDbDataParameter NuevoParameter = Parameter();
+            OdbcParameter NuevoParameter = Parameter();
             NuevoParameter.ParameterName = name.ToLower();
             return NuevoParameter;
         }
@@ -193,9 +194,9 @@ namespace DataLayer
         /// <param name="name">nombre del parametro</param>
         /// <param name="type">tipo de dato del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name, DbType type)
+        public OdbcParameter Parameter(string name, DbType type)
         {
-            IDbDataParameter NuevoParameter = Parameter(name.ToLower());
+            OdbcParameter NuevoParameter = Parameter(name.ToLower());
             NuevoParameter.DbType = type;
             return NuevoParameter;
         }
@@ -207,9 +208,9 @@ namespace DataLayer
         /// <param name="type">tipo de dato del parametro</param>
         /// <param name="value">valor del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name, DbType type, object value)
+        public OdbcParameter Parameter(string name, DbType type, object value)
         {
-            IDbDataParameter NuevoParameter = Parameter(name.ToLower(), type);
+            OdbcParameter NuevoParameter = Parameter(name.ToLower(), type);
             NuevoParameter.Value = value;
             return NuevoParameter;
         }
@@ -222,9 +223,9 @@ namespace DataLayer
         /// <param name="value">valor del parametro</param>
         /// <param name="size">longitud del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name, DbType type, int size, object value)
+        public OdbcParameter Parameter(string name, DbType type, int size, object value)
         {
-            IDbDataParameter NuevoParameter = Parameter(name.ToLower(), type, value);
+            OdbcParameter NuevoParameter = Parameter(name.ToLower(), type, value);
             NuevoParameter.Size = size;
             return NuevoParameter;
         }
@@ -236,9 +237,9 @@ namespace DataLayer
         /// <param name="value">valor del parametro</param>
         /// <param name="size">longitud del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name, int size, object value)
+        public OdbcParameter Parameter(string name, int size, object value)
         {
-            IDbDataParameter NuevoParameter = Parameter(name.ToLower());
+            OdbcParameter NuevoParameter = Parameter(name.ToLower());
             NuevoParameter.Value = value;
             NuevoParameter.Size = size;
             return NuevoParameter;
@@ -250,9 +251,9 @@ namespace DataLayer
         /// <param name="name">nombre del parametro</param>
         /// <param name="value">valor del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter Parameter(string name, object value)
+        public OdbcParameter Parameter(string name, object value)
         {
-            IDbDataParameter NuevoParameter = Parameter(name.ToLower());
+            OdbcParameter NuevoParameter = Parameter(name.ToLower());
             NuevoParameter.Value = value;
             return NuevoParameter;
         }
@@ -263,9 +264,9 @@ namespace DataLayer
         /// <param name="sql">sentencia del command</param>
         /// <param name="parameters">parametros de la sentencia</param>
         /// <returns></returns>
-        internal IDbCommand Command(string sql, params IDbDataParameter[] parameters)
+        internal OdbcCommand Command(string sql, params OdbcParameter[] parameters)
         {
-            IDbCommand NuevoCommand = Connection.CreateCommand();
+            OdbcCommand NuevoCommand = Connection.CreateCommand();
             NuevoCommand.CommandText = sql;
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -280,9 +281,9 @@ namespace DataLayer
         /// </summary>
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="parameters">parametros de la sentencia</param>
-        public int NonQuery(string sql, params IDbDataParameter[] parameters)
+        public int NonQuery(string sql, params OdbcParameter[] parameters)
         {
-            IDbCommand CommandInterno = Connection.CreateCommand();
+            OdbcCommand CommandInterno = Connection.CreateCommand();
             if (InTransaction)
             {
                 CommandInterno.Transaction = Transaction;
@@ -301,9 +302,9 @@ namespace DataLayer
         /// </summary>
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="parameters">parametros de la sentencia</param>
-        public object Scalar(string sql, params IDbDataParameter[] parameters)
+        public object Scalar(string sql, params OdbcParameter[] parameters)
         {
-            IDbCommand CommandInterno = Connection.CreateCommand();
+            OdbcCommand CommandInterno = Connection.CreateCommand();
             if (InTransaction)
             {
                 CommandInterno.Transaction = Transaction;
@@ -322,9 +323,9 @@ namespace DataLayer
         /// </summary>
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="parameters">parametros de la sentencia</param>
-        public IDataReader DataReader(string sql, params IDbDataParameter[] parameters)
+        public OdbcDataReader DataReader(string sql, params OdbcParameter[] parameters)
         {
-            IDbCommand CommandInterno = Connection.CreateCommand();
+            OdbcCommand CommandInterno = Connection.CreateCommand();
             if (InTransaction)
             {
                 CommandInterno.Transaction = Transaction;
@@ -336,7 +337,7 @@ namespace DataLayer
                 CommandInterno.Parameters.Add(parameters[i]);
             }
 
-            IDataReader cursor = CommandInterno.ExecuteReader();
+            OdbcDataReader cursor = CommandInterno.ExecuteReader();
             cursoresAbiertos.Add(cursor);
             return cursor;
         }
@@ -346,7 +347,7 @@ namespace DataLayer
         /// </summary>
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="parameters">parametros de la sentencia</param>
-        public DataTable DataTable(string sql, params IDbDataParameter[] parameters)
+        public DataTable DataTable(string sql, params OdbcParameter[] parameters)
         {
             DataTable Tabla = new DataTable();
             for (int i = 0; i < parameters.Length; i++)
@@ -362,7 +363,7 @@ namespace DataLayer
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="dataTable">DataTable a llenar con los valores</param>
         /// <param name="parameters">parametros de la sentencia</param>
-        public DataTable Query(string sql, DataTable dataTable, params IDbDataParameter[] parameters)
+        public DataTable Query(string sql, DataTable dataTable, params OdbcParameter[] parameters)
         {
             if (Connection.State == ConnectionState.Open)
             {
@@ -417,12 +418,12 @@ namespace DataLayer
         /// <param name="sql">sentencia a ejecutar</param>
         /// <param name="parameters">parametros de la sentencia</param>
         /// <returns></returns>
-        public DataSet DataSet(string sql, params IDbDataParameter[] parameters)
+        public DataSet DataSet(string sql, params OdbcParameter[] parameters)
         {
             DataSet ds = new DataSet();
             int i = 0;
 
-            IDataReader reader = DataReader(sql, parameters);
+            OdbcDataReader reader = DataReader(sql, parameters);
 
             reader.Read();
             do
@@ -469,9 +470,9 @@ namespace DataLayer
             System.Reflection.PropertyInfo[] Propiedades = TipoClase.GetProperties();
             List<string> Campos = new List<string>();
             List<string> Valores = new List<string>();
-            List<IDbDataParameter> Parametros = new List<IDbDataParameter>();
+            List<OdbcParameter> Parametros = new List<OdbcParameter>();
             string NombreTabla = TableNameFromType(TipoClase);
-            IDbDataParameter ParametroAgregar;
+            OdbcParameter ParametroAgregar;
 
             string CampoAgregar = "";
             foreach (System.Reflection.PropertyInfo PropiedadActual in Propiedades)
@@ -507,9 +508,9 @@ namespace DataLayer
         /// <param name="name">nombre del parametro</param>
         /// <param name="fieldAttributes">atributos del campo</param>
         /// <returns></returns>
-        internal IDbDataParameter ParameterFromFieldAttributes(string name, FieldAttributes fieldAttributes)
+        internal OdbcParameter ParameterFromFieldAttributes(string name, FieldAttributes fieldAttributes)
         {
-            IDbDataParameter ParametroDevolver;
+            OdbcParameter ParametroDevolver;
             ParametroDevolver = Parameter(name.ToLower(), fieldAttributes.dbType);
             if (fieldAttributes.Precision > 0)
             {
@@ -533,9 +534,9 @@ namespace DataLayer
         /// <param name="fieldAttributes">atributos del campo</param>
         /// <param name="value">valor del parametro</param>
         /// <returns></returns>
-        internal IDbDataParameter ParameterFromFieldAttributes(string name, FieldAttributes fieldAttributes, object value)
+        internal OdbcParameter ParameterFromFieldAttributes(string name, FieldAttributes fieldAttributes, object value)
         {
-            IDbDataParameter ParametroDevolver = ParameterFromFieldAttributes(name.ToLower(), fieldAttributes);
+            OdbcParameter ParametroDevolver = ParameterFromFieldAttributes(name.ToLower(), fieldAttributes);
             ParametroDevolver.Value = value;
             return ParametroDevolver;
         }
@@ -546,9 +547,9 @@ namespace DataLayer
         /// <param name="classType">clase con el campo del cual crear un parametro</param>
         /// <param name="fieldName">nombre del campo en la base de datos</param>
         /// <returns></returns>
-        public IDbDataParameter ParameterFromField(Type classType, string fieldName)
+        public OdbcParameter ParameterFromField(Type classType, string fieldName)
         {
-            IDbDataParameter ParametroDevolver;
+            OdbcParameter ParametroDevolver;
             System.Reflection.PropertyInfo[] Propiedades = classType.GetProperties();
 
             string CampoAgregar = "";
@@ -588,9 +589,9 @@ namespace DataLayer
         /// <param name="fieldName">nombre del campo en la base de datos</param>
         /// <param name="value">valor del parametro</param>
         /// <returns></returns>
-        public IDbDataParameter ParameterFromField(Type classType, string fieldName, object value)
+        public OdbcParameter ParameterFromField(Type classType, string fieldName, object value)
         {
-            IDbDataParameter ParametroDevolver;
+            OdbcParameter ParametroDevolver;
             ParametroDevolver = ParameterFromField(classType, fieldName.ToLower());
             ParametroDevolver.Value = value;
             return ParametroDevolver;
@@ -635,9 +636,9 @@ namespace DataLayer
             Type TipoClase = obj.GetType();
             System.Reflection.PropertyInfo[] Propiedades = TipoClase.GetProperties();
             List<string> CamposClave = new List<string>();
-            List<IDbDataParameter> Parametros = new List<IDbDataParameter>();
+            List<OdbcParameter> Parametros = new List<OdbcParameter>();
             string NombreTabla = TableNameFromType(TipoClase);
-            IDbDataParameter ParametroAgregar;
+            OdbcParameter ParametroAgregar;
 
             string CampoAgregar = "";
             foreach (System.Reflection.PropertyInfo PropiedadActual in Propiedades)
@@ -691,7 +692,7 @@ namespace DataLayer
             System.Reflection.PropertyInfo[] Propiedades = objectType.GetProperties();
             List<string> list = new List<string>();
             List<string> list2 = new List<string>();
-            List<IDbDataParameter> list3 = new List<IDbDataParameter>();
+            List<OdbcParameter> list3 = new List<OdbcParameter>();
             string str = TableNameFromType(objectType);
             string columnName = "";
             foreach (System.Reflection.PropertyInfo info in Propiedades)
@@ -713,7 +714,7 @@ namespace DataLayer
                         if (atributoCampo.Key)
                         {
                             list.Add(columnName + " = @" + columnName);
-                            IDbDataParameter item = ParameterFromFieldAttributes("@" + columnName.ToLower(), atributoCampo, info.GetValue(obj, null));
+                            OdbcParameter item = ParameterFromFieldAttributes("@" + columnName.ToLower(), atributoCampo, info.GetValue(obj, null));
                             if (atributoCampo.Precision > 0)
                             {
                                 item.Precision = atributoCampo.Precision;
@@ -736,7 +737,7 @@ namespace DataLayer
                 }
             }
 
-            IDataReader reader = DataReader(string.Format("SELECT {0} FROM {1} WHERE {2}", string.Join(", ", list2.ToArray()), str, string.Join(" AND ", list.ToArray())), list3.ToArray());
+            OdbcDataReader reader = DataReader(string.Format("SELECT {0} FROM {1} WHERE {2}", string.Join(", ", list2.ToArray()), str, string.Join(" AND ", list.ToArray())), list3.ToArray());
             if (reader.Read())
             {
                 foreach (System.Reflection.PropertyInfo info2 in Propiedades)
@@ -785,9 +786,9 @@ namespace DataLayer
             System.Reflection.PropertyInfo[] Propiedades = TipoClase.GetProperties();
             List<string> CamposClave = new List<string>();
             List<string> CamposNoClave = new List<string>();
-            List<IDbDataParameter> Parametros = new List<IDbDataParameter>();
+            List<OdbcParameter> Parametros = new List<OdbcParameter>();
             string NombreTabla = TableNameFromType(TipoClase);
-            IDbDataParameter ParametroAgregar;
+            OdbcParameter ParametroAgregar;
 
             string CampoAgregar = "";
             foreach (System.Reflection.PropertyInfo PropiedadActual in Propiedades)
@@ -834,9 +835,9 @@ namespace DataLayer
             Type TipoClase = obj.GetType();
             System.Reflection.PropertyInfo[] Propiedades = TipoClase.GetProperties();
             List<string> Campos = new List<string>();
-            List<IDbDataParameter> Parametros = new List<IDbDataParameter>();
+            List<OdbcParameter> Parametros = new List<OdbcParameter>();
             string NombreTabla = TableNameFromType(TipoClase);
-            IDbDataParameter ParametroAgregar;
+            OdbcParameter ParametroAgregar;
 
             string CampoAgregar = "";
             foreach (System.Reflection.PropertyInfo PropiedadActual in Propiedades)
@@ -879,9 +880,9 @@ namespace DataLayer
             System.Reflection.PropertyInfo[] Propiedades = TipoClase.GetProperties();
             List<string> CamposClave = new List<string>();
             List<string> CamposNoClave = new List<string>();
-            List<IDbDataParameter> Parametros = new List<IDbDataParameter>();
+            List<OdbcParameter> Parametros = new List<OdbcParameter>();
             string NombreTabla = TableNameFromType(TipoClase);
-            IDbDataParameter ParametroAgregar;
+            OdbcParameter ParametroAgregar;
 
             string CampoAgregar = "";
             foreach (System.Reflection.PropertyInfo PropiedadActual in Propiedades)
@@ -927,7 +928,7 @@ namespace DataLayer
                 }
             }
 
-            IDataReader Resultado = DataReader(string.Format("SELECT {0} FROM {1} WHERE {2}", string.Join(", ", CamposNoClave.ToArray()), NombreTabla, string.Join(" AND ", CamposClave.ToArray())), Parametros.ToArray());
+            OdbcDataReader Resultado = DataReader(string.Format("SELECT {0} FROM {1} WHERE {2}", string.Join(", ", CamposNoClave.ToArray()), NombreTabla, string.Join(" AND ", CamposClave.ToArray())), Parametros.ToArray());
 
             if (Resultado.Read())
             {

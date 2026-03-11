@@ -795,7 +795,7 @@ namespace Capibara
             // 
             this.SPCclase.Panel2.Controls.Add(this.SPCparametros);
             this.SPCclase.Size = new System.Drawing.Size(1156, 321);
-            this.SPCclase.SplitterDistance = 313;
+            this.SPCclase.SplitterDistance = 390;
             this.SPCclase.TabIndex = 13;
             this.SPCclase.TabStop = false;
             this.SPCclase.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.SPCclase_SplitterMoved);
@@ -806,7 +806,7 @@ namespace Capibara
             this.LBLtablaSeleccionada.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LBLtablaSeleccionada.Location = new System.Drawing.Point(0, 0);
             this.LBLtablaSeleccionada.Name = "LBLtablaSeleccionada";
-            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(313, 20);
+            this.LBLtablaSeleccionada.Size = new System.Drawing.Size(390, 20);
             this.LBLtablaSeleccionada.TabIndex = 0;
             this.LBLtablaSeleccionada.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -821,7 +821,7 @@ namespace Capibara
             this.LSVcampos.HideSelection = false;
             this.LSVcampos.Location = new System.Drawing.Point(0, 27);
             this.LSVcampos.Name = "LSVcampos";
-            this.LSVcampos.Size = new System.Drawing.Size(312, 294);
+            this.LSVcampos.Size = new System.Drawing.Size(389, 294);
             this.LSVcampos.SmallImageList = this.IMLTabla;
             this.LSVcampos.TabIndex = 1;
             this.LSVcampos.UseCompatibleStateImageBehavior = false;
@@ -849,8 +849,8 @@ namespace Capibara
             // 
             this.SPCparametros.Panel2.Controls.Add(this.LBLclasesGeneradas);
             this.SPCparametros.Panel2.Controls.Add(this.TXTclase);
-            this.SPCparametros.Size = new System.Drawing.Size(839, 321);
-            this.SPCparametros.SplitterDistance = 373;
+            this.SPCparametros.Size = new System.Drawing.Size(762, 321);
+            this.SPCparametros.SplitterDistance = 432;
             this.SPCparametros.TabIndex = 1;
             this.SPCparametros.TabStop = false;
             // 
@@ -882,7 +882,7 @@ namespace Capibara
             this.LBLcamposABM.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LBLcamposABM.Location = new System.Drawing.Point(0, 0);
             this.LBLcamposABM.Name = "LBLcamposABM";
-            this.LBLcamposABM.Size = new System.Drawing.Size(373, 20);
+            this.LBLcamposABM.Size = new System.Drawing.Size(432, 20);
             this.LBLcamposABM.TabIndex = 0;
             this.LBLcamposABM.Text = "CAMPOS ABM";
             this.LBLcamposABM.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -900,7 +900,7 @@ namespace Capibara
             this.TBCcamposABM.Location = new System.Drawing.Point(65, 27);
             this.TBCcamposABM.Name = "TBCcamposABM";
             this.TBCcamposABM.SelectedIndex = 0;
-            this.TBCcamposABM.Size = new System.Drawing.Size(305, 294);
+            this.TBCcamposABM.Size = new System.Drawing.Size(364, 294);
             this.TBCcamposABM.TabIndex = 0;
             // 
             // TBPalta
@@ -908,7 +908,7 @@ namespace Capibara
             this.TBPalta.Controls.Add(this.DGValta);
             this.TBPalta.Location = new System.Drawing.Point(4, 25);
             this.TBPalta.Name = "TBPalta";
-            this.TBPalta.Size = new System.Drawing.Size(297, 265);
+            this.TBPalta.Size = new System.Drawing.Size(356, 265);
             this.TBPalta.TabIndex = 4;
             this.TBPalta.Text = "ALTA";
             this.TBPalta.UseVisualStyleBackColor = true;
@@ -925,7 +925,7 @@ namespace Capibara
             this.DGValta.Name = "DGValta";
             this.DGValta.RowHeadersVisible = false;
             this.DGValta.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DGValta.Size = new System.Drawing.Size(297, 265);
+            this.DGValta.Size = new System.Drawing.Size(356, 265);
             this.DGValta.TabIndex = 0;
             this.DGValta.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grilla_DataError);
             // 
@@ -961,7 +961,7 @@ namespace Capibara
             this.TBPbaja.Location = new System.Drawing.Point(4, 25);
             this.TBPbaja.Name = "TBPbaja";
             this.TBPbaja.Padding = new System.Windows.Forms.Padding(3);
-            this.TBPbaja.Size = new System.Drawing.Size(297, 265);
+            this.TBPbaja.Size = new System.Drawing.Size(345, 265);
             this.TBPbaja.TabIndex = 1;
             this.TBPbaja.Text = "  BAJA  ";
             this.TBPbaja.UseVisualStyleBackColor = true;
@@ -978,7 +978,7 @@ namespace Capibara
             this.DGVbaja.Name = "DGVbaja";
             this.DGVbaja.RowHeadersVisible = false;
             this.DGVbaja.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DGVbaja.Size = new System.Drawing.Size(291, 259);
+            this.DGVbaja.Size = new System.Drawing.Size(339, 259);
             this.DGVbaja.TabIndex = 0;
             this.DGVbaja.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grilla_DataError);
             // 
@@ -1014,7 +1014,7 @@ namespace Capibara
             this.TBPmodificacion.Location = new System.Drawing.Point(4, 25);
             this.TBPmodificacion.Name = "TBPmodificacion";
             this.TBPmodificacion.Padding = new System.Windows.Forms.Padding(3);
-            this.TBPmodificacion.Size = new System.Drawing.Size(297, 265);
+            this.TBPmodificacion.Size = new System.Drawing.Size(345, 265);
             this.TBPmodificacion.TabIndex = 2;
             this.TBPmodificacion.Text = "  MODIFICACION  ";
             this.TBPmodificacion.UseVisualStyleBackColor = true;
@@ -1031,7 +1031,7 @@ namespace Capibara
             this.DGVmodificacion.Name = "DGVmodificacion";
             this.DGVmodificacion.RowHeadersVisible = false;
             this.DGVmodificacion.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DGVmodificacion.Size = new System.Drawing.Size(291, 259);
+            this.DGVmodificacion.Size = new System.Drawing.Size(339, 259);
             this.DGVmodificacion.TabIndex = 0;
             this.DGVmodificacion.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grilla_DataError);
             // 
@@ -1053,7 +1053,7 @@ namespace Capibara
             this.TBPrecuperacion.Location = new System.Drawing.Point(4, 25);
             this.TBPrecuperacion.Name = "TBPrecuperacion";
             this.TBPrecuperacion.Padding = new System.Windows.Forms.Padding(3);
-            this.TBPrecuperacion.Size = new System.Drawing.Size(297, 265);
+            this.TBPrecuperacion.Size = new System.Drawing.Size(345, 265);
             this.TBPrecuperacion.TabIndex = 3;
             this.TBPrecuperacion.Text = "  RECUPERACION  ";
             this.TBPrecuperacion.UseVisualStyleBackColor = true;
@@ -1070,7 +1070,7 @@ namespace Capibara
             this.DGVrecuperacion.Name = "DGVrecuperacion";
             this.DGVrecuperacion.RowHeadersVisible = false;
             this.DGVrecuperacion.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DGVrecuperacion.Size = new System.Drawing.Size(291, 259);
+            this.DGVrecuperacion.Size = new System.Drawing.Size(339, 259);
             this.DGVrecuperacion.TabIndex = 0;
             this.DGVrecuperacion.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grilla_DataError);
             // 
@@ -1093,7 +1093,7 @@ namespace Capibara
             this.LBLclasesGeneradas.Location = new System.Drawing.Point(0, 0);
             this.LBLclasesGeneradas.Margin = new System.Windows.Forms.Padding(3, 0, 3, 5);
             this.LBLclasesGeneradas.Name = "LBLclasesGeneradas";
-            this.LBLclasesGeneradas.Size = new System.Drawing.Size(462, 20);
+            this.LBLclasesGeneradas.Size = new System.Drawing.Size(326, 20);
             this.LBLclasesGeneradas.TabIndex = 0;
             this.LBLclasesGeneradas.Text = "CLASES GENERADAS";
             this.LBLclasesGeneradas.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1108,7 +1108,7 @@ namespace Capibara
             this.TXTclase.Multiline = true;
             this.TXTclase.Name = "TXTclase";
             this.TXTclase.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TXTclase.Size = new System.Drawing.Size(462, 301);
+            this.TXTclase.Size = new System.Drawing.Size(326, 301);
             this.TXTclase.TabIndex = 1;
             // 
             // TTPusarTryOrIf

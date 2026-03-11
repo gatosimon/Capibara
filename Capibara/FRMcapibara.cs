@@ -257,7 +257,8 @@ namespace Capibara
             LSVcampos.Columns.Add("Longitud", 70);
             LSVcampos.Columns.Add("Escala", 60);
             LSVcampos.Columns.Add("Acepta Nulos", 100);
-            
+            LSVcampos.Columns.Add("Valor por defecto", 150);
+
             // Fuerzo a que tome el valor de la tabla guardada en la configuración o sino la primera de la primer conexión
             indice = configuracion.Tabla.Trim().Length > 0 ? CMBtablas.FindStringExact(configuracion.Tabla) : 0;
             CMBtablas.SelectedIndex = -1;
@@ -292,45 +293,36 @@ namespace Capibara
 
             bool consultaOk = true;
 
-            //Conexion conexion = DefinirConexion();
-            if (conexionActual.Motor == TipoMotor.DB2)
+            try
             {
-                try
+                string query = string.Empty;
+                switch (conexionActual.Motor)
                 {
-                    consulta = consulta.Trim().Length > 0 ? consulta : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} FETCH FIRST 1 ROW ONLY";
+                    case TipoMotor.DB2:
+                        query = consulta.Trim().Length > 0 ? consulta : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} FETCH FIRST 1 ROW ONLY";
+                        break;
+                    case TipoMotor.MS_SQL:
+                        tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
 
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                    DB2base.OpenConnection();
-                    DataSet DS = DB2base.DataSet(consulta);
-                    DB2base.CloseConnection();
-                    
-                    camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
+                        query = consulta.Trim().Length > 0 ? consulta : $"SELECT TOP 1 {string.Join(", ", capas.camposTabla)} FROM {tabla}";
+                        break;
+                    case TipoMotor.POSTGRES:
+                    case TipoMotor.SQLITE:
+                        query = consulta.Trim().Length > 0 ? consulta : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} LIMIT 1";
+                        break;
                 }
-                catch (Exception ex)
-                {
-                    resultado = ex.Message;
-                    consultaOk = false;
-                }
+
+                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                BaseConsultar.OpenConnection();
+                DataSet DS = BaseConsultar.DataSet(query);
+
+                camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
+                BaseConsultar.CloseConnection();
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
-
-                    string query = consulta.Trim().Length > 0 ? consulta : $"SELECT TOP 1 {string.Join(", ", capas.camposTabla)} FROM {tabla}";
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                    SQLbase.OpenConnection();
-                    DataSet DS = SQLbase.DataSet(query);
-
-                    camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
-                    SQLbase.CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    resultado = ex.Message;
-                    consultaOk = false;
-                }
+                resultado = ex.Message;
+                consultaOk = false;
             }
 
             if (consultaOk)
@@ -441,7 +433,7 @@ namespace Capibara
             List<DataColumn> camposConsulta = new List<DataColumn>();
             int i = 0;
             bool obtenerTodas = LSVcampos.CheckedItems.Count == 0;
-            consulta = TXTgenerarAPartirDeConsulta.Text.Trim().Length > 0 ? consulta : string.Empty;
+
             foreach (DataColumn columna in DS.Tables[0].Columns)
             {
                 // Si genero a partir de una Query
@@ -2260,59 +2252,6 @@ namespace Capibara
                 capas.tablasBase = new List<string>();
                 string consultaTablas = string.Empty;
 
-                #region METODO VIEJO
-                //if (conexionActual.Motor == TipoMotor.DB2)
-                //{
-                //    try
-                //    {
-                //        DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexion.StringConnection()));
-                //        DB2base.OpenConnection();
-                //        IDataReader consulta = DB2base.DataReader("SELECT LTRIM(RTRIM(TBNAME)) AS Nombre, COUNT(NAME) FROM SYSIBM.SYSCOLUMNS WHERE TBCREATOR = 'DB2ADMIN' GROUP BY LTRIM(RTRIM(TBNAME)) ORDER BY Nombre");
-
-                //        while (consulta.Read())
-                //        {
-                //            capas.tablasBase.Add(consulta.GetString(0));
-                //            CMBtablas.Items.Add(consulta.GetString(0));
-                //        }
-                //        DB2base.CloseConnection();
-                //    }
-                //    catch (Exception error)
-                //    {
-                //        //CustomMessageBox.Show($"Ocurrió un error al intentar obtener las tablas de:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //    }
-                //}
-                //else
-                //{
-                //    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexion.StringConnection()));
-                //    using (SQLbase.Connection)
-                //    {
-                //        try
-                //        {
-                //            SQLbase.OpenConnection();
-
-                //            string query = @"SELECT TABLE_SCHEMA, TABLE_NAME 
-                //                FROM INFORMATION_SCHEMA.TABLES 
-                //                WHERE TABLE_TYPE = 'BASE TABLE'
-                //                ORDER BY TABLE_SCHEMA, TABLE_NAME";
-
-                //            IDataReader reader = SQLbase.DataReader(query);
-
-                //            while (reader.Read())
-                //            {
-                //                string schema = reader.GetString(0);
-                //                string table = reader.GetString(1);
-                //                capas.tablasBase.Add($"{schema}.{table}");
-                //                CMBtablas.Items.Add($"{schema}.{table}");
-                //            }
-                //        }
-                //        catch (Exception error)
-                //        {
-                //            //CustomMessageBox.Show($"Ocurrió un error al intentar obtener las tablas de:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //        }
-                //    }
-                //} 
-                #endregion
-
                 using (var conn = new OdbcConnection(conexionActual.StringConnection()))
                 {
                     conn.Open();
@@ -2330,7 +2269,22 @@ namespace Capibara
                     {
                         string schema = tabla["TABLE_SCHEM"].ToString();
                         string nombreTabla = tabla["TABLE_NAME"].ToString();
-                        string tablaActual = (string.IsNullOrEmpty(schema) || conexionActual.Motor != TipoMotor.MS_SQL) ? nombreTabla : $"{schema}.{nombreTabla}";
+                        string tablaActual = string.Empty;
+                        switch (conexionActual.Motor)
+                        {
+                            case TipoMotor.DB2:
+                                tablaActual = nombreTabla;
+                                break;
+                            case TipoMotor.MS_SQL:
+                            case TipoMotor.POSTGRES:
+                                tablaActual = string.IsNullOrEmpty(schema) ? nombreTabla : $"{schema}.{nombreTabla}";
+                                break;
+                            case TipoMotor.SQLITE:
+                                break;
+                            default:
+                                break;
+                        }
+
                         capas.tablasBase.Add(tablaActual);
                         CMBtablas.Items.Add(tablaActual);
                     }
@@ -2345,7 +2299,7 @@ namespace Capibara
             }
             catch (Exception error)
             {
-                //CustomMessageBox.Show($"Ocurrió un error al intentar conectar a la base:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CustomMessageBox.Show($"Ocurrió un error al intentar conectar a la base:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2361,7 +2315,8 @@ namespace Capibara
                     LBLtablaSeleccionada.Text = $"{(tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString())}:";
                     LSVcampos.Items.Clear();
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
-                    //Conexion conexion = DefinirConexion();
+
+                    /**
                     // BASE DE DATOS DB2
                     if (conexionActual.Motor == TipoMotor.DB2)
                     {
@@ -2596,7 +2551,191 @@ namespace Capibara
                                 CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
+                    }*/
+
+                    DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                    try
+                    {
+                        using (var conn = BaseConsultar.Connection)
+                        {
+                            conn.Open();
+
+                            // Obtiene las tablas
+                            switch (conexionActual.Motor)
+                            {
+                                case TipoMotor.DB2:
+                                    break;
+                                case TipoMotor.MS_SQL:
+                                case TipoMotor.POSTGRES:
+                                    tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
+                                    break;
+                                case TipoMotor.SQLITE:
+                                    break;
+                                default:
+                                    break;
+                            }
+                            DataTable tablas = conn.GetSchema("Tables");
+
+                            // Filtrar SOLO las filas cuyo tipo sea "TABLE"
+                            DataRow[] tablasFiltradas = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
+
+                            foreach (DataRow tablaActual in tablasFiltradas)
+                            {
+                                string schema = tablaActual["TABLE_SCHEM"].ToString();
+                                string nombreTabla = tablaActual["TABLE_NAME"].ToString();
+                                {
+                                    string tipo = tablaActual["TABLE_TYPE"].ToString();
+                                    if (tipo != "TABLE") continue;
+
+                                    string headerText = string.IsNullOrEmpty(schema) ? nombreTabla : $"{schema}.{nombreTabla}";
+                                    var columnas = conn.GetSchema("Columns", new string[] { null, schema, nombreTabla });
+
+                                    // 🔑 Obtener columnas que son clave primaria mediante SQL según el motor
+                                    var columnasClaveSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                                    try
+                                    {
+                                        string sqlPK = null;
+                                        switch (conexionActual.Motor)
+                                        {
+                                            case TipoMotor.MS_SQL:
+                                                sqlPK = $@"SELECT c.name AS COLUMN_NAME
+                                                FROM sys.indexes i
+                                                INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
+                                                INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+                                                INNER JOIN sys.tables t ON i.object_id = t.object_id
+                                                WHERE i.is_primary_key = 1 AND t.name = '{nombreTabla}'";
+                                                break;
+                                            case TipoMotor.DB2:
+                                                sqlPK = $@"SELECT UPPER(COLNAMES) AS COLUMN_NAME FROM SYSCAT.INDEXES WHERE TABNAME = '{nombreTabla}' AND UNIQUERULE IN ('U')";
+                                                break;
+                                            case TipoMotor.POSTGRES:
+                                                sqlPK = $@"SELECT a.attname AS COLUMN_NAME
+                                                FROM pg_index ix
+                                                JOIN pg_class t ON t.oid = ix.indrelid
+                                                JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+                                                WHERE ix.indisprimary = true AND t.relname = '{nombreTabla}'";
+                                                break;
+                                            case TipoMotor.SQLITE:
+                                                sqlPK = $"PRAGMA table_info('{nombreTabla}')";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+
+                                        if (!string.IsNullOrEmpty(sqlPK))
+                                        {
+                                            using (var cmdPK = conn.CreateCommand())
+                                            {
+                                                cmdPK.CommandText = sqlPK;
+                                                using (var rdrPK = cmdPK.ExecuteReader())
+                                                {
+                                                    if (conexionActual.Motor == TipoMotor.SQLITE)
+                                                    {
+                                                        // PRAGMA table_info devuelve una fila por columna con campo "pk" > 0 si es PK
+                                                        while (rdrPK.Read())
+                                                        {
+                                                            int pkOrdinal = rdrPK.GetOrdinal("pk");
+                                                            int nameOrdinal = rdrPK.GetOrdinal("name");
+                                                            if (!rdrPK.IsDBNull(pkOrdinal) && rdrPK.GetInt32(pkOrdinal) > 0)
+                                                                columnasClaveSet.Add(rdrPK.GetString(nameOrdinal));
+                                                        }
+                                                    }
+                                                    else if (conexionActual.Motor == TipoMotor.DB2)
+                                                    {
+                                                        List<string> claves = new List<string>();
+                                                        while (rdrPK.Read())
+                                                        {
+                                                            claves.Add(rdrPK.GetString(0));
+                                                        }
+                                                        if (claves.Count > 0)
+                                                        {
+                                                            int minCantidad = claves.Min(s => s.Count(c => c == '+'));
+
+                                                            // Paso 2: filtrar los strings con esa cantidad mínima
+                                                            List<string> clave = claves
+                                                                .Where(s => s.Count(c => c == '+') == minCantidad)
+                                                                .Select(s => s.Split('+'))
+                                                                .FirstOrDefault().ToList();
+                                                            // Eliminar los elementos vacíos
+                                                            clave.RemoveAll(s => string.IsNullOrWhiteSpace(s));
+
+                                                            foreach (string item in clave)
+                                                            {
+                                                                columnasClaveSet.Add(item);
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        while (rdrPK.Read())
+                                                            columnasClaveSet.Add(rdrPK["COLUMN_NAME"].ToString());
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch { }
+
+                                    // Agregar columnas
+                                    foreach (DataRow col in columnas.Rows)
+                                    {
+                                        string colName = col["COLUMN_NAME"].ToString();
+                                        string tipoCol = col["TYPE_NAME"].ToString();
+                                        string longitud = col["COLUMN_SIZE"].ToString();
+
+                                        string escala = string.Empty;
+                                        if (col.Table.Columns.Contains("DECIMAL_DIGITS") && col["DECIMAL_DIGITS"] != DBNull.Value)
+                                            escala = col["DECIMAL_DIGITS"].ToString();
+                                        else if (col.Table.Columns.Contains("NUMERIC_SCALE") && col["NUMERIC_SCALE"] != DBNull.Value)
+                                            escala = col["NUMERIC_SCALE"].ToString();
+                                        else if (col.Table.Columns.Contains("COLUMN_SCALE") && col["COLUMN_SCALE"] != DBNull.Value)
+                                            escala = col["COLUMN_SCALE"].ToString();
+                                        else if (col.Table.Columns.Contains("COLUMN_SIZE") && col["COLUMN_SIZE"] != DBNull.Value)
+                                            escala = col["COLUMN_SIZE"].ToString();
+
+                                        string aceptaNulos = string.Empty;
+                                        if (col.Table.Columns.Contains("IS_NULLABLE") && col["IS_NULLABLE"] != DBNull.Value)
+                                        {
+                                            string nuloStr = col["IS_NULLABLE"].ToString().ToUpper();
+                                            aceptaNulos = nuloStr == "YES" ? "SÍ" : nuloStr == "NO" ? "NO" : string.Empty;
+                                        }
+
+                                        string defecto = string.Empty;
+                                        if (col.Table.Columns.Contains("COLUMN_DEF") && col["COLUMN_DEF"] != DBNull.Value)
+                                            defecto = col["COLUMN_DEF"].ToString();
+
+                                        string tipoCompleto = tipoCol;
+                                        string tipoNormalizado = tipoCol.ToUpper();
+                                        bool esNumericoDecimal = tipoNormalizado.Contains("DECIMAL") || tipoNormalizado.Contains("NUMERIC");
+
+                                        capas.camposTabla.Add(colName);
+                                        ListViewItem item = new ListViewItem(colName);
+                                        item.SubItems.Add(tipoCompleto);
+                                        item.SubItems.Add(longitud);
+                                        item.SubItems.Add(escala);
+                                        item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
+                                        item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
+                                        if (columnasClaveSet.Contains(colName))
+                                        {
+                                            item.ImageKey = KEY;
+                                        }
+
+                                        LSVcampos.Items.Add(item);
+                                    }
+                                }
+                            }
+                        }
                     }
+                    catch (TaskCanceledException)
+                    {
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
                     if (camposOk)
                     {
                         ComprobarTiposDeCampos(tablaSeleccionada);
@@ -2614,6 +2753,19 @@ namespace Capibara
             }
             CursorDefault();
             return camposOk;
+        }
+
+        private static string QuitarEsquema(string consulta, string tablaSeleccionada)
+        {
+            string esquema = string.Empty;
+            if (consulta.Trim().Length == 0)
+            {
+                string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                tablaSeleccionada = partes[partes.Length - 1];
+                esquema = partes[0];
+            }
+
+            return tablaSeleccionada;
         }
 
         private void CargarListViewDesdeEsquema(IDataReader reader, bool esDB2)
@@ -2669,39 +2821,33 @@ namespace Capibara
             List<string> columnasError = new List<string>();
             DataSet DS = null;
 
-            //Conexion conexion = DefinirConexion();
-            if (conexionActual.Motor == TipoMotor.DB2)
+            try
             {
-                try
+                string query = string.Empty;
+                switch (conexionActual.Motor)
                 {
-                    string consulta = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT * FROM " + tabla + " FETCH FIRST 1 ROW ONLY";
-                    DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                    DB2base.OpenConnection();
-                    DS = DB2base.DataSet(consulta);
-                    DB2base.CloseConnection();
+                    case TipoMotor.DB2:
+                        query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} FETCH FIRST 1 ROW ONLY";
+                        break;
+                    case TipoMotor.MS_SQL:
+                        tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+
+                        query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : $"SELECT TOP 1 {string.Join(", ", capas.camposTabla)} FROM {tabla}";
+                        break;
+                    case TipoMotor.POSTGRES:
+                    case TipoMotor.SQLITE:
+                        query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : $"SELECT {string.Join(", ", capas.camposTabla)} FROM {tabla} LIMIT 1";
+                        break;
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+
+                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                BaseConsultar.OpenConnection();
+                DS = BaseConsultar.DataSet(query);
+
+                BaseConsultar.CloseConnection();
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
-
-                    string query = generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : "SELECT TOP 1 * FROM " + tabla;
-
-                    DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                    SQLbase.OpenConnection();
-                    DS = SQLbase.DataSet(query);
-                    SQLbase.CloseConnection();
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
             }
 
             if (DS != null)
