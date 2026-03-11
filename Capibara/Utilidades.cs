@@ -66,12 +66,9 @@ namespace Capibara
             {
                 return string.Empty;
             }
-
             // 2. Dividir la cadena en palabras.
             string[] palabras = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
             StringBuilder resultadoFinal = new StringBuilder();
-
             // 3. Procesar cada palabra.
             foreach (string palabra in palabras)
             {
@@ -87,21 +84,21 @@ namespace Capibara
                         palabraLimpia.Append(c);
                     }
                 }
-
                 if (palabraLimpia.Length > 0)
                 {
                     // La primera letra de la palabra SIEMPRE va en mayúscula.
                     resultadoFinal.Append(char.ToUpper(palabraLimpia[0]));
-
                     for (int i = 1; i < palabraLimpia.Length; i++)
                     {
                         char caracterActual = palabraLimpia[i];
-
                         // 4. Lógica condicional basada en el nuevo parámetro booleano.
                         if (respetarMayusculasInternas)
                         {
                             // MODO: Respetar mayúsculas (PascalCase)
-                            char caracterAnterior = resultadoFinal[resultadoFinal.Length - 1];
+                            // Se consulta el caracter anterior en la palabra original,
+                            // no en resultadoFinal, para no verse afectado por el forzado
+                            // a mayúscula del primer caracter.
+                            char caracterAnterior = palabraLimpia[i - 1];
                             if (char.IsUpper(caracterAnterior))
                             {
                                 resultadoFinal.Append(char.ToLower(caracterActual));
