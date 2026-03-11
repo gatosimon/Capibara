@@ -512,8 +512,8 @@ namespace Capibara
 
         private string ArmarControllers(List<DataColumn> claves)
         {
-            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
-            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            bool noSQL = conexionActual.Motor != TipoMotor.MS_SQL;
+            string origen = noSQL ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = $"{nombreDeClase[0].ToString().ToLower()}{nombreDeClase.Substring(1)}";
@@ -903,8 +903,8 @@ namespace Capibara
 
         private string ArmarRepositories(List<DataColumn> columnas, List<DataColumn> claves)
         {
-            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
-            string origen = DB2 ? Capas.MODEL : string.Empty;
+            bool noSQL = conexionActual.Motor != TipoMotor.MS_SQL;
+            string origen = noSQL ? Capas.MODEL : string.Empty;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
@@ -921,7 +921,7 @@ namespace Capibara
             Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
-            if (!DB2) Repositories.AppendLine("using System.Text;");
+            if (!noSQL) Repositories.AppendLine("using System.Text;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
             Repositories.AppendLine();
@@ -933,7 +933,7 @@ namespace Capibara
             #region ALTA
             if (CHKalta.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     Repositories.AppendLine($"\t\tpublic (string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
@@ -1012,7 +1012,7 @@ namespace Capibara
             #region BAJA
             if (CHKbaja.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     Repositories.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
@@ -1105,7 +1105,7 @@ namespace Capibara
             #region MODIFICAR
             if (CHKmodificacion.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     bool where = clavesConsulta.Count > 0 || generarDesdeConsulta;
                     if (where)
@@ -1200,7 +1200,7 @@ namespace Capibara
             #region OBTENER POR ID
             if (CHKobtenerPorId.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     Repositories.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClave })");
                     Repositories.AppendLine("\t\t{");
@@ -1271,7 +1271,7 @@ namespace Capibara
             #region TODOS
             if (CHKtodos.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     Repositories.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                     Repositories.AppendLine("\t\t{");
@@ -1315,7 +1315,7 @@ namespace Capibara
             #region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
-                if (DB2)
+                if (noSQL)
                 {
                     Repositories.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                     Repositories.AppendLine("\t\t{");
@@ -1429,8 +1429,8 @@ namespace Capibara
 
         private string ArmarRepositoriesInterface(List<DataColumn> claves)
         {
-            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
-            string origen = DB2 ? Capas.MODEL : string.Empty;
+            bool noSQL = conexionActual.Motor != TipoMotor.MS_SQL;
+            string origen = noSQL ? Capas.MODEL : string.Empty;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1);
@@ -1516,8 +1516,8 @@ namespace Capibara
 
         private string ArmarService(List<DataColumn> columnas, List<DataColumn> claves)
         {
-            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
-            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            bool noSQL = conexionActual.Motor != TipoMotor.MS_SQL;
+            string origen = noSQL ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
@@ -1552,7 +1552,7 @@ namespace Capibara
             {
                 Service.AppendLine($"\t\tpublic (string, bool) alta{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } nuevo = new { nombreDeClase + (DB2 ? origen : string.Empty) }()");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (noSQL ? origen : string.Empty) } nuevo = new { nombreDeClase + (noSQL ? origen : string.Empty) }()");
                 Service.AppendLine("\t\t\t{");
 
                 Dictionary<string, string> camposAlta = new Dictionary<string, string>();
@@ -1635,7 +1635,7 @@ namespace Capibara
             {
                 Service.AppendLine($"\t\tpublic (string, bool) baja{ nombreDeClase }({ columnasClaveTipo }, int codigoBaja, string motivoBaja)");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (noSQL ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
 
@@ -1684,7 +1684,7 @@ namespace Capibara
                 Service.AppendLine($"\t\tpublic (string, bool) modificacion{ nombreDeClase }({ tipoClase } { nombreClasePrimeraMinuscula })");
                 Service.AppendLine("\t\t{");
                 string columnasBusqueda = string.Join(", ", claves.Select(c => nombreClasePrimeraMinuscula + "." + c.ColumnName));
-                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasBusqueda });");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (noSQL ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasBusqueda });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 Dictionary<string, string> camposModificacion = new Dictionary<string, string>();
@@ -1728,10 +1728,10 @@ namespace Capibara
             {
                 Service.AppendLine($"\t\tpublic { tipoClase } obtenerPorId({ columnasClaveTipo })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (noSQL ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
-                if (DB2)
+                if (noSQL)
                 {
                     Service.AppendLine("\t\t\t\treturn solicitado;");
                 }
@@ -1757,12 +1757,12 @@ namespace Capibara
             {
                 Service.AppendLine($"\t\tpublic List<{ tipoClase }> obtenerTodos()");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine($"\t\t\tList<{ nombreDeClase + (DB2 ? origen : string.Empty) }> listado = new List<{ nombreDeClase + (DB2 ? origen : string.Empty) }>();");
+                Service.AppendLine($"\t\t\tList<{ nombreDeClase + (noSQL ? origen : string.Empty) }> listado = new List<{ nombreDeClase + (noSQL ? origen : string.Empty) }>();");
                 Service.AppendLine();
                 Service.AppendLine("\t\t\tlistado = _repositories.obtenerTodos();");
                 Service.AppendLine("\t\t\tif (listado.Count() > 0)");
                 Service.AppendLine("\t\t\t{");
-                if (DB2)
+                if (noSQL)
                 {
                     Service.AppendLine("\t\t\t\treturn listado;");
                 }
@@ -1788,7 +1788,7 @@ namespace Capibara
             {
                 Service.AppendLine($"\t\tpublic (string, bool) recuperar{ nombreDeClase }({ columnasClaveTipo })");
                 Service.AppendLine("\t\t{");
-                Service.AppendLine($"\t\t\t{ nombreDeClase + (DB2 ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
+                Service.AppendLine($"\t\t\t{ nombreDeClase + (noSQL ? origen : string.Empty) } solicitado = _repositories.obtenerPorId({ columnasClave });");
                 Service.AppendLine("\t\t\tif (solicitado != null)");
                 Service.AppendLine("\t\t\t{");
                 Dictionary<string, string> camposRecuperacion = new Dictionary<string, string>();
@@ -1869,8 +1869,8 @@ namespace Capibara
 
         private string ArmarServiceInterface(List<DataColumn> claves)
         {
-            bool DB2 = conexionActual.Motor == TipoMotor.DB2;
-            string origen = DB2 ? Capas.MODEL : Capas.DTO;
+            bool noSQL = conexionActual.Motor != TipoMotor.MS_SQL;
+            string origen = noSQL ? Capas.MODEL : Capas.DTO;
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + origen;
@@ -2280,6 +2280,7 @@ namespace Capibara
                                 tablaActual = string.IsNullOrEmpty(schema) ? nombreTabla : $"{schema}.{nombreTabla}";
                                 break;
                             case TipoMotor.SQLITE:
+                                tablaActual = nombreTabla;
                                 break;
                             default:
                                 break;
