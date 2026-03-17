@@ -197,12 +197,13 @@ namespace Capibara
         {
             try
             {
-                TXTclase.Text = Clase(CMBtablas.Items[CMBtablas.SelectedIndex].ToString(), generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : string.Empty);
+                string tabla = CMBtablas.SelectedIndex == -1 ? string.Empty : CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                TXTclase.Text = Clase(tabla, generarDesdeConsulta ? TXTgenerarAPartirDeConsulta.Text : string.Empty);
 
                 CapibararProyecto();
 
                 configuracion.Conexion = conexionActual;
-                configuracion.Tabla = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+                configuracion.Tabla = tabla;
                 configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
                 configuracion.NombreAmigable = TXTnombreAmigable.Text;
@@ -252,12 +253,12 @@ namespace Capibara
 
             LSVcampos.View = View.Details;
             LSVcampos.CheckBoxes = true;
-            LSVcampos.Columns.Add("Nombre", 200);
-            LSVcampos.Columns.Add("Tipo", 80);
-            LSVcampos.Columns.Add("Longitud", 70);
-            LSVcampos.Columns.Add("Escala", 60);
-            LSVcampos.Columns.Add("Acepta Nulos", 100);
-            LSVcampos.Columns.Add("Valor por defecto", 150);
+            LSVcampos.Columns.Add("NOMBRE", 200);
+            LSVcampos.Columns.Add("TIPO", 90);
+            LSVcampos.Columns.Add("LONGITUD", 80);
+            LSVcampos.Columns.Add("ESCALA", 70);
+            LSVcampos.Columns.Add("NULOS", 70);
+            LSVcampos.Columns.Add("DEFECTO", 150);
 
             // Fuerzo a que tome el valor de la tabla guardada en la configuración o sino la primera de la primer conexión
             indice = configuracion.Tabla.Trim().Length > 0 ? CMBtablas.FindStringExact(configuracion.Tabla) : 0;
@@ -2229,18 +2230,6 @@ namespace Capibara
             }
         }
 
-        private Conexion DefinirConexion()
-        {
-            if (conexionActual != null)
-            {
-                return conexionActual;
-            }
-            else
-            {
-                return new Conexion();
-            }
-        }
-
         private void TablasBase()
         {
             try
@@ -2304,6 +2293,305 @@ namespace Capibara
             }
         }
 
+        //private bool CamposTabla(string tabla = "", string consulta = "")
+        //{
+        //    WaitCursor();
+        //    bool camposOk = true;
+        //    if (cargarCampos)
+        //    {
+        //        capas.camposTabla = new List<string>();
+        //        try
+        //        {
+        //            LBLtablaSeleccionada.Text = $"{(tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString())}:";
+        //            LSVcampos.Items.Clear();
+        //            string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
+
+        //            // CREACION POR CONSULTA
+        //            DataLayer.DataBase baseDeDatos = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+        //            baseDeDatos.OpenConnection();
+        //            // GENERO DESDE UNA CONSULTA
+        //            if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
+        //            {
+        //                switch (conexionActual.Motor)
+        //                {
+        //                    case TipoMotor.DB2:
+        //                        if (!consulta.Trim().ToUpper().Contains("FETCH"))
+        //                        {
+        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+        //                            switch (resultado)
+        //                            {
+        //                                case DialogResult.Cancel:
+        //                                    CursorDefault();
+        //                                    camposOk = false;
+        //                                    break;
+        //                                case DialogResult.No:
+        //                                    consulta += " FETCH FIRST 1 ROW ONLY";
+        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+        //                                    break;
+        //                            }
+        //                        }
+        //                        if (camposOk)
+        //                        {
+        //                            IDataReader reader = baseDeDatos.DataReader(consulta);
+        //                            reader.Read();
+
+        //                            using (reader)
+        //                            {
+        //                                CargarListViewDesdeEsquema(reader, true);
+        //                            }
+        //                        }
+        //                        break;
+        //                    case TipoMotor.MS_SQL:
+        //                        try
+        //                        {
+        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+        //                            switch (resultado)
+        //                            {
+        //                                case DialogResult.Cancel:
+        //                                    CursorDefault();
+        //                                    camposOk = false;
+        //                                    break;
+        //                                case DialogResult.No:
+        //                                    consulta = Regex.Replace(
+        //                                                    consulta,
+        //                                                    @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
+        //                                                    "SELECT TOP 1",
+        //                                                    RegexOptions.IgnoreCase
+        //                                                );
+        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+        //                                    break;
+        //                            }
+
+        //                            if (camposOk)
+        //                            {
+        //                                string esquema = string.Empty;
+        //                                if (consulta.Trim().Length == 0)
+        //                                {
+        //                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        //                                    tablaSeleccionada = partes[partes.Length - 1];
+        //                                    esquema = partes[0];
+        //                                }
+
+        //                                string query = consulta;
+
+        //                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+
+        //                                try
+        //                                {
+        //                                    SQLbase.OpenConnection();
+        //                                    IDataReader reader = SQLbase.DataReader(query);
+        //                                    using (reader)
+        //                                    {
+        //                                        // GENERO DESDE UNA CONSULTA
+        //                                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
+        //                                        {
+        //                                            CargarListViewDesdeEsquema(reader, false);
+        //                                        }
+        //                                    }
+        //                                    SQLbase.CloseConnection();
+        //                                }
+        //                                catch (Exception ex)
+        //                                {
+        //                                    var error = ex.InnerException.Message ?? ex.Message;
+        //                                    CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                                }
+
+        //                                // Seteo las claves primarias si es que contiene
+        //                                if (LSVcampos.Items.Count > 0)
+        //                                {
+        //                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        //                                    tablaSeleccionada = partes[partes.Length - 1];
+        //                                    query = $@"SELECT KU.COLUMN_NAME Nombre 
+        //                                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC 
+        //                                        INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME 
+        //                                        WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+        //                                    try
+        //                                    {
+        //                                        SQLbase.OpenConnection();
+        //                                        IDataReader reader = SQLbase.DataReader(query);
+        //                                        using (reader)
+        //                                        {
+        //                                            while (reader.Read())
+        //                                            {
+        //                                                var nombre = reader["Nombre"].ToString().ToUpper();
+
+        //                                                foreach (ListViewItem item in LSVcampos.Items)
+        //                                                {
+        //                                                    if (item.SubItems[0].Text.ToUpper() == nombre)
+        //                                                    {
+        //                                                        item.ImageKey = KEY;
+        //                                                    }
+        //                                                }
+        //                                            }
+        //                                        }
+        //                                        SQLbase.CloseConnection();
+        //                                    }
+        //                                    catch (Exception ex)
+        //                                    {
+        //                                        var error = ex.InnerException.Message ?? ex.Message;
+        //                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar setear las claves primarias:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            camposOk = false;
+        //                            var error = ex.InnerException ?? ex;
+        //                            CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                        }
+        //                        break;
+        //                    case TipoMotor.POSTGRES:
+        //                        if (!consulta.Trim().ToUpper().Contains("LIMIT"))
+        //                        {
+        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula LIMIT y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+        //                            switch (resultado)
+        //                            {
+        //                                case DialogResult.Cancel:
+        //                                    CursorDefault();
+        //                                    camposOk = false;
+        //                                    break;
+        //                                case DialogResult.No:
+        //                                    consulta += " LIMIT 1";
+        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+        //                                    break;
+        //                            }
+        //                        }
+        //                        if (camposOk)
+        //                        {
+        //                            IDataReader Db2 = baseDeDatos.DataReader(consulta);
+        //                            Db2.Read();
+
+        //                            using (Db2)
+        //                            {
+        //                                CargarListViewDesdeEsquema(Db2, true);
+        //                            }
+        //                        }
+        //                        break;
+        //                    case TipoMotor.SQLITE:
+        //                        break;
+        //                }
+
+        //                if (conexionActual.Motor == TipoMotor.DB2)
+        //                {
+        //                }
+        //                else
+        //                {
+        //                }
+        //            }
+        //            else
+        //            {
+        //                #region GENERACION POR TABLA
+
+        //                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+        //                try
+        //                {
+        //                    using (var conn = BaseConsultar.Connection)
+        //                    {
+        //                        conn.Open();
+
+        //                        switch (conexionActual.Motor)
+        //                        {
+        //                            case TipoMotor.MS_SQL:
+        //                            case TipoMotor.POSTGRES:
+        //                                tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
+        //                                break;
+        //                        }
+        //                        DataTable tablas = conn.GetSchema("Tables");
+
+        //                        DataRow[] infoTablaSeleccionada = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
+
+        //                        foreach (DataRow tablaActual in infoTablaSeleccionada)
+        //                        {
+        //                            string schema = tablaActual["TABLE_SCHEM"].ToString();
+        //                            string nombreTabla = tablaActual["TABLE_NAME"].ToString();
+        //                            var columnas = conn.GetSchema("Columns", new string[] { null, schema, nombreTabla });
+
+        //                            // 🔑 Obtener columnas que son clave primaria mediante SQL según el motor
+        //                            HashSet<string> columnasClave = ObtenerColumnasClave(conn, nombreTabla);
+
+        //                            // Agregar columnas
+        //                            foreach (DataRow col in columnas.Rows)
+        //                            {
+        //                                string colName = col["COLUMN_NAME"].ToString();
+        //                                string tipoCol = col["TYPE_NAME"].ToString();
+        //                                string longitud = col["COLUMN_SIZE"].ToString();
+
+        //                                string escala = string.Empty;
+        //                                if (col.Table.Columns.Contains("DECIMAL_DIGITS") && col["DECIMAL_DIGITS"] != DBNull.Value)
+        //                                    escala = col["DECIMAL_DIGITS"].ToString();
+        //                                else if (col.Table.Columns.Contains("NUMERIC_SCALE") && col["NUMERIC_SCALE"] != DBNull.Value)
+        //                                    escala = col["NUMERIC_SCALE"].ToString();
+        //                                else if (col.Table.Columns.Contains("COLUMN_SCALE") && col["COLUMN_SCALE"] != DBNull.Value)
+        //                                    escala = col["COLUMN_SCALE"].ToString();
+        //                                else if (col.Table.Columns.Contains("COLUMN_SIZE") && col["COLUMN_SIZE"] != DBNull.Value)
+        //                                    escala = col["COLUMN_SIZE"].ToString();
+
+        //                                string aceptaNulos = string.Empty;
+        //                                if (col.Table.Columns.Contains("IS_NULLABLE") && col["IS_NULLABLE"] != DBNull.Value)
+        //                                {
+        //                                    string nuloStr = col["IS_NULLABLE"].ToString().ToUpper();
+        //                                    aceptaNulos = nuloStr == "YES" ? "SÍ" : nuloStr == "NO" ? "NO" : string.Empty;
+        //                                }
+
+        //                                string defecto = string.Empty;
+        //                                if (col.Table.Columns.Contains("COLUMN_DEF") && col["COLUMN_DEF"] != DBNull.Value)
+        //                                    defecto = col["COLUMN_DEF"].ToString();
+
+        //                                string tipoCompleto = tipoCol;
+        //                                string tipoNormalizado = tipoCol.ToUpper();
+        //                                bool esNumericoDecimal = tipoNormalizado.Contains("DECIMAL") || tipoNormalizado.Contains("NUMERIC");
+
+        //                                capas.camposTabla.Add(colName);
+        //                                ListViewItem item = new ListViewItem(colName);
+        //                                item.SubItems.Add(tipoCompleto);
+        //                                item.SubItems.Add(longitud);
+        //                                item.SubItems.Add(escala);
+        //                                item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
+        //                                item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
+        //                                if (columnasClave.Contains(colName))
+        //                                {
+        //                                    item.ImageKey = KEY;
+        //                                }
+
+        //                                LSVcampos.Items.Add(item);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{ex.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                }  
+
+        //                #endregion
+        //            }
+
+        //            if (camposOk)
+        //            {
+        //                ComprobarTiposDeCampos(tablaSeleccionada);
+        //                LSVcampos.Refresh();
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            camposOk = false;
+        //            var error = ex.InnerException ?? ex;
+        //            CustomMessageBox.Show($"Ocurrió un error al intentar acceder a la base de datos:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //        LSVcampos.Refresh();
+        //        LSVcampos.ResumeLayout();
+        //    }
+        //    CursorDefault();
+        //    return camposOk;
+        //}
+
+
+
         private bool CamposTabla(string tabla = "", string consulta = "")
         {
             WaitCursor();
@@ -2317,365 +2605,98 @@ namespace Capibara
                     LSVcampos.Items.Clear();
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
 
-                    /**
-                    // BASE DE DATOS DB2
-                    if (conexionActual.Motor == TipoMotor.DB2)
+                    // CREACION POR CONSULTA
+                    DataLayer.DataBase baseDeDatos = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                    baseDeDatos.OpenConnection();
+
+                    string consultaConLimite = string.Empty;
+                    string limitador = string.Empty;
+                    string mensajeLimitador = string.Empty;
+                    // GENERO DESDE UNA CONSULTA
+                    if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
                     {
-                        try
+                        switch (conexionActual.Motor)
                         {
-                            DataLayer.DataBase DB2base = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                            DB2base.OpenConnection();
-                            // GENERO DESDE UNA CONSULTA
-                            if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
-                            {
-                                if (!consulta.Trim().ToUpper().Contains("FETCH"))
-                                {
-                                    DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                                    switch (resultado)
-                                    {
-                                        case DialogResult.Cancel:
-                                            CursorDefault();
-                                            camposOk = false;
-                                            break;
-                                        case DialogResult.No:
-                                            consulta += " FETCH FIRST 1 ROW ONLY";
-                                            TXTgenerarAPartirDeConsulta.Text = consulta;
-                                            break;
-                                    }
-                                }
-                                if (camposOk)
-                                {
-                                    IDataReader Db2 = DB2base.DataReader(consulta);
-                                    Db2.Read();
-
-                                    using (Db2)
-                                    {
-                                        CargarListViewDesdeEsquema(Db2, true);
-                                    }
-                                }
-                            }
-                            else // GENERO DESDE UNA TABLA
-                            {
-                                IDataReader Db2 = DB2base.DataReader($"SELECT LTRIM(RTRIM(NAME)) AS Nombre, COLTYPE as Tipo, LENGTH as Longitud, SCALE as Escala, CASE WHEN NULLS = 'N' THEN 'NO' ELSE 'SÍ' END as AceptaNulos FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '{tablaSeleccionada}'");
-
-                                Db2.Read();
-                                do
-                                {
-                                    CargarListViewDesdeReader(Db2);
-                                }
-                                while (Db2.Read());
-
-                                if (LSVcampos.Items.Count > 0)
-                                {
-                                    Db2 = DB2base.DataReader($"SELECT UPPER(COLNAMES) AS Clave FROM SYSCAT.INDEXES WHERE TABNAME = '{tablaSeleccionada}' AND UNIQUERULE IN ('U')");
-                                    List<string> claves = new List<string>();
-                                    while (Db2.Read())
-                                    {
-                                        claves.Add(Db2.GetString(0));
-                                    }
-
-                                    if (claves.Count > 0)
-                                    {
-                                        int minCantidad = claves.Min(s => s.Count(c => c == '+'));
-
-                                        // Paso 2: filtrar los strings con esa cantidad mínima
-                                        List<string> clave = claves
-                                            .Where(s => s.Count(c => c == '+') == minCantidad)
-                                            .Select(s => s.Split('+'))
-                                            .FirstOrDefault().ToList();
-                                        // Eliminar los elementos vacíos
-                                        clave.RemoveAll(s => string.IsNullOrWhiteSpace(s));
-
-                                        foreach (ListViewItem item in LSVcampos.Items)
-                                        {
-                                            if (clave.Contains(item.SubItems[0].Text))
-                                            {
-                                                //item.Checked = true;
-                                                item.ImageKey = KEY;
-                                            }
-                                        }
-                                        LSVcampos.Refresh();
-                                    }
-                                }
-                            }
-                            DB2base.CloseConnection();
+                            case TipoMotor.DB2:
+                                mensajeLimitador = "La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No";
+                                consultaConLimite = $"{consulta} FETCH FIRST 1 ROW ONLY";
+                                limitador = "FETCH";
+                                break;
+                            case TipoMotor.MS_SQL:
+                                mensajeLimitador = "La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No";
+                                consultaConLimite = Regex.Replace(
+                                                            consulta,
+                                                            @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
+                                                            "SELECT TOP 1",
+                                                            RegexOptions.IgnoreCase
+                                                        );
+                                limitador = "SELECT TOP";
+                                break;
+                            case TipoMotor.POSTGRES:
+                            case TipoMotor.SQLITE:
+                                mensajeLimitador = "La consulta de la que intenta obtener una estructura de tabla no posee la clausula LIMIT y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No";
+                                consultaConLimite = $"{consulta} LIMIT 1";
+                                limitador = "LIMIT";
+                                break;
                         }
-                        catch (Exception ex)
+
+                        if (!consulta.Trim().ToUpper().Contains(limitador))
                         {
-                            camposOk = false;
-                            var error = ex.InnerException ?? ex;
-                            if (consulta.Trim().Length > 0)
+                            DialogResult resultado = CustomMessageBox.Show(mensajeLimitador, CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                            switch (resultado)
                             {
-                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                case DialogResult.Cancel:
+                                    CursorDefault();
+                                    camposOk = false;
+                                    break;
+                                case DialogResult.No:
+                                    consulta = consultaConLimite;
+                                    TXTgenerarAPartirDeConsulta.Text = consulta;
+                                    break;
                             }
-                            else
+                        }
+                        if (camposOk)
+                        {
+                            IDataReader reader = baseDeDatos.DataReader(consulta);
+                            reader.Read();
+
+                            using (reader)
                             {
-                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n" + error.Message, CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CargarListViewDesdeEsquema(reader, true);
                             }
                         }
                     }
-                    else // BASE DE DATOS MS SQL
+                    else
                     {
+                        #region GENERACION POR TABLA
+
+                        DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                         try
                         {
-                            bool comienzaConSelectTop = Regex.IsMatch(consulta, @"^\s*SELECT\s+TOP\s", RegexOptions.IgnoreCase);
-
-                            if (overlay.IsDisposed && generarDesdeConsulta && !comienzaConSelectTop)
+                            using (var conn = BaseConsultar.Connection)
                             {
-                                DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                                conn.Open();
 
-                                switch (resultado)
+                                switch (conexionActual.Motor)
                                 {
-                                    case DialogResult.Cancel:
-                                        CursorDefault();
-                                        camposOk = false;
-                                        break;
-                                    case DialogResult.No:
-                                        consulta = Regex.Replace(
-                                                        consulta,
-                                                        @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
-                                                        "SELECT TOP 1",
-                                                        RegexOptions.IgnoreCase
-                                                    );
-                                        TXTgenerarAPartirDeConsulta.Text = consulta;
+                                    case TipoMotor.MS_SQL:
+                                    case TipoMotor.POSTGRES:
+                                        tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
                                         break;
                                 }
-                            }
+                                DataTable tablas = conn.GetSchema("Tables");
 
-                            if (camposOk)
-                            {
-                                string esquema = string.Empty;
-                                if (consulta.Trim().Length == 0)
+                                DataRow[] infoTablaSeleccionada = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
+
+                                foreach (DataRow tablaActual in infoTablaSeleccionada)
                                 {
-                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                                    tablaSeleccionada = partes[partes.Length - 1];
-                                    esquema = partes[0];
-                                }
-
-                                string query = (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0) ? consulta : 
-                                    $@"SELECT c.name AS Nombre, ty.name AS Tipo, c.max_length AS Longitud, c.scale AS Escala, CASE WHEN c.is_nullable = 1 THEN 'SÍ' ELSE 'NO' END AS AceptaNulos, SCHEMA_NAME(t.schema_id) AS Esquema
-                                       FROM sys.columns c 
-                                       JOIN sys.types ty 
-                                       ON c.user_type_id = ty.user_type_id 
-                                       JOIN sys.tables t 
-                                       ON c.object_id = t.object_id 
-                                       WHERE t.name = '{tablaSeleccionada}' AND SCHEMA_NAME(t.schema_id) = '{esquema}'
-                                       ORDER BY c.column_id;";
-
-                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-
-                                try
-                                {
-                                    SQLbase.OpenConnection();
-                                    IDataReader reader = SQLbase.DataReader(query);
-                                    using (reader)
-                                    {
-                                        // GENERO DESDE UNA CONSULTA
-                                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
-                                        {
-                                            CargarListViewDesdeEsquema(reader, false);
-                                        }
-                                        else // GENERO DESDE UNA TABLA
-                                        {
-                                            while (reader.Read())
-                                            {
-                                                CargarListViewDesdeReader(reader);
-                                            }
-                                        }
-                                    }
-                                    SQLbase.CloseConnection();
-                                }
-                                catch (Exception ex)
-                                {
-                                    var error = ex.InnerException.Message ?? ex.Message;
-                                    if (consulta.Trim().Length > 0)
-                                    {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
-                                    else
-                                    {
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
-                                }
-
-                                // Seteo las claves primarias si es que contiene
-                                if (LSVcampos.Items.Count > 0)
-                                {
-                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                                    tablaSeleccionada = partes[partes.Length - 1];
-                                    query = $@"SELECT KU.COLUMN_NAME Nombre 
-                                                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC 
-                                                INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME 
-                                                WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
-
-                                    try
-                                    {
-                                        SQLbase.OpenConnection();
-                                        IDataReader reader = SQLbase.DataReader(query);
-                                        using (reader)
-                                        {
-                                            while (reader.Read())
-                                            {
-                                                var nombre = reader["Nombre"].ToString().ToUpper();
-
-                                                foreach (ListViewItem item in LSVcampos.Items)
-                                                {
-                                                    if (item.SubItems[0].Text.ToUpper() == nombre)
-                                                    {
-                                                        //item.Checked = true;
-                                                        item.ImageKey = KEY;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        SQLbase.CloseConnection();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        var error = ex.InnerException.Message ?? ex.Message;
-                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar setear las claves primarias:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            camposOk = false;
-                            var error = ex.InnerException ?? ex;
-                            if (consulta.Trim().Length > 0)
-                            {
-                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                            else
-                            {
-                                CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }*/
-
-                    DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-                    try
-                    {
-                        using (var conn = BaseConsultar.Connection)
-                        {
-                            conn.Open();
-
-                            // Obtiene las tablas
-                            switch (conexionActual.Motor)
-                            {
-                                case TipoMotor.DB2:
-                                    break;
-                                case TipoMotor.MS_SQL:
-                                case TipoMotor.POSTGRES:
-                                    tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
-                                    break;
-                                case TipoMotor.SQLITE:
-                                    break;
-                                default:
-                                    break;
-                            }
-                            DataTable tablas = conn.GetSchema("Tables");
-
-                            // Filtrar SOLO las filas cuyo tipo sea "TABLE"
-                            DataRow[] tablasFiltradas = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
-
-                            foreach (DataRow tablaActual in tablasFiltradas)
-                            {
-                                string schema = tablaActual["TABLE_SCHEM"].ToString();
-                                string nombreTabla = tablaActual["TABLE_NAME"].ToString();
-                                {
-                                    string tipo = tablaActual["TABLE_TYPE"].ToString();
-                                    if (tipo != "TABLE") continue;
-
-                                    string headerText = string.IsNullOrEmpty(schema) ? nombreTabla : $"{schema}.{nombreTabla}";
+                                    string schema = tablaActual["TABLE_SCHEM"].ToString();
+                                    string nombreTabla = tablaActual["TABLE_NAME"].ToString();
                                     var columnas = conn.GetSchema("Columns", new string[] { null, schema, nombreTabla });
 
                                     // 🔑 Obtener columnas que son clave primaria mediante SQL según el motor
-                                    var columnasClaveSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                                    try
-                                    {
-                                        string sqlPK = null;
-                                        switch (conexionActual.Motor)
-                                        {
-                                            case TipoMotor.MS_SQL:
-                                                sqlPK = $@"SELECT c.name AS COLUMN_NAME
-                                                FROM sys.indexes i
-                                                INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
-                                                INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-                                                INNER JOIN sys.tables t ON i.object_id = t.object_id
-                                                WHERE i.is_primary_key = 1 AND t.name = '{nombreTabla}'";
-                                                break;
-                                            case TipoMotor.DB2:
-                                                sqlPK = $@"SELECT UPPER(COLNAMES) AS COLUMN_NAME FROM SYSCAT.INDEXES WHERE TABNAME = '{nombreTabla}' AND UNIQUERULE IN ('U')";
-                                                break;
-                                            case TipoMotor.POSTGRES:
-                                                sqlPK = $@"SELECT a.attname AS COLUMN_NAME
-                                                FROM pg_index ix
-                                                JOIN pg_class t ON t.oid = ix.indrelid
-                                                JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
-                                                WHERE ix.indisprimary = true AND t.relname = '{nombreTabla}'";
-                                                break;
-                                            case TipoMotor.SQLITE:
-                                                sqlPK = $"PRAGMA table_info('{nombreTabla}')";
-                                                break;
-                                            default:
-                                                break;
-                                        }
-
-                                        if (!string.IsNullOrEmpty(sqlPK))
-                                        {
-                                            using (var cmdPK = conn.CreateCommand())
-                                            {
-                                                cmdPK.CommandText = sqlPK;
-                                                using (var rdrPK = cmdPK.ExecuteReader())
-                                                {
-                                                    if (conexionActual.Motor == TipoMotor.SQLITE)
-                                                    {
-                                                        // PRAGMA table_info devuelve una fila por columna con campo "pk" > 0 si es PK
-                                                        while (rdrPK.Read())
-                                                        {
-                                                            int pkOrdinal = rdrPK.GetOrdinal("pk");
-                                                            int nameOrdinal = rdrPK.GetOrdinal("name");
-                                                            if (!rdrPK.IsDBNull(pkOrdinal) && rdrPK.GetInt32(pkOrdinal) > 0)
-                                                                columnasClaveSet.Add(rdrPK.GetString(nameOrdinal));
-                                                        }
-                                                    }
-                                                    else if (conexionActual.Motor == TipoMotor.DB2)
-                                                    {
-                                                        List<string> claves = new List<string>();
-                                                        while (rdrPK.Read())
-                                                        {
-                                                            claves.Add(rdrPK.GetString(0));
-                                                        }
-                                                        if (claves.Count > 0)
-                                                        {
-                                                            int minCantidad = claves.Min(s => s.Count(c => c == '+'));
-
-                                                            // Paso 2: filtrar los strings con esa cantidad mínima
-                                                            List<string> clave = claves
-                                                                .Where(s => s.Count(c => c == '+') == minCantidad)
-                                                                .Select(s => s.Split('+'))
-                                                                .FirstOrDefault().ToList();
-                                                            // Eliminar los elementos vacíos
-                                                            clave.RemoveAll(s => string.IsNullOrWhiteSpace(s));
-
-                                                            foreach (string item in clave)
-                                                            {
-                                                                columnasClaveSet.Add(item);
-                                                            }
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        while (rdrPK.Read())
-                                                            columnasClaveSet.Add(rdrPK["COLUMN_NAME"].ToString());
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    catch { }
+                                    HashSet<string> columnasClave = ObtenerColumnasClave(conn, nombreTabla);
 
                                     // Agregar columnas
                                     foreach (DataRow col in columnas.Rows)
@@ -2716,7 +2737,7 @@ namespace Capibara
                                         item.SubItems.Add(escala);
                                         item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
                                         item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
-                                        if (columnasClaveSet.Contains(colName))
+                                        if (columnasClave.Contains(colName))
                                         {
                                             item.ImageKey = KEY;
                                         }
@@ -2726,15 +2747,12 @@ namespace Capibara
                                 }
                             }
                         }
-                    }
-                    catch (TaskCanceledException)
-                    {
-                    }
-                    catch (OperationCanceledException)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
+                        catch (Exception ex)
+                        {
+                            CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{ex.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                        #endregion
                     }
 
                     if (camposOk)
@@ -2754,6 +2772,97 @@ namespace Capibara
             }
             CursorDefault();
             return camposOk;
+        }
+
+
+        private static HashSet<string> ObtenerColumnasClave(OdbcConnection conn, string nombreTabla)
+        {
+            var columnasClave = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                string sqlPK = null;
+                switch (conexionActual.Motor)
+                {
+                    case TipoMotor.MS_SQL:
+                        sqlPK = $@"SELECT c.name AS COLUMN_NAME
+                                                FROM sys.indexes i
+                                                INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
+                                                INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+                                                INNER JOIN sys.tables t ON i.object_id = t.object_id
+                                                WHERE i.is_primary_key = 1 AND t.name = '{nombreTabla}'";
+                        break;
+                    case TipoMotor.DB2:
+                        sqlPK = $@"SELECT UPPER(COLNAMES) AS COLUMN_NAME FROM SYSCAT.INDEXES WHERE TABNAME = '{nombreTabla}' AND UNIQUERULE IN ('U')";
+                        break;
+                    case TipoMotor.POSTGRES:
+                        sqlPK = $@"SELECT a.attname AS COLUMN_NAME
+                                                FROM pg_index ix
+                                                JOIN pg_class t ON t.oid = ix.indrelid
+                                                JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey)
+                                                WHERE ix.indisprimary = true AND t.relname = '{nombreTabla}'";
+                        break;
+                    case TipoMotor.SQLITE:
+                        sqlPK = $"PRAGMA table_info('{nombreTabla}')";
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!string.IsNullOrEmpty(sqlPK))
+                {
+                    using (var cmdPK = conn.CreateCommand())
+                    {
+                        cmdPK.CommandText = sqlPK;
+                        using (var rdrPK = cmdPK.ExecuteReader())
+                        {
+                            if (conexionActual.Motor == TipoMotor.SQLITE)
+                            {
+                                // PRAGMA table_info devuelve una fila por columna con campo "pk" > 0 si es PK
+                                while (rdrPK.Read())
+                                {
+                                    int pkOrdinal = rdrPK.GetOrdinal("pk");
+                                    int nameOrdinal = rdrPK.GetOrdinal("name");
+                                    if (!rdrPK.IsDBNull(pkOrdinal) && rdrPK.GetInt32(pkOrdinal) > 0)
+                                        columnasClave.Add(rdrPK.GetString(nameOrdinal));
+                                }
+                            }
+                            else if (conexionActual.Motor == TipoMotor.DB2)
+                            {
+                                List<string> claves = new List<string>();
+                                while (rdrPK.Read())
+                                {
+                                    claves.Add(rdrPK.GetString(0));
+                                }
+                                if (claves.Count > 0)
+                                {
+                                    int minCantidad = claves.Min(s => s.Count(c => c == '+'));
+
+                                    // Paso 2: filtrar los strings con esa cantidad mínima
+                                    List<string> clave = claves
+                                        .Where(s => s.Count(c => c == '+') == minCantidad)
+                                        .Select(s => s.Split('+'))
+                                        .FirstOrDefault().ToList();
+                                    // Eliminar los elementos vacíos
+                                    clave.RemoveAll(s => string.IsNullOrWhiteSpace(s));
+
+                                    foreach (string item in clave)
+                                    {
+                                        columnasClave.Add(item);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                while (rdrPK.Read())
+                                    columnasClave.Add(rdrPK["COLUMN_NAME"].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return columnasClave;
         }
 
         private static string QuitarEsquema(string consulta, string tablaSeleccionada)
@@ -3255,6 +3364,7 @@ namespace Capibara
 
         private void BTNobtenerEstructura_Click(object sender, EventArgs e)
         {
+            generarDesdeConsulta = true;
             CamposTabla("CONSULTA", TXTgenerarAPartirDeConsulta.Text);
         }
 
