@@ -919,9 +919,10 @@ namespace Capibara
 
             Repositories.AppendLine("using System;");
             Repositories.AppendLine("using System.Collections.Generic;");
-            Repositories.AppendLine("using System.Data.Entity;");
+            if(!noSQL)Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
+            if (CHKusarCapiDL.Checked) Repositories.AppendLine("using CapiDL.DataBase;");
             if (!noSQL) Repositories.AppendLine("using System.Text;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
@@ -930,6 +931,20 @@ namespace Capibara
             Repositories.AppendLine("{");
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
+
+            string comando = "Command";
+            string consultaComando = "CommandText";
+            string parametros = "AddParameter";
+            string seguirLeyendo = "Read(SQLconsulta)";
+            string cerrarConexion = "SQLconsulta.Connection.Close()";
+            if (!CHKusarCapiDL.Checked)
+            {
+                comando = "ComandoDB2";
+                consultaComando = "Consulta";
+                parametros = "Agregar";
+                seguirLeyendo = "SQLconsulta.HayRegistros()";
+                cerrarConexion = "SQLconsulta.CerrarConexion()";
+            }
 
             #region ALTA
             if (CHKalta.Checked)
@@ -940,31 +955,45 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
 
                     foreach (DataColumn c in columnas)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                     }
                     Repositories.AppendLine();
-                    if (CHKtryOrIf.Checked)
+                    if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine($"\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
-                    }
-                    else
-                    {
-                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                        Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
-                        Repositories.AppendLine("\t\t\t\t}");
-                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar insertar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
+                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\t{");
+                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
+                        Repositories.AppendLine("\t\t\t\t}");
+                    }
+                    else
+                    {
+                        if (CHKtryOrIf.Checked)
+                        {
+                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                            Repositories.AppendLine($"\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
+                        }
+                        else
+                        {
+                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Alta correcta de {{ { capas.NombreTabla } }}\", true);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                            Repositories.AppendLine("\t\t\t\telse");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar insertar {{ { capas.NombreTabla } }}\", false);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                        } 
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
@@ -1020,8 +1049,8 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                    Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                     Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                     Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                     Repositories.AppendLine();
@@ -1029,34 +1058,48 @@ namespace Capibara
 
                     foreach (DataColumn c in columnasUpdate)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                     }
                     Repositories.AppendLine("\t\t\t\t#endregion UPDATE");
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\t\t#region WHERE");
                     foreach (DataColumn c in claves)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                     }
-                    Repositories.AppendLine("\t\t\t\t#endregion UPDATE");
+                    Repositories.AppendLine("\t\t\t\t#endregion WHERE");
 
                     Repositories.AppendLine();
 
-                    if (CHKtryOrIf.Checked)
+                    if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine($"\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
-                    }
-                    else
-                    {
-                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                        Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
-                        Repositories.AppendLine("\t\t\t\t}");
-                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar eliminar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
+                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\t{");
+                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
+                        Repositories.AppendLine("\t\t\t\t}");
+                    }
+                    else
+                    {
+                        if (CHKtryOrIf.Checked)
+                        {
+                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                            Repositories.AppendLine($"\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
+                        }
+                        else
+                        {
+                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Eliminación correcta de {{ { capas.NombreTabla } }}\", true);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                            Repositories.AppendLine("\t\t\t\telse");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar eliminar {{ { capas.NombreTabla } }}\", false);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                        } 
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
@@ -1116,8 +1159,8 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                        Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"UPDATE {{ { capas.NombreTabla } }} ");
+                        Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                         Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                         Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
                         Repositories.AppendLine();
@@ -1125,7 +1168,7 @@ namespace Capibara
 
                         foreach (DataColumn c in columnasUpdate)
                         {
-                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                         }
                         Repositories.AppendLine("\t\t\t\t#endregion");
 
@@ -1133,25 +1176,39 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\t\t#region WHERE");
                         foreach (DataColumn c in claves)
                         {
-                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                            Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                         }
                         Repositories.AppendLine("\t\t\t\t#endregion");
                         Repositories.AppendLine();
-                        if (CHKtryOrIf.Checked)
+                        if (CHKusarCapiDL.Checked)
                         {
-                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                            Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
-                        }
-                        else
-                        {
-                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                            Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}\", false);");
                             Repositories.AppendLine("\t\t\t\t}");
                             Repositories.AppendLine("\t\t\t\telse");
                             Repositories.AppendLine("\t\t\t\t{");
-                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}, false);");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
                             Repositories.AppendLine("\t\t\t\t}");
+                        }
+                        else
+                        {
+                            if (CHKtryOrIf.Checked)
+                            {
+                                Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                                Repositories.AppendLine($"\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
+                            }
+                            else
+                            {
+                                Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                Repositories.AppendLine($"\t\t\t\t\treturn ($\"Modificación correcta de {{ { capas.NombreTabla } }}\", true);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                                Repositories.AppendLine("\t\t\t\telse");
+                                Repositories.AppendLine("\t\t\t\t{");
+                                Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}, false);");
+                                Repositories.AppendLine("\t\t\t\t}");
+                            } 
                         }
                         Repositories.AppendLine("\t\t\t}");
                         Repositories.AppendLine("\t\t\tcatch (Exception ex)");
@@ -1209,7 +1266,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
                     Repositories.AppendLine();
 
                     var campoBaja = camposConsulta.Where(c => c.ToLower().Contains("baja") && c.ToLower().StartsWith("f")).FirstOrDefault();
@@ -1217,27 +1274,27 @@ namespace Capibara
                     bool where = campoBaja != null;
                     if (!where) where = clavesConsulta.Count > 0;
 
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }} ");
-                    Repositories.AppendLine($"\t\t\t\t                         { (where ? (" WHERE " + string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty)}");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }} {(where ? string.Empty : "\";")}");
+                    if (where)Repositories.AppendLine($"\t\t\t\t                         { (where ? (" WHERE " + string.Join(" AND ", claves.Select(c => c.ColumnName + " = ?")) + (campoBaja != null ? " AND " + campoBaja + " = ?" : string.Empty) + "\";") : string.Empty)}");
                     Repositories.AppendLine();
 
                     foreach (string[] clave in clavesConsulta)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ clave[0] }\", { capas.Mapeo[clave[1]] }, { clave[0] });");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ clave[0] }\", { capas.Mapeo[clave[1]] }, { clave[0] });");
                     }
                     if (campoBaja != null)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ campoBaja }\", OdbcType.DateTime, new System.DateTime(1900, 1, 1));");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ campoBaja }\", OdbcType.DateTime, new System.DateTime(1900, 1, 1));");
                     }
                     Repositories.AppendLine();
-                    Repositories.AppendLine("\t\t\t\tif (SQLconsulta.HayRegistros())");
+                    Repositories.AppendLine($"\t\t\t\tif ({seguirLeyendo})");
                     Repositories.AppendLine("\t\t\t\t{");
                     string instancia = char.ToLower(nombreDeClase[0]) + tipoClase.Substring(1);
                     Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } { instancia } = new { tipoClase }();");
                     Repositories.AppendLine($"\t\t\t\t\tResultado = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
                     Repositories.AppendLine("\t\t\t\t};");
                     Repositories.AppendLine();
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.CerrarConexion();");
+                    Repositories.AppendLine($"\t\t\t\t{cerrarConexion};");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1280,18 +1337,18 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(\"\", \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(\"\", \"DB2_Tributos\");");
                     Repositories.AppendLine();
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }}\";");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }}\";");
                     Repositories.AppendLine();
-                    Repositories.AppendLine("\t\t\t\twhile (SQLconsulta.HayRegistros())");
+                    Repositories.AppendLine($"\t\t\t\twhile ({seguirLeyendo})");
                     Repositories.AppendLine("\t\t\t\t{");
                     string instancia = char.ToLower(nombreDeClase[0]) + nombreDeClase.Substring(1);
                     Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } { instancia } = new { tipoClase }();");
                     Repositories.AppendLine($"\t\t\t\t\t{ tipoClase } instancia = FuncionesGenerales.RellenarCampos(SQLconsulta, { instancia }) as { tipoClase };");
                     Repositories.AppendLine("\t\t\t\t\ttodos.Add(instancia);");
                     Repositories.AppendLine("\t\t\t\t}");
-                    Repositories.AppendLine("\t\t\t\tSQLconsulta.CerrarConexion();");
+                    Repositories.AppendLine($"\t\t\t\t{cerrarConexion};");
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
                     Repositories.AppendLine("\t\t\t{");
@@ -1322,31 +1379,45 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine("\t\t\t\tComandoDB2 SQLconsulta = new ComandoDB2(string.Empty, \"DB2_Tributos\");");
-                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.Consulta = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", columnas.Select(c => c.ColumnName)) }) ");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", columnas.Select(c => c.ColumnName)) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
 
                     Repositories.AppendLine();
                     foreach (DataColumn c in columnas)
                     {
-                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.Agregar(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
+                        Repositories.AppendLine($"\t\t\t\tSQLconsulta.{parametros}(\"@{ c.ColumnName }\", { capas.Mapeo[capas.Tipo(c)] }, { nombreClasePrimeraMinuscula }.{ c.ColumnName });");
                     }
                     Repositories.AppendLine();
-                    if (CHKtryOrIf.Checked)
+                    if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
-                        Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
-                    }
-                    else
-                    {
-                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
-                        Repositories.AppendLine("\t\t\t\t{");
-                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
-                        Repositories.AppendLine("\t\t\t\t}");
-                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
+                        Repositories.AppendLine("\t\t\t\telse");
+                        Repositories.AppendLine("\t\t\t\t{");
+                        Repositories.AppendLine($"\t\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
+                        Repositories.AppendLine("\t\t\t\t}");
+                    }
+                    else
+                    {
+                        if (CHKtryOrIf.Checked)
+                        {
+                            Repositories.AppendLine("\t\t\t\tSQLconsulta.Ejecutar(true);");
+                            Repositories.AppendLine($"\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
+                        }
+                        else
+                        {
+                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.EjecutarNonQuery(true) > -1)");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Recuperación correcta de {{ { capas.NombreTabla } }}\", true);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                            Repositories.AppendLine("\t\t\t\telse");
+                            Repositories.AppendLine("\t\t\t\t{");
+                            Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}\", false);");
+                            Repositories.AppendLine("\t\t\t\t}");
+                        } 
                     }
                     Repositories.AppendLine("\t\t\t}");
                     Repositories.AppendLine("\t\t\tcatch (Exception ex)");
@@ -2245,11 +2316,23 @@ namespace Capibara
                 {
                     conn.Open();
 
+                    string[] tiposTabla = new string[] { "Table", "View" };
                     // Obtiene las tablas
-                    DataTable tablas = conn.GetSchema("Tables");
+                    DataTable tablas = new DataTable();
+
+                    foreach (string tipo in tiposTabla)
+                    {
+                        // Obtenemos el esquema actual (ej: "Tables", "Views")
+                        DataTable esquemaTemporal = conn.GetSchema($"{tipo}s");
+
+                        // Fusionamos el contenido en nuestra tabla principal
+                        tablas.Merge(esquemaTemporal);
+                    }
+
+                    string selecciones = string.Join(" OR ", tiposTabla.Select(t => $"TABLE_TYPE = '{t}'").ToArray());
 
                     // Filtrar SOLO las filas cuyo tipo sea "TABLE"
-                    DataRow[] tablasFiltradas = tablas.Select($"TABLE_TYPE = 'TABLE'");
+                    DataRow[] tablasFiltradas = tablas.Select(selecciones);
 
                     // Si querés seguir usando un DataTable:
                     DataTable tablasSolo = tablasFiltradas.Length > 0 ? tablasFiltradas.CopyToDataTable() : tablas.Clone();
@@ -2292,305 +2375,6 @@ namespace Capibara
                 CustomMessageBox.Show($"Ocurrió un error al intentar conectar a la base:\r\n{conexionActual.BaseDatos}\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        //private bool CamposTabla(string tabla = "", string consulta = "")
-        //{
-        //    WaitCursor();
-        //    bool camposOk = true;
-        //    if (cargarCampos)
-        //    {
-        //        capas.camposTabla = new List<string>();
-        //        try
-        //        {
-        //            LBLtablaSeleccionada.Text = $"{(tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString())}:";
-        //            LSVcampos.Items.Clear();
-        //            string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
-
-        //            // CREACION POR CONSULTA
-        //            DataLayer.DataBase baseDeDatos = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-        //            baseDeDatos.OpenConnection();
-        //            // GENERO DESDE UNA CONSULTA
-        //            if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
-        //            {
-        //                switch (conexionActual.Motor)
-        //                {
-        //                    case TipoMotor.DB2:
-        //                        if (!consulta.Trim().ToUpper().Contains("FETCH"))
-        //                        {
-        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula FETCH y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-        //                            switch (resultado)
-        //                            {
-        //                                case DialogResult.Cancel:
-        //                                    CursorDefault();
-        //                                    camposOk = false;
-        //                                    break;
-        //                                case DialogResult.No:
-        //                                    consulta += " FETCH FIRST 1 ROW ONLY";
-        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
-        //                                    break;
-        //                            }
-        //                        }
-        //                        if (camposOk)
-        //                        {
-        //                            IDataReader reader = baseDeDatos.DataReader(consulta);
-        //                            reader.Read();
-
-        //                            using (reader)
-        //                            {
-        //                                CargarListViewDesdeEsquema(reader, true);
-        //                            }
-        //                        }
-        //                        break;
-        //                    case TipoMotor.MS_SQL:
-        //                        try
-        //                        {
-        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula TOP al inicio y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-        //                            switch (resultado)
-        //                            {
-        //                                case DialogResult.Cancel:
-        //                                    CursorDefault();
-        //                                    camposOk = false;
-        //                                    break;
-        //                                case DialogResult.No:
-        //                                    consulta = Regex.Replace(
-        //                                                    consulta,
-        //                                                    @"^\s*SELECT\b",     // busca SELECT al inicio, permitiendo espacios previos
-        //                                                    "SELECT TOP 1",
-        //                                                    RegexOptions.IgnoreCase
-        //                                                );
-        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
-        //                                    break;
-        //                            }
-
-        //                            if (camposOk)
-        //                            {
-        //                                string esquema = string.Empty;
-        //                                if (consulta.Trim().Length == 0)
-        //                                {
-        //                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-        //                                    tablaSeleccionada = partes[partes.Length - 1];
-        //                                    esquema = partes[0];
-        //                                }
-
-        //                                string query = consulta;
-
-        //                                DataLayer.DataBase SQLbase = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-
-        //                                try
-        //                                {
-        //                                    SQLbase.OpenConnection();
-        //                                    IDataReader reader = SQLbase.DataReader(query);
-        //                                    using (reader)
-        //                                    {
-        //                                        // GENERO DESDE UNA CONSULTA
-        //                                        if (overlay.IsDisposed && generarDesdeConsulta && consulta.Trim().Length > 0)
-        //                                        {
-        //                                            CargarListViewDesdeEsquema(reader, false);
-        //                                        }
-        //                                    }
-        //                                    SQLbase.CloseConnection();
-        //                                }
-        //                                catch (Exception ex)
-        //                                {
-        //                                    var error = ex.InnerException.Message ?? ex.Message;
-        //                                    CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                                }
-
-        //                                // Seteo las claves primarias si es que contiene
-        //                                if (LSVcampos.Items.Count > 0)
-        //                                {
-        //                                    string[] partes = tablaSeleccionada.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-        //                                    tablaSeleccionada = partes[partes.Length - 1];
-        //                                    query = $@"SELECT KU.COLUMN_NAME Nombre 
-        //                                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC 
-        //                                        INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE KU ON TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME 
-        //                                        WHERE TC.TABLE_NAME = '{tablaSeleccionada}' AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'";
-
-        //                                    try
-        //                                    {
-        //                                        SQLbase.OpenConnection();
-        //                                        IDataReader reader = SQLbase.DataReader(query);
-        //                                        using (reader)
-        //                                        {
-        //                                            while (reader.Read())
-        //                                            {
-        //                                                var nombre = reader["Nombre"].ToString().ToUpper();
-
-        //                                                foreach (ListViewItem item in LSVcampos.Items)
-        //                                                {
-        //                                                    if (item.SubItems[0].Text.ToUpper() == nombre)
-        //                                                    {
-        //                                                        item.ImageKey = KEY;
-        //                                                    }
-        //                                                }
-        //                                            }
-        //                                        }
-        //                                        SQLbase.CloseConnection();
-        //                                    }
-        //                                    catch (Exception ex)
-        //                                    {
-        //                                        var error = ex.InnerException.Message ?? ex.Message;
-        //                                        CustomMessageBox.Show(CustomMessageBox.ERROR, $"Ocurrió un error al intentar setear las claves primarias:\r\n{error}", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                                    }
-        //                                }
-        //                            }
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            camposOk = false;
-        //                            var error = ex.InnerException ?? ex;
-        //                            CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la consulta:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                        }
-        //                        break;
-        //                    case TipoMotor.POSTGRES:
-        //                        if (!consulta.Trim().ToUpper().Contains("LIMIT"))
-        //                        {
-        //                            DialogResult resultado = CustomMessageBox.Show("La consulta de la que intenta obtener una estructura de tabla no posee la clausula LIMIT y puede ser que tarde mucho en ejecutarse.\r\n   • Si desea continuar de todas maneras, presione Sí.\r\n   • Si desea agregar la clausula, presione No", CustomMessageBox.GUATEFAK, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-        //                            switch (resultado)
-        //                            {
-        //                                case DialogResult.Cancel:
-        //                                    CursorDefault();
-        //                                    camposOk = false;
-        //                                    break;
-        //                                case DialogResult.No:
-        //                                    consulta += " LIMIT 1";
-        //                                    TXTgenerarAPartirDeConsulta.Text = consulta;
-        //                                    break;
-        //                            }
-        //                        }
-        //                        if (camposOk)
-        //                        {
-        //                            IDataReader Db2 = baseDeDatos.DataReader(consulta);
-        //                            Db2.Read();
-
-        //                            using (Db2)
-        //                            {
-        //                                CargarListViewDesdeEsquema(Db2, true);
-        //                            }
-        //                        }
-        //                        break;
-        //                    case TipoMotor.SQLITE:
-        //                        break;
-        //                }
-
-        //                if (conexionActual.Motor == TipoMotor.DB2)
-        //                {
-        //                }
-        //                else
-        //                {
-        //                }
-        //            }
-        //            else
-        //            {
-        //                #region GENERACION POR TABLA
-
-        //                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
-        //                try
-        //                {
-        //                    using (var conn = BaseConsultar.Connection)
-        //                    {
-        //                        conn.Open();
-
-        //                        switch (conexionActual.Motor)
-        //                        {
-        //                            case TipoMotor.MS_SQL:
-        //                            case TipoMotor.POSTGRES:
-        //                                tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
-        //                                break;
-        //                        }
-        //                        DataTable tablas = conn.GetSchema("Tables");
-
-        //                        DataRow[] infoTablaSeleccionada = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
-
-        //                        foreach (DataRow tablaActual in infoTablaSeleccionada)
-        //                        {
-        //                            string schema = tablaActual["TABLE_SCHEM"].ToString();
-        //                            string nombreTabla = tablaActual["TABLE_NAME"].ToString();
-        //                            var columnas = conn.GetSchema("Columns", new string[] { null, schema, nombreTabla });
-
-        //                            // 🔑 Obtener columnas que son clave primaria mediante SQL según el motor
-        //                            HashSet<string> columnasClave = ObtenerColumnasClave(conn, nombreTabla);
-
-        //                            // Agregar columnas
-        //                            foreach (DataRow col in columnas.Rows)
-        //                            {
-        //                                string colName = col["COLUMN_NAME"].ToString();
-        //                                string tipoCol = col["TYPE_NAME"].ToString();
-        //                                string longitud = col["COLUMN_SIZE"].ToString();
-
-        //                                string escala = string.Empty;
-        //                                if (col.Table.Columns.Contains("DECIMAL_DIGITS") && col["DECIMAL_DIGITS"] != DBNull.Value)
-        //                                    escala = col["DECIMAL_DIGITS"].ToString();
-        //                                else if (col.Table.Columns.Contains("NUMERIC_SCALE") && col["NUMERIC_SCALE"] != DBNull.Value)
-        //                                    escala = col["NUMERIC_SCALE"].ToString();
-        //                                else if (col.Table.Columns.Contains("COLUMN_SCALE") && col["COLUMN_SCALE"] != DBNull.Value)
-        //                                    escala = col["COLUMN_SCALE"].ToString();
-        //                                else if (col.Table.Columns.Contains("COLUMN_SIZE") && col["COLUMN_SIZE"] != DBNull.Value)
-        //                                    escala = col["COLUMN_SIZE"].ToString();
-
-        //                                string aceptaNulos = string.Empty;
-        //                                if (col.Table.Columns.Contains("IS_NULLABLE") && col["IS_NULLABLE"] != DBNull.Value)
-        //                                {
-        //                                    string nuloStr = col["IS_NULLABLE"].ToString().ToUpper();
-        //                                    aceptaNulos = nuloStr == "YES" ? "SÍ" : nuloStr == "NO" ? "NO" : string.Empty;
-        //                                }
-
-        //                                string defecto = string.Empty;
-        //                                if (col.Table.Columns.Contains("COLUMN_DEF") && col["COLUMN_DEF"] != DBNull.Value)
-        //                                    defecto = col["COLUMN_DEF"].ToString();
-
-        //                                string tipoCompleto = tipoCol;
-        //                                string tipoNormalizado = tipoCol.ToUpper();
-        //                                bool esNumericoDecimal = tipoNormalizado.Contains("DECIMAL") || tipoNormalizado.Contains("NUMERIC");
-
-        //                                capas.camposTabla.Add(colName);
-        //                                ListViewItem item = new ListViewItem(colName);
-        //                                item.SubItems.Add(tipoCompleto);
-        //                                item.SubItems.Add(longitud);
-        //                                item.SubItems.Add(escala);
-        //                                item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
-        //                                item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
-        //                                if (columnasClave.Contains(colName))
-        //                                {
-        //                                    item.ImageKey = KEY;
-        //                                }
-
-        //                                LSVcampos.Items.Add(item);
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    CustomMessageBox.Show($"Ocurrió un error al intentar obtener la estructura de la tabla:\r\n{tablaSeleccionada.ToUpper()}\r\n{ex.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                }  
-
-        //                #endregion
-        //            }
-
-        //            if (camposOk)
-        //            {
-        //                ComprobarTiposDeCampos(tablaSeleccionada);
-        //                LSVcampos.Refresh();
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            camposOk = false;
-        //            var error = ex.InnerException ?? ex;
-        //            CustomMessageBox.Show($"Ocurrió un error al intentar acceder a la base de datos:\r\n{error.Message}", CustomMessageBox.ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //        LSVcampos.Refresh();
-        //        LSVcampos.ResumeLayout();
-        //    }
-        //    CursorDefault();
-        //    return camposOk;
-        //}
-
-
 
         private bool CamposTabla(string tabla = "", string consulta = "")
         {
@@ -2685,9 +2469,24 @@ namespace Capibara
                                         tablaSeleccionada = QuitarEsquema(consulta, tablaSeleccionada);
                                         break;
                                 }
-                                DataTable tablas = conn.GetSchema("Tables");
 
-                                DataRow[] infoTablaSeleccionada = tablas.Select($"TABLE_TYPE = 'TABLE' AND TABLE_NAME = '{tablaSeleccionada}'");
+                                string[] tiposTabla = new string[] { "Table", "View" };
+                                // Obtiene las tablas
+                                DataTable tablas = new DataTable();
+
+                                foreach (string tipo in tiposTabla)
+                                {
+                                    // Obtenemos el esquema actual (ej: "Tables", "Views")
+                                    DataTable esquemaTemporal = conn.GetSchema($"{tipo}s");
+
+                                    // Fusionamos el contenido en nuestra tabla principal
+                                    tablas.Merge(esquemaTemporal);
+                                }
+
+                                string selecciones = string.Join(" OR ", tiposTabla.Select(t => $"(TABLE_TYPE = '{t}' AND TABLE_NAME = '{tablaSeleccionada}')").ToArray());
+
+                                // Filtrar SOLO las filas cuyo tipo sea "TABLE"
+                                DataRow[] infoTablaSeleccionada = tablas.Select(selecciones);
 
                                 foreach (DataRow tablaActual in infoTablaSeleccionada)
                                 {
@@ -4142,6 +3941,33 @@ namespace Capibara
             }
 
             e.DrawFocusRectangle();
+        }
+        
+        private ListViewItem _itemClicDerecho = null;
+
+        private void TSMagregarComoClave_Click(object sender, EventArgs e)
+        {
+            if (_itemClicDerecho == null) return;
+
+            if (_itemClicDerecho.ImageKey == KEY)
+            {
+                _itemClicDerecho.ImageKey = string.Empty;
+            }
+            else
+            {
+                _itemClicDerecho.ImageKey = KEY;
+            }
+
+            LSVcampos.Refresh();
+            ComprobarClaves();
+        }
+
+        private void LSVcampos_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _itemClicDerecho = LSVcampos.GetItemAt(e.X, e.Y);
+            }
         }
     }
 }
