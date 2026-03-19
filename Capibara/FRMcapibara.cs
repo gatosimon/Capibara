@@ -925,7 +925,7 @@ namespace Capibara
             if(!noSQL)Repositories.AppendLine("using System.Data.Entity;");
             Repositories.AppendLine("using System.Data.Odbc;");
             Repositories.AppendLine("using System.Linq;");
-            if (CHKusarCapiDL.Checked) Repositories.AppendLine("using CapiDL.DataBase;");
+            if (CHKusarCapiDL.Checked) Repositories.AppendLine("using CapiDL;");
             if (!noSQL) Repositories.AppendLine("using System.Text;");
             Repositories.AppendLine("using SistemaMunicipalGeneral.Controles;");
             if (espacioDeNombres.Trim().Length > 0) Repositories.AppendLine($"using { espacioDeNombres }.{ Capas.MODEL };");
@@ -935,10 +935,10 @@ namespace Capibara
             Repositories.AppendLine($"\tpublic class { nombreDeClase }Repositories : { nombreDeClase + Capas.REPOSITORIES_INTERFACE}");
             Repositories.AppendLine("\t{");
 
-            string comando = "Command";
-            string consultaComando = "CommandText";
+            string comando = "DataBase";
+            string consultaComando = "Command.CommandText";
             string parametros = "AddParameter";
-            string seguirLeyendo = "Read(SQLconsulta)";
+            string seguirLeyendo = "SQLconsulta.Read()";
             string cerrarConexion = "SQLconsulta.Connection.Close()";
             if (!CHKusarCapiDL.Checked)
             {
@@ -958,7 +958,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
@@ -970,7 +970,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
+                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.NonQuery() == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar insertar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
@@ -1052,7 +1052,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                     Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                     Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
@@ -1076,7 +1076,7 @@ namespace Capibara
 
                     if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
+                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.NonQuery() == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar eliminar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
@@ -1162,7 +1162,7 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                        Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                        Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                         Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                         Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                         Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
@@ -1185,7 +1185,7 @@ namespace Capibara
                         Repositories.AppendLine();
                         if (CHKusarCapiDL.Checked)
                         {
-                            Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
+                            Repositories.AppendLine("\t\t\t\tif(SQLconsulta.NonQuery() == -2)");
                             Repositories.AppendLine("\t\t\t\t{");
                             Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar modificar {{ { capas.NombreTabla } }}\", false);");
                             Repositories.AppendLine("\t\t\t\t}");
@@ -1269,7 +1269,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                     Repositories.AppendLine();
 
                     var campoBaja = camposConsulta.Where(c => c.ToLower().Contains("baja") && c.ToLower().StartsWith("f")).FirstOrDefault();
@@ -1340,7 +1340,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(\"\", \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }}\";");
                     Repositories.AppendLine();
@@ -1382,7 +1382,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}(string.Empty, \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", columnas.Select(c => c.ColumnName)) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
 
@@ -1394,7 +1394,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     if (CHKusarCapiDL.Checked)
                     {
-                        Repositories.AppendLine("\t\t\t\tif(NonQuery(SQLconsulta) == -2)");
+                        Repositories.AppendLine("\t\t\t\tif(SQLconsulta.NonQuery() == -2)");
                         Repositories.AppendLine("\t\t\t\t{");
                         Repositories.AppendLine($"\t\t\t\t\treturn ($\"Ocurrió un error inesperado al intentar recuperar {{ { capas.NombreTabla } }}\", false);");
                         Repositories.AppendLine("\t\t\t\t}");
