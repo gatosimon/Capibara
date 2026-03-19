@@ -22,6 +22,8 @@ public class Configuracion
     public string RutaPorDefectoResultados { get; set; } = @"C:\Temp\";
     public bool MostrarOverlayEnInicio { get; set; } = false;
     public bool InsertarEnProyecto { get; set; } = true;
+    public List<string> Claves { get; set; }
+
     public Configuracion()
     {
     }

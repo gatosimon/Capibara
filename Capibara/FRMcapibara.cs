@@ -94,8 +94,8 @@ namespace Capibara
         {
             try
             {
-                //configuracion = Configuracion.Cargar();
-                InicializarConexiones();
+                configuracion = Configuracion.Cargar();
+                InicializarConexiones(true);
                 if (configuracion.Conexion != null)
                 {
                     ActualizarConeccionActual(configuracion.Conexion); 
@@ -217,6 +217,9 @@ namespace Capibara
                 configuracion.camposBaja = GuardarCamposAbm(DGVbaja);
                 configuracion.camposModificacion = GuardarCamposAbm(DGVmodificacion);
                 configuracion.camposRecuperacion = GuardarCamposAbm(DGVrecuperacion);
+
+                List<string> nombresClaves = LSVcampos.Items.Cast<ListViewItem>().Where(x => x.ImageKey == KEY).Select(x => x.Text).ToList();
+                configuracion.Claves = nombresClaves;
 
                 configuracion.Guardar();
             }
@@ -2536,7 +2539,7 @@ namespace Capibara
                                         item.SubItems.Add(escala);
                                         item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
                                         item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
-                                        if (columnasClave.Contains(colName))
+                                        if (columnasClave.Contains(colName) || configuracion.Claves.Contains(colName))
                                         {
                                             item.ImageKey = KEY;
                                         }
@@ -3844,7 +3847,7 @@ namespace Capibara
             public override string ToString() => Texto;
         }
 
-        private void InicializarConexiones()
+        private void InicializarConexiones(bool cargarDesdeConfiguracion = false)
         {
             conexiones = ConexionesManager.Cargar();
 
@@ -3869,6 +3872,12 @@ namespace Capibara
             }
 
             string nombreConexion = conexiones.First().Key;
+
+            if (cargarDesdeConfiguracion)
+            {
+                conexionActual = configuracion.Conexion;
+            }
+
             // Seleccionar conexión guardada
             if (conexionActual != null)
             {
