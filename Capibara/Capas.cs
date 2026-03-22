@@ -218,6 +218,8 @@ namespace Capibara
 
         public List<string> camposTabla = new List<string>();
 
+        public string ESQUEMA = string.Empty;
+
         public string TABLA = string.Empty;
 
         public string NOMBRE_AMIGABLE = string.Empty;

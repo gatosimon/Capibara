@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Microsoft.Build.Construction;
 
 namespace Capibara
 {
@@ -119,7 +120,7 @@ namespace Capibara
                 CargarCamposAbmDesdeConfiguracion(configuracion.camposModificacion, DGVmodificacion);
                 CargarCamposAbmDesdeConfiguracion(configuracion.camposRecuperacion, DGVrecuperacion);
 
-                CargarComboyTreeView();
+                CargarDatosSolucion();
             }
             catch { }
         }
@@ -203,7 +204,8 @@ namespace Capibara
                 CapibararProyecto();
 
                 configuracion.Conexion = conexionActual;
-                configuracion.Tabla = tabla;
+                configuracion.Tabla = ObtenerTabla(tabla);
+                configuracion.Esquema = ObtenerEsquema(tabla);
                 configuracion.Consulta = TXTgenerarAPartirDeConsulta.Text;
                 configuracion.UltimoNamespaceSeleccionado = TXTespacioDeNombres.Text;
                 configuracion.NombreAmigable = TXTnombreAmigable.Text;
@@ -217,6 +219,7 @@ namespace Capibara
                 configuracion.camposBaja = GuardarCamposAbm(DGVbaja);
                 configuracion.camposModificacion = GuardarCamposAbm(DGVmodificacion);
                 configuracion.camposRecuperacion = GuardarCamposAbm(DGVrecuperacion);
+                configuracion.NombreConexion = CMBnombresConexiones.SelectedIndex == -1 ? CMBnombresConexiones.Text : CMBnombresConexiones.Items[CMBnombresConexiones.SelectedIndex].ToString();
 
                 List<string> nombresClaves = LSVcampos.Items.Cast<ListViewItem>().Where(x => x.ImageKey == KEY).Select(x => x.Text).ToList();
                 configuracion.Claves = nombresClaves;
@@ -264,13 +267,33 @@ namespace Capibara
             LSVcampos.Columns.Add("DEFECTO", 150);
 
             // Fuerzo a que tome el valor de la tabla guardada en la configuración o sino la primera de la primer conexión
-            indice = configuracion.Tabla.Trim().Length > 0 ? CMBtablas.FindStringExact(configuracion.Tabla) : 0;
+            string tabla = $"{(configuracion.Esquema.Length > 0 ? $"{configuracion.Esquema}." : string.Empty)}{configuracion.Tabla}"; 
+
+            indice = configuracion.Tabla.Trim().Length > 0 ? CMBtablas.FindStringExact(tabla) : 0;
             CMBtablas.SelectedIndex = -1;
             cargarCampos = true;
             if (indice > -1 && CMBtablas.Items.Count > 0)
             {
                 CMBtablas.SelectedIndex = indice > -1 ? indice : 0;
                 CMBtablas.Text = CMBtablas.Items[CMBtablas.SelectedIndex].ToString();
+            }
+
+            indice = configuracion.UltimoNamespaceSeleccionado.Trim().Length > 0 ? CMBnamespaces.FindStringExact(configuracion.UltimoNamespaceSeleccionado) : 0;
+            CMBnamespaces.SelectedIndex = -1;
+            cargarCampos = true;
+            if (indice > -1 && CMBnamespaces.Items.Count > 0)
+            {
+                CMBnamespaces.SelectedIndex = indice > -1 ? indice : 0;
+                CMBnamespaces.Text = CMBnamespaces.Items[CMBnamespaces.SelectedIndex].ToString();
+            }
+
+            indice = configuracion.NombreConexion.Trim().Length > 0 ? CMBnombresConexiones.FindStringExact(configuracion.NombreConexion) : 0;
+            CMBnombresConexiones.SelectedIndex = -1;
+            cargarCampos = true;
+            if (indice > -1 && CMBnombresConexiones.Items.Count > 0)
+            {
+                CMBnombresConexiones.SelectedIndex = indice > -1 ? indice : 0;
+                CMBnombresConexiones.Text = CMBnombresConexiones.Items[CMBnombresConexiones.SelectedIndex].ToString();
             }
 
             AsegurarTamañoMinimo();
@@ -339,9 +362,8 @@ namespace Capibara
                 else
                 {
                     // Saco el esquema para las tablas de SQL
-                    string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    tabla = partes[partes.Length - 1];
-                    capas.TABLA = tabla;
+                    capas.ESQUEMA = ObtenerEsquema(tabla);
+                    capas.TABLA = tabla = ObtenerTabla(tabla);
 
                     if (CHKcontrollers.Checked)
                     {
@@ -499,12 +521,10 @@ namespace Capibara
                 {
                     if (TXTespacioDeNombres.Text.Trim().Length == 0)
                     {
-                        //_espacioDeNombres = $"{CMBnamespaces.SelectedText}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
                         _espacioDeNombres = $"{CMBnamespaces.SelectedText}.{capas.NOMBRE_AMIGABLE}";
                     }
                     else
                     {
-                        //_espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{Utilidades.FormatearCadena(TXTnombreAmigable.Text)}";
                         _espacioDeNombres = $"{TXTespacioDeNombres.Text.Trim()}.{capas.NOMBRE_AMIGABLE}";
                     }
                 }
@@ -512,6 +532,7 @@ namespace Capibara
             } 
             set { } 
         }
+
         private string _espacioDeNombres = string.Empty;
 
         private string ArmarControllers(List<DataColumn> claves)
@@ -826,13 +847,13 @@ namespace Capibara
             Modelo.AppendLine();
             Modelo.AppendLine($"namespace { espacioDeNombres }.{ Capas.MODEL}");
             Modelo.AppendLine("{");
-            Modelo.AppendLine($"\t[Table(\"{nombreDeClase}\")]");
+            Modelo.AppendLine($"\t[Table(\"{(capas.ESQUEMA.Length > 0 ? $"{capas.ESQUEMA}." : string.Empty)}{capas.TABLA}\")]");
             Modelo.AppendLine($"\tpublic class {nombreDeClase + Capas.MODEL}");
             Modelo.AppendLine("\t{");
             Modelo.AppendLine("\t\t/// <summary>");
             Modelo.AppendLine("\t\t/// NOMBRE INTERNO DE LA TABLA ASOCIADA AL MODELO");
             Modelo.AppendLine("\t\t/// </summary>");
-            Modelo.AppendLine($"\t\tpublic static readonly string { Capas.TABLE_NAME } = \"{ nombreDeClase }\";");
+            Modelo.AppendLine($"\t\tpublic static readonly string { Capas.TABLE_NAME } = \"{(capas.ESQUEMA.Length > 0 ? $"{capas.ESQUEMA}." : string.Empty)}{capas.TABLA}\";");
             Modelo.AppendLine();
 
             int nroOrdenColumna = 0;
@@ -912,6 +933,7 @@ namespace Capibara
             string nombreDeClase = capas.TABLA;
             string tipoClase = capas.TABLA + origen;
             string nombreClasePrimeraMinuscula = nombreDeClase[0].ToString().ToLower() + nombreDeClase.Substring(1) + Capas.MODEL;
+            string nombreConexion = CMBnombresConexiones.Items.Count > 0 ? CMBnombresConexiones.SelectedIndex > -1 ? CMBnombresConexiones.Items[CMBnombresConexiones.SelectedIndex].ToString() : "DB2_Tributos" : "DB2_Tributos";
             List<string> camposConsulta = (from c in columnas select c.ColumnName).ToList();
             string columnasClave = string.Join(", ", (from c in claves select capas.Tipo(c) + " " + c.ColumnName).ToList());
             List<string[]> clavesConsulta = (from c in claves select new string[] { c.ColumnName, capas.Tipo(c) }).ToList();
@@ -958,7 +980,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"c\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
@@ -1052,7 +1074,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
                     List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                     Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                     Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
@@ -1162,7 +1184,7 @@ namespace Capibara
                         Repositories.AppendLine("\t\t\ttry");
                         Repositories.AppendLine("\t\t\t{");
                         List<DataColumn> columnasUpdate = (from c in columnas where !claves.Contains(c) select c).ToList();
-                        Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                        Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                         Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"UPDATE {{ { capas.NombreTabla } }} ");
                         Repositories.AppendLine($"\t\t\t\t                          SET { string.Join(", ", columnasUpdate.Select(c => c.ColumnName + " = ?")) }");
                         Repositories.AppendLine($"\t\t\t\t                          WHERE { string.Join(", ", claves.Select(c => c.ColumnName + " = ?")) }\";");
@@ -1269,7 +1291,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                     Repositories.AppendLine();
 
                     var campoBaja = camposConsulta.Where(c => c.ToLower().Contains("baja") && c.ToLower().StartsWith("f")).FirstOrDefault();
@@ -1340,7 +1362,7 @@ namespace Capibara
                     Repositories.AppendLine();
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                     Repositories.AppendLine();
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $\"SELECT { string.Join(", ", camposConsulta.ToArray()) } FROM {{ { capas.NombreTabla } }}\";");
                     Repositories.AppendLine();
@@ -1382,7 +1404,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"DB2_Tributos\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", columnas.Select(c => c.ColumnName)) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
 
@@ -2576,7 +2598,6 @@ namespace Capibara
             return camposOk;
         }
 
-
         private static HashSet<string> ObtenerColumnasClave(OdbcConnection conn, string nombreTabla)
         {
             var columnasClave = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -2992,10 +3013,10 @@ namespace Capibara
         private void BTNbuscarSolucion_Click(object sender, EventArgs e)
         {
             OFDlistarDeSolucion.ShowDialog();
-            CargarComboyTreeView();
+            CargarDatosSolucion();
         }
 
-        private void CargarComboyTreeView()
+        private void CargarDatosSolucion()
         {
             if (OFDlistarDeSolucion.FileName.Length > 0)
             {
@@ -3007,6 +3028,8 @@ namespace Capibara
                     desplegarCombo = isActivated && !CHKinsertarEnProyecto.Checked;
                     CargarSolucionPorCarpetas();
                     CMBnamespaces.DroppedDown = desplegarCombo;
+                    CargarNombresConexiones();
+                    CMBnombresConexiones.DroppedDown = desplegarCombo;
                     desplegarCombo = true;
                 }
                 catch (Exception ex)
@@ -3150,6 +3173,77 @@ namespace Capibara
             foreach (Match match in regex.Matches(contenido))
             {
                 yield return match.Groups[1].Value;
+            }
+        }
+
+        private List<string> ObtenerNombresConnectionStrings(string solutionPath)
+        {
+            var nombres = new List<string>();
+
+            // 1. Parsear el .sln
+            var solutionFile = SolutionFile.Parse(solutionPath);
+            string solutionDir = Path.GetDirectoryName(solutionPath);
+
+            foreach (var project in solutionFile.ProjectsInOrder)
+            {
+                // Filtrar carpetas de solución y otros tipos que no son proyectos reales
+                if (project.ProjectType == SolutionProjectType.SolutionFolder)
+                    continue;
+
+                string projectDir = Path.GetDirectoryName(project.AbsolutePath);
+                string webConfigPath = Path.Combine(projectDir, "Web.config");
+
+                if (!File.Exists(webConfigPath))
+                    continue;
+
+                // 2. Parsear el Web.config con XDocument
+                XDocument doc = XDocument.Load(webConfigPath);
+
+                var connectionStringNames = doc
+                    .Descendants("connectionStrings")
+                    .Elements("add")
+                    .Select(e => (string)e.Attribute("name"))
+                    .Where(name => name != null)
+                    .ToList();
+
+                nombres.AddRange(connectionStringNames);
+            }
+
+            return nombres.Distinct().ToList();
+        }
+
+        private string ObtenerTabla(string tabla)
+        {
+            string resultado = string.Empty;
+
+            string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            resultado = partes[partes.Length - 1];
+
+            return resultado;
+        }
+
+        private string ObtenerEsquema(string tabla)
+        {
+            string resultado = string.Empty;
+
+            string[] partes = tabla.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            resultado = partes.Length > 1 ? partes[0] : string.Empty;
+
+            return resultado;
+        }
+
+        private void CargarNombresConexiones()
+        {
+            CMBnombresConexiones.Items.Clear();
+            if (OFDlistarDeSolucion.FileName.Length > 0)
+            {
+                string pathSolucion = OFDlistarDeSolucion.FileName;
+                List<string> connections = ObtenerNombresConnectionStrings(pathSolucion);
+                foreach (string item in connections)
+                {
+                    CMBnombresConexiones.Items.Add(item);
+                }
+                CMBnombresConexiones.DroppedDown = desplegarCombo;
             }
         }
 
@@ -3552,7 +3646,7 @@ namespace Capibara
                 ActualizarGlobalAsax();
 
                 // Refrescar Combo y TreeView
-                CargarComboyTreeView();
+                CargarDatosSolucion();
             }
         }
 

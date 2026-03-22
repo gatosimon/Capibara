@@ -9,8 +9,10 @@ public class Configuracion
 {
     public string PathSolucion { get; set; } = string.Empty;
     public Conexion Conexion { get; set; } = null;
+    public string Esquema { get; set; } = string.Empty;
     public string Tabla { get; set; } = string.Empty;
     public string Consulta { get; set; } = string.Empty;
+    public string NombreConexion { get; set; } = string.Empty;
     public List<string[]> camposAlta { get; set; } = new List<string[]>();
     public List<string[]> camposBaja { get; set; } = new List<string[]>();
     public List<string[]> camposModificacion { get; set; } = new List<string[]>();

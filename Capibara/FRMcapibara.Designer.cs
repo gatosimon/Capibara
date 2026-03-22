@@ -81,13 +81,14 @@ namespace Capibara
             this.GBPaPartirDeConsulta = new System.Windows.Forms.GroupBox();
             this.BTNobtenerEstructura = new System.Windows.Forms.Button();
             this.TXTgenerarAPartirDeConsulta = new System.Windows.Forms.TextBox();
-            this.BTNgenerarDesdeTabla = new Capibara.CustomControls.SplitButton();
             this.CMScapibarar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.TSMdesdeTabla = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMdesdeConsulta = new System.Windows.Forms.ToolStripMenuItem();
             this.SPCclase = new System.Windows.Forms.SplitContainer();
             this.LBLtablaSeleccionada = new System.Windows.Forms.Label();
             this.LSVcampos = new System.Windows.Forms.ListView();
+            this.CMScolumnasClave = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.TSMagregarComoClave = new System.Windows.Forms.ToolStripMenuItem();
             this.IMLTabla = new System.Windows.Forms.ImageList(this.components);
             this.SPCparametros = new System.Windows.Forms.SplitContainer();
             this.BTNquitarCampo = new System.Windows.Forms.Button();
@@ -125,9 +126,10 @@ namespace Capibara
             this.LBLespacioDeNombres = new System.Windows.Forms.Label();
             this.TXTnombreAmigable = new System.Windows.Forms.TextBox();
             this.LBLnombreAmigable = new System.Windows.Forms.Label();
+            this.LBLnombreConexion = new System.Windows.Forms.Label();
+            this.CMBnombresConexiones = new System.Windows.Forms.ComboBox();
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
-            this.CMScolumnasClave = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.TSMagregarComoClave = new System.Windows.Forms.ToolStripMenuItem();
+            this.BTNgenerarDesdeTabla = new Capibara.CustomControls.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -159,6 +161,7 @@ namespace Capibara
             this.SPCclase.Panel1.SuspendLayout();
             this.SPCclase.Panel2.SuspendLayout();
             this.SPCclase.SuspendLayout();
+            this.CMScolumnasClave.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SPCparametros)).BeginInit();
             this.SPCparametros.Panel1.SuspendLayout();
             this.SPCparametros.Panel2.SuspendLayout();
@@ -177,7 +180,6 @@ namespace Capibara
             this.SPCdirectorios.Panel1.SuspendLayout();
             this.SPCdirectorios.Panel2.SuspendLayout();
             this.SPCdirectorios.SuspendLayout();
-            this.CMScolumnasClave.SuspendLayout();
             this.SuspendLayout();
             // 
             // CMBtablas
@@ -208,7 +210,7 @@ namespace Capibara
             // 
             this.LBLdirectorioCapas.AutoSize = true;
             this.LBLdirectorioCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLdirectorioCapas.Location = new System.Drawing.Point(7, 114);
+            this.LBLdirectorioCapas.Location = new System.Drawing.Point(7, 91);
             this.LBLdirectorioCapas.Name = "LBLdirectorioCapas";
             this.LBLdirectorioCapas.Size = new System.Drawing.Size(144, 16);
             this.LBLdirectorioCapas.TabIndex = 2;
@@ -219,7 +221,7 @@ namespace Capibara
             this.TXTpathCapas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TXTpathCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TXTpathCapas.Location = new System.Drawing.Point(195, 111);
+            this.TXTpathCapas.Location = new System.Drawing.Point(195, 88);
             this.TXTpathCapas.Name = "TXTpathCapas";
             this.TXTpathCapas.Size = new System.Drawing.Size(332, 23);
             this.TXTpathCapas.TabIndex = 4;
@@ -229,7 +231,7 @@ namespace Capibara
             // 
             this.BTNdirectorioCapas.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BTNdirectorioCapas.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNdirectorioCapas.Location = new System.Drawing.Point(533, 109);
+            this.BTNdirectorioCapas.Location = new System.Drawing.Point(533, 86);
             this.BTNdirectorioCapas.Name = "BTNdirectorioCapas";
             this.BTNdirectorioCapas.Size = new System.Drawing.Size(39, 27);
             this.BTNdirectorioCapas.TabIndex = 5;
@@ -240,7 +242,7 @@ namespace Capibara
             // BTNbuscarSolucion
             // 
             this.BTNbuscarSolucion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNbuscarSolucion.Location = new System.Drawing.Point(7, 6);
+            this.BTNbuscarSolucion.Location = new System.Drawing.Point(7, 3);
             this.BTNbuscarSolucion.Name = "BTNbuscarSolucion";
             this.BTNbuscarSolucion.Size = new System.Drawing.Size(182, 24);
             this.BTNbuscarSolucion.TabIndex = 0;
@@ -775,21 +777,6 @@ namespace Capibara
             this.TXTgenerarAPartirDeConsulta.Size = new System.Drawing.Size(921, 187);
             this.TXTgenerarAPartirDeConsulta.TabIndex = 0;
             // 
-            // BTNgenerarDesdeTabla
-            // 
-            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
-            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
-            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
-            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
-            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
-            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
-            this.BTNgenerarDesdeTabla.TabIndex = 1;
-            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
-            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
-            // 
             // CMScapibarar
             // 
             this.CMScapibarar.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -861,6 +848,21 @@ namespace Capibara
             this.LSVcampos.TabIndex = 1;
             this.LSVcampos.UseCompatibleStateImageBehavior = false;
             this.LSVcampos.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LSVcampos_MouseDown);
+            // 
+            // CMScolumnasClave
+            // 
+            this.CMScolumnasClave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CMScolumnasClave.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TSMagregarComoClave});
+            this.CMScolumnasClave.Name = "CMScolumnasClave";
+            this.CMScolumnasClave.Size = new System.Drawing.Size(208, 26);
+            // 
+            // TSMagregarComoClave
+            // 
+            this.TSMagregarComoClave.Name = "TSMagregarComoClave";
+            this.TSMagregarComoClave.Size = new System.Drawing.Size(207, 22);
+            this.TSMagregarComoClave.Text = "Agregar como clave";
+            this.TSMagregarComoClave.Click += new System.EventHandler(this.TSMagregarComoClave_Click);
             // 
             // IMLTabla
             // 
@@ -1234,6 +1236,8 @@ namespace Capibara
             // 
             // SPCdirectorios.Panel2
             // 
+            this.SPCdirectorios.Panel2.Controls.Add(this.CMBnombresConexiones);
+            this.SPCdirectorios.Panel2.Controls.Add(this.LBLnombreConexion);
             this.SPCdirectorios.Panel2.Controls.Add(this.TXTespacioDeNombres);
             this.SPCdirectorios.Panel2.Controls.Add(this.LBLespacioDeNombres);
             this.SPCdirectorios.Panel2.Controls.Add(this.TXTnombreAmigable);
@@ -1272,7 +1276,7 @@ namespace Capibara
             this.TXTespacioDeNombres.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TXTespacioDeNombres.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TXTespacioDeNombres.Location = new System.Drawing.Point(195, 39);
+            this.TXTespacioDeNombres.Location = new System.Drawing.Point(195, 32);
             this.TXTespacioDeNombres.Name = "TXTespacioDeNombres";
             this.TXTespacioDeNombres.Size = new System.Drawing.Size(377, 23);
             this.TXTespacioDeNombres.TabIndex = 2;
@@ -1282,7 +1286,7 @@ namespace Capibara
             // 
             this.LBLespacioDeNombres.AutoSize = true;
             this.LBLespacioDeNombres.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLespacioDeNombres.Location = new System.Drawing.Point(7, 42);
+            this.LBLespacioDeNombres.Location = new System.Drawing.Point(7, 35);
             this.LBLespacioDeNombres.Name = "LBLespacioDeNombres";
             this.LBLespacioDeNombres.Size = new System.Drawing.Size(162, 16);
             this.LBLespacioDeNombres.TabIndex = 5;
@@ -1293,7 +1297,7 @@ namespace Capibara
             this.TXTnombreAmigable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TXTnombreAmigable.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TXTnombreAmigable.Location = new System.Drawing.Point(195, 75);
+            this.TXTnombreAmigable.Location = new System.Drawing.Point(195, 60);
             this.TXTnombreAmigable.Name = "TXTnombreAmigable";
             this.TXTnombreAmigable.Size = new System.Drawing.Size(377, 23);
             this.TXTnombreAmigable.TabIndex = 3;
@@ -1302,11 +1306,32 @@ namespace Capibara
             // 
             this.LBLnombreAmigable.AutoSize = true;
             this.LBLnombreAmigable.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLnombreAmigable.Location = new System.Drawing.Point(7, 78);
+            this.LBLnombreAmigable.Location = new System.Drawing.Point(7, 63);
             this.LBLnombreAmigable.Name = "LBLnombreAmigable";
             this.LBLnombreAmigable.Size = new System.Drawing.Size(139, 16);
             this.LBLnombreAmigable.TabIndex = 7;
             this.LBLnombreAmigable.Text = "NOMBRE AMIGABLE:";
+            // 
+            // LBLnombreConexion
+            // 
+            this.LBLnombreConexion.AutoSize = true;
+            this.LBLnombreConexion.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LBLnombreConexion.Location = new System.Drawing.Point(7, 120);
+            this.LBLnombreConexion.Name = "LBLnombreConexion";
+            this.LBLnombreConexion.Size = new System.Drawing.Size(143, 16);
+            this.LBLnombreConexion.TabIndex = 8;
+            this.LBLnombreConexion.Text = "NOMBRE CONEXIÓN?";
+            // 
+            // CMBnombresConexiones
+            // 
+            this.CMBnombresConexiones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CMBnombresConexiones.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CMBnombresConexiones.FormattingEnabled = true;
+            this.CMBnombresConexiones.Location = new System.Drawing.Point(195, 116);
+            this.CMBnombresConexiones.Name = "CMBnombresConexiones";
+            this.CMBnombresConexiones.Size = new System.Drawing.Size(377, 24);
+            this.CMBnombresConexiones.TabIndex = 6;
             // 
             // CMBnamespaces
             // 
@@ -1317,26 +1342,26 @@ namespace Capibara
             this.CMBnamespaces.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.CMBnamespaces.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CMBnamespaces.FormattingEnabled = true;
-            this.CMBnamespaces.Location = new System.Drawing.Point(195, 6);
+            this.CMBnamespaces.Location = new System.Drawing.Point(195, 3);
             this.CMBnamespaces.Name = "CMBnamespaces";
             this.CMBnamespaces.Size = new System.Drawing.Size(377, 24);
             this.CMBnamespaces.TabIndex = 1;
             this.CMBnamespaces.SelectedIndexChanged += new System.EventHandler(this.CMBnamespaces_SelectedIndexChanged);
             // 
-            // CMScolumnasClave
+            // BTNgenerarDesdeTabla
             // 
-            this.CMScolumnasClave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CMScolumnasClave.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TSMagregarComoClave});
-            this.CMScolumnasClave.Name = "CMScolumnasClave";
-            this.CMScolumnasClave.Size = new System.Drawing.Size(208, 26);
-            // 
-            // TSMagregarComoClave
-            // 
-            this.TSMagregarComoClave.Name = "TSMagregarComoClave";
-            this.TSMagregarComoClave.Size = new System.Drawing.Size(207, 22);
-            this.TSMagregarComoClave.Text = "Agregar como clave";
-            this.TSMagregarComoClave.Click += new System.EventHandler(this.TSMagregarComoClave_Click);
+            this.BTNgenerarDesdeTabla.AlwaysDropDown = true;
+            this.BTNgenerarDesdeTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTNgenerarDesdeTabla.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BTNgenerarDesdeTabla.Image = global::Capibara.Properties.Resources.Capibara50x50;
+            this.BTNgenerarDesdeTabla.Location = new System.Drawing.Point(1056, 28);
+            this.BTNgenerarDesdeTabla.Menu = this.CMScapibarar;
+            this.BTNgenerarDesdeTabla.Name = "BTNgenerarDesdeTabla";
+            this.BTNgenerarDesdeTabla.Size = new System.Drawing.Size(97, 113);
+            this.BTNgenerarDesdeTabla.TabIndex = 1;
+            this.BTNgenerarDesdeTabla.Text = "&Capibarar";
+            this.BTNgenerarDesdeTabla.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.BTNgenerarDesdeTabla.UseVisualStyleBackColor = true;
             // 
             // FRMcapibara
             // 
@@ -1390,6 +1415,7 @@ namespace Capibara
             this.SPCclase.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SPCclase)).EndInit();
             this.SPCclase.ResumeLayout(false);
+            this.CMScolumnasClave.ResumeLayout(false);
             this.SPCparametros.Panel1.ResumeLayout(false);
             this.SPCparametros.Panel2.ResumeLayout(false);
             this.SPCparametros.Panel2.PerformLayout();
@@ -1411,7 +1437,6 @@ namespace Capibara
             this.SPCdirectorios.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SPCdirectorios)).EndInit();
             this.SPCdirectorios.ResumeLayout(false);
-            this.CMScolumnasClave.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1510,6 +1535,8 @@ namespace Capibara
         private System.Windows.Forms.CheckBox CHKusarCapiDL;
         private System.Windows.Forms.ContextMenuStrip CMScolumnasClave;
         private System.Windows.Forms.ToolStripMenuItem TSMagregarComoClave;
+        private System.Windows.Forms.ComboBox CMBnombresConexiones;
+        private System.Windows.Forms.Label LBLnombreConexion;
     }
 }
 
