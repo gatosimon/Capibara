@@ -53,18 +53,19 @@ namespace Capibara
                 txtNombre.Text = ConexionActual.Nombre;
                 cmbMotor.SelectedValue = ConexionActual.Motor;
                 txtServidor.Text = ConexionActual.Servidor;
+                txtBaseDatos.Text = ConexionActual.BaseDatos;
+                txtUsuario.Text = ConexionActual.Usuario;
+                txtContrasena.Text = ConexionActual.Contrasena;
+                CHKesWeb.Checked = ConexionActual.EsWeb;
 
                 try
                 {
+                    CargarBasesDeDatos();
                     cmbBaseDatos.SelectedItem = ConexionActual.BaseDatos;
                 }
                 catch
                 {
                 }
-
-                txtBaseDatos.Text = ConexionActual.BaseDatos;
-                txtUsuario.Text = ConexionActual.Usuario;
-                txtContrasena.Text = ConexionActual.Contrasena;
             }
         }
 
@@ -76,10 +77,10 @@ namespace Capibara
             ConexionActual.Nombre = txtNombre.Text.Trim();
             ConexionActual.Motor = (TipoMotor)cmbMotor.SelectedValue;
             ConexionActual.Servidor = txtServidor.Text.Trim();
-            //ConexionActual.BaseDatos = cmbBaseDatos.Visible ? (cmbBaseDatos.Text ?? string.Empty).Trim()  : (txtBaseDatos.Text ?? string.Empty).Trim();
             ConexionActual.BaseDatos = (cmbBaseDatos.Text ?? string.Empty).Trim();
             ConexionActual.Usuario = txtUsuario.Text.Trim();
             ConexionActual.Contrasena = txtContrasena.Text;
+            ConexionActual.EsWeb = CHKesWeb.Checked;
 
             var conexiones = ConexionesManager.Cargar();
             conexiones[ConexionActual.Nombre] = ConexionActual;
@@ -106,24 +107,11 @@ namespace Capibara
                 // DB2: combo de bases
                 if (motor == TipoMotor.DB2)
                 {
-                    //cmbBaseDatos.Visible = true;
                     cmbBaseDatos.Items.Clear();
                     cmbBaseDatos.Items.AddRange(ConexionesManager.BasesDB2);
                     if (cmbBaseDatos.Items.Count > 0)
                         cmbBaseDatos.SelectedIndex = 0;
-
-                    //txtBaseDatos.Visible = false;
-                    //txtBaseDatos.Enabled = false;
-                    //cmbBaseDatos.Enabled = true;
                 }
-                //else
-                //{
-                //    cmbBaseDatos.Visible = false;
-                //    txtBaseDatos.Visible = true;
-                //    txtBaseDatos.Enabled = true;
-                //    cmbBaseDatos.Enabled = false;
-                //}
-
 
                 btnBuscarBase.Enabled = false;
 
@@ -132,15 +120,16 @@ namespace Capibara
 
                 lblContrasena.Visible = true;
                 txtContrasena.Visible = true;
-
-                //lblBaseDatos.Visible = true;
-                //cmbBaseDatos.Visible = (motor == TipoMotor.DB2);
-                //txtBaseDatos.Visible = !cmbBaseDatos.Visible;
             }
             catch { }
         }
 
         private void txtContrasena_Leave(object sender, EventArgs e)
+        {
+            CargarBasesDeDatos();
+        }
+
+        private void CargarBasesDeDatos()
         {
             if (cmbMotor.SelectedValue == null)
                 return;
@@ -160,6 +149,7 @@ namespace Capibara
             stringConnection.Usuario = txtUsuario.Text.Trim();
             stringConnection.Contrasena = txtContrasena.Text;
             stringConnection.Motor = motor;
+            stringConnection.EsWeb = CHKesWeb.Checked;
 
             if (string.IsNullOrWhiteSpace(stringConnection.Servidor) ||
                 string.IsNullOrWhiteSpace(stringConnection.Usuario) ||
@@ -181,7 +171,7 @@ namespace Capibara
                 txtBaseDatos.Visible = false;
                 txtBaseDatos.Enabled = false;
             }
-            catch(Exception err)
+            catch (Exception err)
             {
                 CustomMessageBox.Show(
                     "Ocurrió un error al intentar obtener las bases de datos desde el servidor. Verifique el usuario y la contraseña.",
@@ -255,19 +245,7 @@ namespace Capibara
             stringConnection.Usuario = txtUsuario.Text;
             stringConnection.BaseDatos = cmbBaseDatos.Text;
             stringConnection.Contrasena = txtContrasena.Text;
-
-            //switch (motor)
-            //{
-            //    case TipoMotor.MS_SQL:
-            //        stringConnection =
-            //            $@"Driver={{ODBC Driver 17 for SQL Server}};Server=SQL{txtServidor.Text}\{txtServidor.Text};Database={cmbBaseDatos.Text};Uid={txtUsuario.Text};Pwd={txtContrasena.Text};TrustServerCertificate=yes;";
-            //        break;
-
-            //    case TipoMotor.DB2:
-            //        stringConnection =
-            //            $"Driver={{IBM DB2 ODBC DRIVER}};Database={cmbBaseDatos.Text};Hostname={txtServidor.Text};Port=50000; Protocol=TCPIP;Uid={txtUsuario.Text};Pwd={txtContrasena.Text};";
-            //        break;
-            //}
+            stringConnection.EsWeb = CHKesWeb.Checked;
 
             switch (motor)
             {

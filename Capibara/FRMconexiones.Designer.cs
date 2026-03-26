@@ -62,6 +62,7 @@ namespace Capibara
             this.cmbBaseDatos = new System.Windows.Forms.ComboBox();
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnProbar = new System.Windows.Forms.Button();
+            this.CHKesWeb = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lblNombre
@@ -78,7 +79,7 @@ namespace Capibara
             this.txtNombre.Location = new System.Drawing.Point(120, 12);
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.Size = new System.Drawing.Size(426, 23);
-            this.txtNombre.TabIndex = 1;
+            this.txtNombre.TabIndex = 0;
             // 
             // lblMotor
             // 
@@ -96,7 +97,7 @@ namespace Capibara
             this.cmbMotor.Location = new System.Drawing.Point(120, 42);
             this.cmbMotor.Name = "cmbMotor";
             this.cmbMotor.Size = new System.Drawing.Size(426, 24);
-            this.cmbMotor.TabIndex = 3;
+            this.cmbMotor.TabIndex = 1;
             this.cmbMotor.SelectedIndexChanged += new System.EventHandler(this.cmbMotor_SelectedIndexChanged);
             // 
             // lblServidor
@@ -112,8 +113,8 @@ namespace Capibara
             // 
             this.txtServidor.Location = new System.Drawing.Point(120, 72);
             this.txtServidor.Name = "txtServidor";
-            this.txtServidor.Size = new System.Drawing.Size(426, 23);
-            this.txtServidor.TabIndex = 5;
+            this.txtServidor.Size = new System.Drawing.Size(302, 23);
+            this.txtServidor.TabIndex = 2;
             // 
             // btnBuscarBase
             // 
@@ -121,7 +122,7 @@ namespace Capibara
             this.btnBuscarBase.Location = new System.Drawing.Point(517, 71);
             this.btnBuscarBase.Name = "btnBuscarBase";
             this.btnBuscarBase.Size = new System.Drawing.Size(29, 22);
-            this.btnBuscarBase.TabIndex = 6;
+            this.btnBuscarBase.TabIndex = 4;
             this.btnBuscarBase.Text = "...";
             this.btnBuscarBase.UseVisualStyleBackColor = true;
             this.btnBuscarBase.Visible = false;
@@ -141,7 +142,7 @@ namespace Capibara
             this.txtUsuario.Location = new System.Drawing.Point(120, 102);
             this.txtUsuario.Name = "txtUsuario";
             this.txtUsuario.Size = new System.Drawing.Size(426, 23);
-            this.txtUsuario.TabIndex = 8;
+            this.txtUsuario.TabIndex = 5;
             // 
             // lblContrasena
             // 
@@ -158,7 +159,7 @@ namespace Capibara
             this.txtContrasena.Name = "txtContrasena";
             this.txtContrasena.PasswordChar = '●';
             this.txtContrasena.Size = new System.Drawing.Size(426, 23);
-            this.txtContrasena.TabIndex = 10;
+            this.txtContrasena.TabIndex = 6;
             this.txtContrasena.Leave += new System.EventHandler(this.txtContrasena_Leave);
             // 
             // lblBaseDatos
@@ -184,14 +185,14 @@ namespace Capibara
             this.cmbBaseDatos.Location = new System.Drawing.Point(120, 162);
             this.cmbBaseDatos.Name = "cmbBaseDatos";
             this.cmbBaseDatos.Size = new System.Drawing.Size(426, 24);
-            this.cmbBaseDatos.TabIndex = 13;
+            this.cmbBaseDatos.TabIndex = 7;
             // 
             // btnGuardar
             // 
             this.btnGuardar.Location = new System.Drawing.Point(348, 205);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(198, 52);
-            this.btnGuardar.TabIndex = 15;
+            this.btnGuardar.TabIndex = 9;
             this.btnGuardar.Text = "Guardar Conexión";
             this.btnGuardar.UseVisualStyleBackColor = true;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
@@ -201,14 +202,25 @@ namespace Capibara
             this.btnProbar.Location = new System.Drawing.Point(120, 205);
             this.btnProbar.Name = "btnProbar";
             this.btnProbar.Size = new System.Drawing.Size(198, 52);
-            this.btnProbar.TabIndex = 14;
+            this.btnProbar.TabIndex = 8;
             this.btnProbar.Text = "Probar Conexión";
             this.btnProbar.UseVisualStyleBackColor = true;
             this.btnProbar.Click += new System.EventHandler(this.btnProbar_Click);
             // 
+            // CHKesWeb
+            // 
+            this.CHKesWeb.AutoSize = true;
+            this.CHKesWeb.Location = new System.Drawing.Point(429, 72);
+            this.CHKesWeb.Name = "CHKesWeb";
+            this.CHKesWeb.Size = new System.Drawing.Size(82, 20);
+            this.CHKesWeb.TabIndex = 3;
+            this.CHKesWeb.Text = "Es Web?";
+            this.CHKesWeb.UseVisualStyleBackColor = true;
+            // 
             // FRMconexiones
             // 
             this.ClientSize = new System.Drawing.Size(570, 269);
+            this.Controls.Add(this.CHKesWeb);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnProbar);
             this.Controls.Add(this.cmbBaseDatos);
@@ -238,5 +250,7 @@ namespace Capibara
         }
 
         #endregion
+
+        private CheckBox CHKesWeb;
     }
 }

@@ -17,6 +17,7 @@ namespace Capibara
         public string BaseDatos { get; set; }
         public string Usuario { get; set; }
         public string Contrasena { get; set; }
+        public bool EsWeb { get; set; }
 
         public override string ToString()
         {
@@ -30,7 +31,11 @@ namespace Capibara
             switch (Motor)
             {
                 case TipoMotor.MS_SQL:
-                    if (Servidor.EndsWith("WEB"))
+                    if (EsWeb)
+                    {
+                        stringConnection = $@"Driver={{{driver}}};Server={Servidor};{(baseDeDatos ? $"Database={BaseDatos};" : string.Empty)}Uid={Usuario};Pwd={Contrasena};TrustServerCertificate=yes;";
+                    }
+                    else if (Servidor.EndsWith("WEB"))
                     {
                         stringConnection = $@"Driver={{{driver}}};Server=SQL{Servidor.Replace("WEB", string.Empty)}\{Servidor};Database=;Uid={Usuario};Pwd={Contrasena};TrustServerCertificate=yes;";
                     }
