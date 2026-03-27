@@ -3,18 +3,24 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-// INSTRUCCIÓN: cambiar el namespace por el de la aplicación destino.
 namespace Capibara
 {
     public static class UpdateHelper
     {
         private const string UpdaterFileName = "AutoUpdater.exe";
+        private const string AppFolder = "Capibara";
 
-        /// <summary>
-        /// Busca el recurso embebido cuyo nombre termine en "AutoUpdater.exe",
-        /// independientemente del namespace o subcarpeta con que fue registrado.
-        /// Loguea todos los recursos disponibles para facilitar el diagnóstico.
-        /// </summary>
+        private static string GetUpdaterDir()
+        {
+            string dir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                AppFolder
+            );
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            return dir;
+        }
+
         private static string FindEmbeddedResourceName(Assembly assembly)
         {
             string[] names = assembly.GetManifestResourceNames();
@@ -36,24 +42,20 @@ namespace Capibara
             return null;
         }
 
-        /// <summary>
-        /// Verifica que AutoUpdater.exe exista en el directorio de la app.
-        /// Si no existe o el tamaño difiere respecto al recurso embebido, lo extrae.
-        /// </summary>
-        private static bool EnsureAutoUpdaterExists(string appDir, out string updaterPath)
+        private static bool EnsureAutoUpdaterExists(out string updaterPath)
         {
-            updaterPath = Path.Combine(appDir, UpdaterFileName);
+            string updaterDir = GetUpdaterDir();
+            updaterPath = Path.Combine(updaterDir, UpdaterFileName);
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName = FindEmbeddedResourceName(assembly);
 
             if (resourceName == null)
             {
-                // El recurso no está embebido: usar el archivo si ya existe en disco
                 bool exists = File.Exists(updaterPath);
                 LogToFile(exists
                     ? "Recurso no embebido pero AutoUpdater.exe existe en disco: " + updaterPath
-                    : "Recurso no embebido y AutoUpdater.exe NO existe en disco. No se puede actualizar.");
+                    : "Recurso no embebido y AutoUpdater.exe NO existe. No se puede actualizar.");
                 return exists;
             }
 
@@ -77,7 +79,7 @@ namespace Capibara
                 }
                 else
                 {
-                    LogToFile("AutoUpdater.exe no existe en disco. Se extrae del recurso embebido.");
+                    LogToFile("AutoUpdater.exe no existe. Se extrae del recurso embebido en: " + updaterPath);
                 }
 
                 if (needsExtract)
@@ -105,9 +107,6 @@ namespace Capibara
             return File.Exists(updaterPath);
         }
 
-        /// <summary>
-        /// Extrae AutoUpdater.exe si es necesario y lo lanza.
-        /// </summary>
         public static void CheckForUpdates(string manifestUrl, bool silent = true)
         {
             try
@@ -118,14 +117,14 @@ namespace Capibara
                 LogToFile("ManifestUrl: " + manifestUrl);
 
                 string updaterPath;
-                if (!EnsureAutoUpdaterExists(appDir, out updaterPath))
+                if (!EnsureAutoUpdaterExists(out updaterPath))
                 {
                     LogToFile("No se pudo obtener AutoUpdater.exe. Se omite la verificacion.");
                     return;
                 }
 
                 string appName = Assembly.GetExecutingAssembly().GetName().Name;
-                int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
+                int pid = Process.GetCurrentProcess().Id;
 
                 string args =
                     "--app-name \"" + appName + "\" " +
@@ -137,11 +136,14 @@ namespace Capibara
                 LogToFile("Lanzando: " + updaterPath);
                 LogToFile("Args: " + args);
 
-                System.Diagnostics.Process.Start(new ProcessStartInfo
+                Process.Start(new ProcessStartInfo
                 {
                     FileName = updaterPath,
                     Arguments = args,
-                    UseShellExecute = false
+                    // UseShellExecute = true es OBLIGATORIO para que Windows
+                    // procese el manifiesto UAC y muestre el dialogo de elevacion.
+                    // Con false el proceso hereda el token del padre sin elevar.
+                    UseShellExecute = true
                 });
             }
             catch (Exception ex)
@@ -150,16 +152,13 @@ namespace Capibara
             }
         }
 
-        // ── Log propio del helper (independiente del Logger de AutoUpdater) ──
-
         private static readonly object _logLock = new object();
 
         private static void LogToFile(string message)
         {
             try
             {
-                string appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string logPath = Path.Combine(appDir, "updatehelper.log");
+                string logPath = Path.Combine(GetUpdaterDir(), "updatehelper.log");
                 string line = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + message;
                 lock (_logLock)
                     File.AppendAllText(logPath, line + Environment.NewLine);
@@ -168,7 +167,6 @@ namespace Capibara
         }
     }
 }
-
 
 
 //using System;
