@@ -22,7 +22,7 @@
         "Entry"
         {
         "MsmKey" = "8:_01832EDF56E63F043509D022EFA98EF3"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_08DA3C6151A215529388D1F5DCAD29E8"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_0D5FB01481DF4DF1106D55A6DFE4B3BB"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,7 +58,7 @@
         "Entry"
         {
         "MsmKey" = "8:_11663B49E0B074C18E0173559855197E"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -178,13 +178,13 @@
         "Entry"
         {
         "MsmKey" = "8:_11A10FD64AE48023BD680FB5BA44B7BE"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_176D7F6272D695427EE3C4C559D74D76"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -268,7 +268,7 @@
         "Entry"
         {
         "MsmKey" = "8:_17BF0FCE6B0B92E015AA08084B8512DC"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -291,20 +291,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "MsmKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_229E3F06DF353F81A3CF3CE9B532C5AF"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_23057FA93B6022D1B1102F5A1AA36F70"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -316,13 +316,13 @@
         "Entry"
         {
         "MsmKey" = "8:_232522910AAC67F6A706C56A421D9993"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_24CA84CFBFA4BBDF2DC1AABD634F2339"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -334,7 +334,7 @@
         "Entry"
         {
         "MsmKey" = "8:_282349F7F7FAAED82D9C05D7FC01CB6F"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -346,7 +346,7 @@
         "Entry"
         {
         "MsmKey" = "8:_2BED227917D436834055BB0368232A6A"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -358,7 +358,7 @@
         "Entry"
         {
         "MsmKey" = "8:_2CF9D77E3834523F667B770F36FCA7AF"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -400,7 +400,7 @@
         "Entry"
         {
         "MsmKey" = "8:_2F3DD927D07EEF4484BDCD41D51B679C"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -412,19 +412,19 @@
         "Entry"
         {
         "MsmKey" = "8:_355F42EED6F27BBDCA38522F401D8E27"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_387DA0391FEBEFF8C012478321A7BFB9"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_3A3D90F91FED7E504991DEB7C23C0956"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -436,7 +436,7 @@
         "Entry"
         {
         "MsmKey" = "8:_40541504D552AF00C972710895EE1422"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -448,7 +448,7 @@
         "Entry"
         {
         "MsmKey" = "8:_44284AA139A0E67F0A03F9BCF1507A1A"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -627,12 +627,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_55A5ADFC289779D56F4AF99F0E2EBCF0"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_574EB0227DA9FC285B92AD162E0E2323"
         "OwnerKey" = "8:_71A1EE8B2BBE8A7A45B8DE67FE9EB2DC"
         "MsmSig" = "8:_UNDEFINED"
@@ -640,31 +634,31 @@
         "Entry"
         {
         "MsmKey" = "8:_574EB0227DA9FC285B92AD162E0E2323"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_57558DAF74B7C007D6CAB935B053A5BF"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_637839BD110593039569CA5BA60A7A8A"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_6A801284C12D1CCF0FBAF87F09138765"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_71877A6380E903A99F18B269DD45A3D1"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -676,7 +670,7 @@
         "Entry"
         {
         "MsmKey" = "8:_71A1EE8B2BBE8A7A45B8DE67FE9EB2DC"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -700,13 +694,13 @@
         "Entry"
         {
         "MsmKey" = "8:_77094890EB2AF3FBB0D86A0F35D4C768"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_7BC3BC5353B776008B2F6255A8031BD8"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -718,7 +712,7 @@
         "Entry"
         {
         "MsmKey" = "8:_7CA01464D868FABAF19B5340BE8C2880"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -742,7 +736,7 @@
         "Entry"
         {
         "MsmKey" = "8:_83D60653F9899E65AA0595AEB9D109C3"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -760,7 +754,7 @@
         "Entry"
         {
         "MsmKey" = "8:_866CD1CA8EDFFB3E33632682A9B37600"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -844,7 +838,7 @@
         "Entry"
         {
         "MsmKey" = "8:_90DB18B5B3ACFD67DF0D359D1B20883F"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -856,7 +850,7 @@
         "Entry"
         {
         "MsmKey" = "8:_92CC88AD160EF082812AE718CF38CF36"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -946,7 +940,7 @@
         "Entry"
         {
         "MsmKey" = "8:_94F0EE4A518E0A24A02590124147DCAE"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1006,7 +1000,7 @@
         "Entry"
         {
         "MsmKey" = "8:_98C9EB20934CE24D83F91E867BFFA353"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1018,7 +1012,7 @@
         "Entry"
         {
         "MsmKey" = "8:_9FCE2C741F762FF3AF8CED663E173115"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1030,19 +1024,19 @@
         "Entry"
         {
         "MsmKey" = "8:_A24271A3C7EB4BC8C04C178441CDEC1E"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_A9D61E4F83667FAA5C580CA17B0E069A"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_AD2380E393F5F05D3A3E7D4C0E2E989B"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1156,19 +1150,19 @@
         "Entry"
         {
         "MsmKey" = "8:_B6F3FF27FF8313CF7224FE0AF29561DE"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_B9C62FE90E6C76A81EE514AFC32AEAC1"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C56F751A5EBAF0A34D6AA64164B95CE0"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1192,7 +1186,7 @@
         "Entry"
         {
         "MsmKey" = "8:_D04BE351823BEF7F5EF12B356286DA4A"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1204,7 +1198,7 @@
         "Entry"
         {
         "MsmKey" = "8:_D369E3A6A4122B15ABE52C8ADD3BFF44"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1294,7 +1288,7 @@
         "Entry"
         {
         "MsmKey" = "8:_D4144725AFC94FA14811687803D488F2"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1306,7 +1300,7 @@
         "Entry"
         {
         "MsmKey" = "8:_DAD739FB2321B940EF19BBD4703E5332"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1318,7 +1312,7 @@
         "Entry"
         {
         "MsmKey" = "8:_DC615356BF85D3E7781933BAE6B17479"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1336,13 +1330,13 @@
         "Entry"
         {
         "MsmKey" = "8:_E26ADCD03A6484131307D2D772E021D3"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_E831AC185A83602B37C90143FF3986B3"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1354,7 +1348,7 @@
         "Entry"
         {
         "MsmKey" = "8:_EAA422A5B06B541110C7FFECD611811C"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1366,7 +1360,7 @@
         "Entry"
         {
         "MsmKey" = "8:_EB54A1BE9428CA8423EB3CA9D5D63516"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1384,13 +1378,19 @@
         "Entry"
         {
         "MsmKey" = "8:_EF847D6931369B80405B4002537DB629"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F995E0E48E37A471D4590DCD5219D79F"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_FC1D2028318EC3DED08F3A14149D7F58"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1402,7 +1402,7 @@
         "Entry"
         {
         "MsmKey" = "8:_FDA388C34E93960E0996C3DF4EEC7C71"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1426,7 +1426,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+        "OwnerKey" = "8:_9893B2D0365A3EB238DF9CC514F5FD24"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1BF9DFC0687142B694725D906441061F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1738,7 +1744,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_55A5ADFC289779D56F4AF99F0E2EBCF0"
+        "OwnerKey" = "8:_F995E0E48E37A471D4590DCD5219D79F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1757,12 +1763,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FC1D2028318EC3DED08F3A14149D7F58"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9893B2D0365A3EB238DF9CC514F5FD24"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -2463,37 +2463,6 @@
                     }
                 }
             "SourcePath" = "8:Microsoft.TeamFoundation.Common.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_55A5ADFC289779D56F4AF99F0E2EBCF0"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_55A5ADFC289779D56F4AF99F0E2EBCF0"
-                    {
-                    "Name" = "8:DataLayer.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:DataLayer.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
@@ -3574,6 +3543,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F995E0E48E37A471D4590DCD5219D79F"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:DataLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F995E0E48E37A471D4590DCD5219D79F"
+                    {
+                    "Name" = "8:DataLayer.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:DataLayer.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FC1D2028318EC3DED08F3A14149D7F58"
             {
             "AssemblyRegister" = "3:1"
@@ -3693,7 +3693,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Capibara"
         "ProductCode" = "8:{85580AEF-6BFB-4558-98E7-EDF9A0DC6245}"
-        "PackageCode" = "8:{BB30F00C-F50D-4F91-B6A8-3FFA7E14E27A}"
+        "PackageCode" = "8:{EEF95DDC-F1A7-47E3-A535-E6BD0B7563C3}"
         "UpgradeCode" = "8:{A80B72B0-4E63-4A7E-A2E1-1EBACC21F1CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3710,7 +3710,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:Herramienta de scaffolding para los sistemas de la Municipalidad de Rafaela."
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_C70561C1E5974BF99F912D16CCE6FAA0"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -3813,7 +3813,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_082473FEF25041788D60C02D4CBDFC04"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F4F5FF20E8AD441BBE24B90DA47A34C1"
             {
             "Name" = "8:Capibara"
             "Arguments" = "8:"
@@ -3821,21 +3821,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
-            "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"
-            "WorkingFolder" = "8:_E456F9D293404494BED0F5D6CA933378"
-            "Icon" = "8:_C70561C1E5974BF99F912D16CCE6FAA0"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_0A2FB0C9339B4655BD3257D27F5C9D25"
-            {
-            "Name" = "8:Capibara"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+            "Target" = "8:_1BF9DFC0687142B694725D906441061F"
             "Folder" = "8:_6911A7EACB194CAEAF978C8C862D5A90"
             "WorkingFolder" = "8:_E456F9D293404494BED0F5D6CA933378"
             "Icon" = "8:_C70561C1E5974BF99F912D16CCE6FAA0"
@@ -4250,9 +4236,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1FD7A4E30DFD42FFA668EF63BA3D5B91"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1BF9DFC0687142B694725D906441061F"
             {
-            "SourcePath" = "8:..\\Capibara\\obj\\Debug\\Capibara.exe"
+            "SourcePath" = "8:..\\Capibara\\obj\\Release\\Capibara.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E456F9D293404494BED0F5D6CA933378"

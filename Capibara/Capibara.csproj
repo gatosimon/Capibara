@@ -278,6 +278,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TfsHelper.cs" />
+    <Compile Include="UpdateHelper.cs" />
     <Compile Include="Utilidades.cs" />
     <Compile Include="WaitOverlay.cs">
       <SubType>Form</SubType>
@@ -401,6 +402,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AutoUpdater.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Capibara.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
