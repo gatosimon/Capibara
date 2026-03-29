@@ -13,7 +13,13 @@ namespace Capibara
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            UpdateHelper.CheckForUpdates("https://github.com/gatosimon/CapibaraUpdates/releases/download/v1.0.0.0/version.xml");
+
+            // Si CheckForUpdates devuelve false, se aplicó una actualización
+            // y la versión nueva ya fue relanzada. No continuar con esta instancia.
+            if (!UpdateHelper.CheckForUpdates(
+                    "https://github.com/gatosimon/CapibaraUpdates/releases/latest/download/version.xml"))
+                return;
+
             Application.Run(new FRMcapibara());
         }
     }

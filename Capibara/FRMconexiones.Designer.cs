@@ -63,6 +63,8 @@ namespace Capibara
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnProbar = new System.Windows.Forms.Button();
             this.CHKesWeb = new System.Windows.Forms.CheckBox();
+            this.TXTpuerto = new System.Windows.Forms.TextBox();
+            this.LBLpuerto = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblNombre
@@ -84,7 +86,7 @@ namespace Capibara
             // lblMotor
             // 
             this.lblMotor.AutoSize = true;
-            this.lblMotor.Location = new System.Drawing.Point(12, 45);
+            this.lblMotor.Location = new System.Drawing.Point(12, 46);
             this.lblMotor.Name = "lblMotor";
             this.lblMotor.Size = new System.Drawing.Size(52, 16);
             this.lblMotor.TabIndex = 2;
@@ -103,7 +105,7 @@ namespace Capibara
             // lblServidor
             // 
             this.lblServidor.AutoSize = true;
-            this.lblServidor.Location = new System.Drawing.Point(12, 75);
+            this.lblServidor.Location = new System.Drawing.Point(12, 77);
             this.lblServidor.Name = "lblServidor";
             this.lblServidor.Size = new System.Drawing.Size(68, 16);
             this.lblServidor.TabIndex = 4;
@@ -111,18 +113,18 @@ namespace Capibara
             // 
             // txtServidor
             // 
-            this.txtServidor.Location = new System.Drawing.Point(120, 72);
+            this.txtServidor.Location = new System.Drawing.Point(120, 74);
             this.txtServidor.Name = "txtServidor";
-            this.txtServidor.Size = new System.Drawing.Size(302, 23);
+            this.txtServidor.Size = new System.Drawing.Size(391, 23);
             this.txtServidor.TabIndex = 2;
             // 
             // btnBuscarBase
             // 
             this.btnBuscarBase.Enabled = false;
-            this.btnBuscarBase.Location = new System.Drawing.Point(517, 71);
+            this.btnBuscarBase.Location = new System.Drawing.Point(517, 74);
             this.btnBuscarBase.Name = "btnBuscarBase";
             this.btnBuscarBase.Size = new System.Drawing.Size(29, 22);
-            this.btnBuscarBase.TabIndex = 4;
+            this.btnBuscarBase.TabIndex = 3;
             this.btnBuscarBase.Text = "...";
             this.btnBuscarBase.UseVisualStyleBackColor = true;
             this.btnBuscarBase.Visible = false;
@@ -131,7 +133,7 @@ namespace Capibara
             // lblUsuario
             // 
             this.lblUsuario.AutoSize = true;
-            this.lblUsuario.Location = new System.Drawing.Point(12, 105);
+            this.lblUsuario.Location = new System.Drawing.Point(12, 139);
             this.lblUsuario.Name = "lblUsuario";
             this.lblUsuario.Size = new System.Drawing.Size(62, 16);
             this.lblUsuario.TabIndex = 7;
@@ -139,15 +141,15 @@ namespace Capibara
             // 
             // txtUsuario
             // 
-            this.txtUsuario.Location = new System.Drawing.Point(120, 102);
+            this.txtUsuario.Location = new System.Drawing.Point(120, 136);
             this.txtUsuario.Name = "txtUsuario";
             this.txtUsuario.Size = new System.Drawing.Size(426, 23);
-            this.txtUsuario.TabIndex = 5;
+            this.txtUsuario.TabIndex = 6;
             // 
             // lblContrasena
             // 
             this.lblContrasena.AutoSize = true;
-            this.lblContrasena.Location = new System.Drawing.Point(12, 135);
+            this.lblContrasena.Location = new System.Drawing.Point(12, 170);
             this.lblContrasena.Name = "lblContrasena";
             this.lblContrasena.Size = new System.Drawing.Size(89, 16);
             this.lblContrasena.TabIndex = 9;
@@ -155,17 +157,17 @@ namespace Capibara
             // 
             // txtContrasena
             // 
-            this.txtContrasena.Location = new System.Drawing.Point(120, 132);
+            this.txtContrasena.Location = new System.Drawing.Point(120, 167);
             this.txtContrasena.Name = "txtContrasena";
             this.txtContrasena.PasswordChar = '●';
             this.txtContrasena.Size = new System.Drawing.Size(426, 23);
-            this.txtContrasena.TabIndex = 6;
+            this.txtContrasena.TabIndex = 7;
             this.txtContrasena.Leave += new System.EventHandler(this.txtContrasena_Leave);
             // 
             // lblBaseDatos
             // 
             this.lblBaseDatos.AutoSize = true;
-            this.lblBaseDatos.Location = new System.Drawing.Point(12, 165);
+            this.lblBaseDatos.Location = new System.Drawing.Point(12, 201);
             this.lblBaseDatos.Name = "lblBaseDatos";
             this.lblBaseDatos.Size = new System.Drawing.Size(108, 16);
             this.lblBaseDatos.TabIndex = 11;
@@ -173,7 +175,7 @@ namespace Capibara
             // 
             // txtBaseDatos
             // 
-            this.txtBaseDatos.Location = new System.Drawing.Point(120, 162);
+            this.txtBaseDatos.Location = new System.Drawing.Point(120, 195);
             this.txtBaseDatos.Name = "txtBaseDatos";
             this.txtBaseDatos.Size = new System.Drawing.Size(426, 23);
             this.txtBaseDatos.TabIndex = 12;
@@ -182,27 +184,27 @@ namespace Capibara
             // 
             this.cmbBaseDatos.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbBaseDatos.FormattingEnabled = true;
-            this.cmbBaseDatos.Location = new System.Drawing.Point(120, 162);
+            this.cmbBaseDatos.Location = new System.Drawing.Point(120, 197);
             this.cmbBaseDatos.Name = "cmbBaseDatos";
             this.cmbBaseDatos.Size = new System.Drawing.Size(426, 24);
-            this.cmbBaseDatos.TabIndex = 7;
+            this.cmbBaseDatos.TabIndex = 8;
             // 
             // btnGuardar
             // 
-            this.btnGuardar.Location = new System.Drawing.Point(348, 205);
+            this.btnGuardar.Location = new System.Drawing.Point(348, 238);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(198, 52);
-            this.btnGuardar.TabIndex = 9;
+            this.btnGuardar.TabIndex = 10;
             this.btnGuardar.Text = "Guardar Conexión";
             this.btnGuardar.UseVisualStyleBackColor = true;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
             // btnProbar
             // 
-            this.btnProbar.Location = new System.Drawing.Point(120, 205);
+            this.btnProbar.Location = new System.Drawing.Point(120, 238);
             this.btnProbar.Name = "btnProbar";
             this.btnProbar.Size = new System.Drawing.Size(198, 52);
-            this.btnProbar.TabIndex = 8;
+            this.btnProbar.TabIndex = 9;
             this.btnProbar.Text = "Probar Conexión";
             this.btnProbar.UseVisualStyleBackColor = true;
             this.btnProbar.Click += new System.EventHandler(this.btnProbar_Click);
@@ -210,16 +212,34 @@ namespace Capibara
             // CHKesWeb
             // 
             this.CHKesWeb.AutoSize = true;
-            this.CHKesWeb.Location = new System.Drawing.Point(429, 72);
+            this.CHKesWeb.Location = new System.Drawing.Point(271, 106);
             this.CHKesWeb.Name = "CHKesWeb";
             this.CHKesWeb.Size = new System.Drawing.Size(82, 20);
-            this.CHKesWeb.TabIndex = 3;
+            this.CHKesWeb.TabIndex = 5;
             this.CHKesWeb.Text = "Es Web?";
             this.CHKesWeb.UseVisualStyleBackColor = true;
             // 
+            // TXTpuerto
+            // 
+            this.TXTpuerto.Location = new System.Drawing.Point(120, 105);
+            this.TXTpuerto.Name = "TXTpuerto";
+            this.TXTpuerto.Size = new System.Drawing.Size(129, 23);
+            this.TXTpuerto.TabIndex = 4;
+            // 
+            // LBLpuerto
+            // 
+            this.LBLpuerto.AutoSize = true;
+            this.LBLpuerto.Location = new System.Drawing.Point(12, 108);
+            this.LBLpuerto.Name = "LBLpuerto";
+            this.LBLpuerto.Size = new System.Drawing.Size(57, 16);
+            this.LBLpuerto.TabIndex = 14;
+            this.LBLpuerto.Text = "Puerto:";
+            // 
             // FRMconexiones
             // 
-            this.ClientSize = new System.Drawing.Size(570, 269);
+            this.ClientSize = new System.Drawing.Size(570, 302);
+            this.Controls.Add(this.TXTpuerto);
+            this.Controls.Add(this.LBLpuerto);
             this.Controls.Add(this.CHKesWeb);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnProbar);
@@ -252,5 +272,7 @@ namespace Capibara
         #endregion
 
         private CheckBox CHKesWeb;
+        private TextBox TXTpuerto;
+        private Label LBLpuerto;
     }
 }

@@ -339,9 +339,12 @@ namespace Capibara
                         break;
                 }
 
-                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                string stringConnection = conexionActual.StringConnection();
+                // creo una conexión porque sino CapiDL buscará un stringConnection en la configuración del Capibara que no existe
+                OdbcConnection conexionConsulta = new OdbcConnection(stringConnection);
+                CapiDL.DataBase BaseConsultar = new CapiDL.DataBase(conexionConsulta);
                 BaseConsultar.OpenConnection();
-                DataSet DS = BaseConsultar.DataSet(query);
+                DataSet DS = BaseConsultar. DataSet(query);
 
                 camposConsulta = ObtenerCamposConsulta(consulta, claves, columnasError, DS);
                 BaseConsultar.CloseConnection();
@@ -2415,7 +2418,8 @@ namespace Capibara
                     string tablaSeleccionada = (tabla.Trim().Length > 0 ? tabla : CMBtablas.Items[CMBtablas.SelectedIndex].ToString());
 
                     // CREACION POR CONSULTA
-                    DataLayer.DataBase baseDeDatos = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                    string stringConnection = conexionActual.StringConnection();
+                    CapiDL.DataBase baseDeDatos = new CapiDL.DataBase(new OdbcConnection(stringConnection));
                     baseDeDatos.OpenConnection();
 
                     string consultaConLimite = string.Empty;
@@ -2467,7 +2471,7 @@ namespace Capibara
                         }
                         if (camposOk)
                         {
-                            IDataReader reader = baseDeDatos.DataReader(consulta);
+                            IDataReader reader = baseDeDatos.DataReader(consulta, conexionActual.StringConnection());
                             reader.Read();
 
                             using (reader)
@@ -2480,7 +2484,7 @@ namespace Capibara
                     {
                         #region GENERACION POR TABLA
 
-                        DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                        CapiDL.DataBase BaseConsultar = new CapiDL.DataBase(new OdbcConnection(stringConnection));
                         try
                         {
                             using (var conn = BaseConsultar.Connection)
@@ -2773,7 +2777,7 @@ namespace Capibara
                         break;
                 }
 
-                DataLayer.DataBase BaseConsultar = new DataLayer.DataBase(new OdbcConnection(conexionActual.StringConnection()));
+                CapiDL.DataBase BaseConsultar = new CapiDL.DataBase(new OdbcConnection(conexionActual.StringConnection()));
                 BaseConsultar.OpenConnection();
                 DS = BaseConsultar.DataSet(query);
 

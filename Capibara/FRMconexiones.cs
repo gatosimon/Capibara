@@ -56,6 +56,7 @@ namespace Capibara
                 txtBaseDatos.Text = ConexionActual.BaseDatos;
                 txtUsuario.Text = ConexionActual.Usuario;
                 txtContrasena.Text = ConexionActual.Contrasena;
+                TXTpuerto.Text = ConexionActual.Puerto;
                 CHKesWeb.Checked = ConexionActual.EsWeb;
 
                 try
@@ -80,6 +81,7 @@ namespace Capibara
             ConexionActual.BaseDatos = (cmbBaseDatos.Text ?? string.Empty).Trim();
             ConexionActual.Usuario = txtUsuario.Text.Trim();
             ConexionActual.Contrasena = txtContrasena.Text;
+            ConexionActual.Puerto = TXTpuerto.Text;
             ConexionActual.EsWeb = CHKesWeb.Checked;
 
             var conexiones = ConexionesManager.Cargar();

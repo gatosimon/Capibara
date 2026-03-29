@@ -17,11 +17,12 @@ namespace Capibara
         public string BaseDatos { get; set; }
         public string Usuario { get; set; }
         public string Contrasena { get; set; }
+        public string Puerto { get; set; }
         public bool EsWeb { get; set; }
 
         public override string ToString()
         {
-            return $"Nombre={Nombre}; Motor={Motor}; Servidor={Servidor}; BaseDatos={BaseDatos}; Usuario={Usuario}; Contraseña={Contrasena}";
+            return $"Nombre={Nombre}; Motor={Motor}; Servidor={Servidor}; Puerto={Puerto}; BaseDatos={BaseDatos}; Usuario={Usuario}; Contraseña={Contrasena}; EsWeb={EsWeb}";
         }
 
         public string StringConnection(bool baseDeDatos = true)
@@ -45,10 +46,10 @@ namespace Capibara
                     }
                     break;
                 case TipoMotor.DB2:
-                    stringConnection = $"Driver={{{driver}}};{(baseDeDatos ? $"Database={BaseDatos};" : string.Empty)}Hostname={Servidor};Port=50000; Protocol=TCPIP;Uid={Usuario};Pwd={Contrasena};";
+                    stringConnection = $"Driver={{{driver}}};{(baseDeDatos ? $"Database={BaseDatos};" : string.Empty)}Hostname={Servidor};{(Puerto.Trim().Length > 0 ? $"Port={Puerto};" : string.Empty)}Protocol=TCPIP;Uid={Usuario};Pwd={Contrasena};";
                     break;
                 case TipoMotor.POSTGRES:
-                    stringConnection = $"Driver={{{driver}}};Server={Servidor};Port=5432;Database={(baseDeDatos ? BaseDatos : "postgres")};Uid={Usuario};Pwd={Contrasena};";
+                    stringConnection = $"Driver={{{driver}}};Server={Servidor};{(Puerto.Trim().Length > 0 ? $"Port={Puerto};" : string.Empty)}Database={(baseDeDatos ? BaseDatos : "postgres")};Uid={Usuario};Pwd={Contrasena};";
                     break;
                 case TipoMotor.SQLITE:
                     stringConnection = $"Driver={{{driver}}};Database={Servidor};"; //"Data Source={conexionActual.Servidor};Version=3;";

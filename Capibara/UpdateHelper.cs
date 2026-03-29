@@ -9,13 +9,13 @@ namespace Capibara
     {
         private const string UpdaterFileName = "AutoUpdater.exe";
         private const string AppFolder = "Capibara";
+        private const string SkipUpdateFlagFile = "skip_update_check.flag";
 
         private static string GetUpdaterDir()
         {
             string dir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                AppFolder
-            );
+                AppFolder);
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             return dir;
@@ -24,7 +24,6 @@ namespace Capibara
         private static string FindEmbeddedResourceName(Assembly assembly)
         {
             string[] names = assembly.GetManifestResourceNames();
-
             LogToFile("Recursos embebidos encontrados en el assembly (" + names.Length + "):");
             foreach (string n in names)
                 LogToFile("  -> " + n);
@@ -37,7 +36,6 @@ namespace Capibara
                     return n;
                 }
             }
-
             LogToFile("WARN: No se encontro ningun recurso embebido que termine en " + UpdaterFileName);
             return null;
         }
@@ -107,20 +105,58 @@ namespace Capibara
             return File.Exists(updaterPath);
         }
 
-        public static void CheckForUpdates(string manifestUrl, bool silent = true)
+        /// <summary>
+        /// Verifica si existe el flag que indica que la app acaba de ser actualizada
+        /// y relanzada por AutoUpdater. Si existe, lo elimina y retorna true para
+        /// que la app arranque directamente sin lanzar AutoUpdater de nuevo.
+        /// </summary>
+        private static bool CheckAndClearSkipFlag(string appDir)
+        {
+            try
+            {
+                string flagPath = Path.Combine(appDir, SkipUpdateFlagFile);
+                if (!File.Exists(flagPath)) return false;
+
+                string version = File.ReadAllText(flagPath).Trim();
+                LogToFile("Flag de salto detectado. App recien actualizada a v" + version +
+                          ". Se omite verificacion de actualizaciones.");
+                File.Delete(flagPath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogToFile("Error al verificar flag de salto: " + ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Verifica actualizaciones de forma sincrónica.
+        /// Devuelve true si la app debe continuar su arranque normal.
+        /// Devuelve false si se aplicó una actualización y la app debe cerrarse
+        /// (AutoUpdater ya relanzó la versión nueva).
+        /// </summary>
+        public static bool CheckForUpdates(string manifestUrl, bool silent = true)
         {
             try
             {
                 string appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string appExe = Assembly.GetExecutingAssembly().Location;
                 LogToFile("=== CheckForUpdates iniciado ===");
                 LogToFile("AppDir: " + appDir);
+                LogToFile("AppExe: " + appExe);
                 LogToFile("ManifestUrl: " + manifestUrl);
+
+                // Si la app fue relanzada por AutoUpdater tras una actualización,
+                // saltear el check para no mostrar UAC de nuevo innecesariamente
+                if (CheckAndClearSkipFlag(appDir))
+                    return true;
 
                 string updaterPath;
                 if (!EnsureAutoUpdaterExists(out updaterPath))
                 {
                     LogToFile("No se pudo obtener AutoUpdater.exe. Se omite la verificacion.");
-                    return;
+                    return true;
                 }
 
                 string appName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -130,26 +166,35 @@ namespace Capibara
                     "--app-name \"" + appName + "\" " +
                     "--manifest-url \"" + manifestUrl + "\" " +
                     "--app-dir \"" + appDir + "\" " +
+                    "--app-exe \"" + appExe + "\" " +
                     "--pid " + pid +
                     (silent ? " --silent" : "");
 
                 LogToFile("Lanzando: " + updaterPath);
                 LogToFile("Args: " + args);
 
-                Process.Start(new ProcessStartInfo
+                var psi = new ProcessStartInfo
                 {
                     FileName = updaterPath,
                     Arguments = args,
-                    // UseShellExecute = true es OBLIGATORIO para que Windows
-                    // procese el manifiesto UAC y muestre el dialogo de elevacion.
-                    // Con false el proceso hereda el token del padre sin elevar.
                     UseShellExecute = true,
-                    Verb = "runas" // Esto dispara el cartel de "Desea permitir que esta aplicación..."
-                });
+                    Verb = "runas"
+                };
+
+                Process proc = Process.Start(psi);
+                proc.WaitForExit();
+
+                int exitCode = proc.ExitCode;
+                LogToFile("AutoUpdater termino con ExitCode: " + exitCode);
+
+                // ExitCode 1 = update aplicado, app ya fue relanzada → no continuar
+                // ExitCode 0 = sin update / omitido / error → continuar normalmente
+                return exitCode != 1;
             }
             catch (Exception ex)
             {
                 LogToFile("ERROR en CheckForUpdates: " + ex.Message);
+                return true;
             }
         }
 
