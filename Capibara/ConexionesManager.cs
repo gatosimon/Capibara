@@ -24,7 +24,9 @@ namespace Capibara
                 Motor = TipoMotor.DB2,
                 Nombre = "DB2 - DESARROLLO",
                 Servidor = "133.123.120.120",
-                Usuario = "db2admin"
+                Puerto = "50000",
+                Usuario = "db2admin",
+                EsWeb = false
             });
             ConexionesBase.Add(new Conexion()
             {
@@ -33,7 +35,9 @@ namespace Capibara
                 Motor = TipoMotor.DB2,
                 Nombre = "DB2 - PRODUCCION",
                 Servidor = "SERVER01",
-                Usuario = "db2admin"
+                Puerto = "50000",
+                Usuario = "db2admin",
+                EsWeb = false
             });
             ConexionesBase.Add(new Conexion()
             {
@@ -42,7 +46,9 @@ namespace Capibara
                 Motor = TipoMotor.MS_SQL,
                 Nombre = "SQL - DESARROLLO",
                 Servidor = "DESARROLLO",
-                Usuario = "usuario"
+                Puerto = string.Empty,
+                Usuario = "usuario",
+                EsWeb = false
             });
             ConexionesBase.Add(new Conexion()
             {
@@ -51,7 +57,9 @@ namespace Capibara
                 Motor = TipoMotor.MS_SQL,
                 Nombre = "SQL - PRODUCCION",
                 Servidor = "PRODUCCION",
-                Usuario = "usuario"
+                Puerto = string.Empty,
+                Usuario = "usuario",
+                EsWeb = false
             });
             ConexionesBase.Add(new Conexion()
             {
@@ -60,7 +68,9 @@ namespace Capibara
                 Motor = TipoMotor.MS_SQL,
                 Nombre = "SQL - DESARROLLOWEB",
                 Servidor = "DESARROLLOWEB",
-                Usuario = "usuario"
+                Puerto = string.Empty,
+                Usuario = "usuario",
+                EsWeb = false
             }); 
             #endregion
 

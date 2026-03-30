@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Xml;
 
 namespace Capibara
 {
@@ -10,6 +11,7 @@ namespace Capibara
         private const string UpdaterFileName = "AutoUpdater.exe";
         private const string AppFolder = "Capibara";
         private const string SkipUpdateFlagFile = "skip_update_check.flag";
+        private const string MarkerFileName = "update_marker.xml";
 
         private static string GetUpdaterDir()
         {
@@ -19,6 +21,71 @@ namespace Capibara
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             return dir;
+        }
+        /// <summary>
+        /// Devuelve la versión instalada actualmente según update_marker.xml.
+        /// Si el archivo no existe (primera ejecución antes de la primera actualización),
+        /// devuelve la versión del assembly como fallback.
+        /// </summary>
+        public static string GetInstalledVersion()
+        {
+            try
+            {
+                string appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string markerPath = Path.Combine(appDir, MarkerFileName);
+
+                if (!File.Exists(markerPath))
+                {
+                    // Todavía no se actualizó nunca: usar la versión del assembly
+                    return $"No actualizada aún.\nVersión del ensamblado: {Assembly.GetExecutingAssembly().GetName().Version}";
+                }
+
+                var doc = new XmlDocument();
+                doc.Load(markerPath);
+
+                XmlNode node = doc.SelectSingleNode("/VersionMarker/InstalledVersion");
+                if (node != null && !string.IsNullOrEmpty(node.InnerText))
+                    return node.InnerText.Trim();
+
+                // Nodo no encontrado: fallback al assembly
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+            catch (Exception ex)
+            {
+                LogToFile("Error al leer version instalada: " + ex.Message);
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Devuelve la fecha de la última actualización instalada.
+        /// Devuelve null si nunca se actualizó o si no se puede leer el archivo.
+        /// </summary>
+        public static DateTime? GetInstallDate()
+        {
+            try
+            {
+                string appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string markerPath = Path.Combine(appDir, MarkerFileName);
+
+                if (!File.Exists(markerPath)) return null;
+
+                var doc = new XmlDocument();
+                doc.Load(markerPath);
+
+                XmlNode node = doc.SelectSingleNode("/VersionMarker/InstallDate");
+                if (node == null || string.IsNullOrEmpty(node.InnerText)) return null;
+
+                DateTime date;
+                if (DateTime.TryParse(node.InnerText, out date))
+                    return date;
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private static string FindEmbeddedResourceName(Assembly assembly)

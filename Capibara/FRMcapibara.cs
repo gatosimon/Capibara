@@ -2565,7 +2565,7 @@ namespace Capibara
                                         item.SubItems.Add(escala);
                                         item.SubItems.Add(string.IsNullOrEmpty(aceptaNulos) ? string.Empty : aceptaNulos);
                                         item.SubItems.Add(string.IsNullOrEmpty(defecto) ? string.Empty : defecto);
-                                        if (columnasClave.Contains(colName) || configuracion.Claves.Contains(colName))
+                                        if (columnasClave.Contains(colName) || (configuracion.Claves != null && configuracion.Claves.Contains(colName)))
                                         {
                                             item.ImageKey = KEY;
                                         }
@@ -4075,6 +4075,12 @@ namespace Capibara
             {
                 _itemClicDerecho = LSVcampos.GetItemAt(e.X, e.Y);
             }
+        }
+
+        private void TSMversion_Click(object sender, EventArgs e)
+        {
+            string version = UpdateHelper.GetInstalledVersion();
+            CustomMessageBox.Show($"Versión actual:\n{version}", "INFORMACIÓN DE VERSIÓN", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
