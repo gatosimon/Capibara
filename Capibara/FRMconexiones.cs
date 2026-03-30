@@ -56,7 +56,7 @@ namespace Capibara
                 txtBaseDatos.Text = ConexionActual.BaseDatos;
                 txtUsuario.Text = ConexionActual.Usuario;
                 txtContrasena.Text = ConexionActual.Contrasena;
-                TXTpuerto.Text = ConexionActual.Puerto;
+                txtPuerto.Text = ConexionActual.Puerto;
                 CHKesWeb.Checked = ConexionActual.EsWeb;
 
                 try
@@ -81,7 +81,7 @@ namespace Capibara
             ConexionActual.BaseDatos = (cmbBaseDatos.Text ?? string.Empty).Trim();
             ConexionActual.Usuario = txtUsuario.Text.Trim();
             ConexionActual.Contrasena = txtContrasena.Text;
-            ConexionActual.Puerto = TXTpuerto.Text;
+            ConexionActual.Puerto = txtPuerto.Text;
             ConexionActual.EsWeb = CHKesWeb.Checked;
 
             var conexiones = ConexionesManager.Cargar();
@@ -151,6 +151,7 @@ namespace Capibara
             stringConnection.Usuario = txtUsuario.Text.Trim();
             stringConnection.Contrasena = txtContrasena.Text;
             stringConnection.Motor = motor;
+            stringConnection.Puerto = txtPuerto.Text;
             stringConnection.EsWeb = CHKesWeb.Checked;
 
             if (string.IsNullOrWhiteSpace(stringConnection.Servidor) ||
@@ -247,6 +248,7 @@ namespace Capibara
             stringConnection.Usuario = txtUsuario.Text;
             stringConnection.BaseDatos = cmbBaseDatos.Text;
             stringConnection.Contrasena = txtContrasena.Text;
+            stringConnection.Puerto = txtPuerto.Text;
             stringConnection.EsWeb = CHKesWeb.Checked;
 
             switch (motor)

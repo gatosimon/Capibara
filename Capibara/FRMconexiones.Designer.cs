@@ -63,7 +63,7 @@ namespace Capibara
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnProbar = new System.Windows.Forms.Button();
             this.CHKesWeb = new System.Windows.Forms.CheckBox();
-            this.TXTpuerto = new System.Windows.Forms.TextBox();
+            this.txtPuerto = new System.Windows.Forms.TextBox();
             this.LBLpuerto = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -221,10 +221,10 @@ namespace Capibara
             // 
             // TXTpuerto
             // 
-            this.TXTpuerto.Location = new System.Drawing.Point(120, 105);
-            this.TXTpuerto.Name = "TXTpuerto";
-            this.TXTpuerto.Size = new System.Drawing.Size(129, 23);
-            this.TXTpuerto.TabIndex = 4;
+            this.txtPuerto.Location = new System.Drawing.Point(120, 105);
+            this.txtPuerto.Name = "TXTpuerto";
+            this.txtPuerto.Size = new System.Drawing.Size(129, 23);
+            this.txtPuerto.TabIndex = 4;
             // 
             // LBLpuerto
             // 
@@ -238,7 +238,7 @@ namespace Capibara
             // FRMconexiones
             // 
             this.ClientSize = new System.Drawing.Size(570, 302);
-            this.Controls.Add(this.TXTpuerto);
+            this.Controls.Add(this.txtPuerto);
             this.Controls.Add(this.LBLpuerto);
             this.Controls.Add(this.CHKesWeb);
             this.Controls.Add(this.btnGuardar);
@@ -272,7 +272,7 @@ namespace Capibara
         #endregion
 
         private CheckBox CHKesWeb;
-        private TextBox TXTpuerto;
+        private TextBox txtPuerto;
         private Label LBLpuerto;
     }
 }

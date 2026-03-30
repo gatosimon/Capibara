@@ -983,7 +983,7 @@ namespace Capibara
                     Repositories.AppendLine("\t\t{");
                     Repositories.AppendLine("\t\t\ttry");
                     Repositories.AppendLine("\t\t\t{");
-                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")} \"c\");");
+                    Repositories.AppendLine($"\t\t\t\t{comando} SQLconsulta = new {comando}({(CHKusarCapiDL.Checked ? string.Empty : "string.Empty,")}\"{nombreConexion}\");");
                     Repositories.AppendLine($"\t\t\t\tSQLconsulta.{consultaComando} = $@\"INSERT INTO {{ { capas.NombreTabla } }} ({ string.Join(", ", (from c in columnas select c.ColumnName).ToList()) }) ");
                     Repositories.AppendLine($"\t\t\t\t                          VALUES ({ string.Join(",", Enumerable.Repeat("?", columnas.Count)) })\";");
                     Repositories.AppendLine();
