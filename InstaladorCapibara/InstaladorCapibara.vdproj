@@ -1855,6 +1855,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_17E9D5334D1D41178A94E038ECEF9C4B"
+            {
+            "Name" = "8:Resultado principal from CapibaraInstallerActions (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_1F461C4617654ACFB9899386CE542201"
+            "FileType" = "3:1"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_492F6775_50CB_43F2_A850_9C14216C0080"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:/targetdir=\"[TARGETDIR]\\\""
+            }
             "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E4EC8E4D1D814FA1970744A43779F9C0"
             {
             "Name" = "8:Resultado principal from CapibaraInstallerActions (Active)"
@@ -3698,7 +3712,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_E456F9D293404494BED0F5D6CA933378"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFilesFolder]\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -3725,7 +3739,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Capibara"
         "ProductCode" = "8:{85580AEF-6BFB-4558-98E7-EDF9A0DC6245}"
-        "PackageCode" = "8:{EEF95DDC-F1A7-47E3-A535-E6BD0B7563C3}"
+        "PackageCode" = "8:{741960E1-7838-4E88-9850-E70A5C411201}"
         "UpgradeCode" = "8:{A80B72B0-4E63-4A7E-A2E1-1EBACC21F1CD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -3733,7 +3747,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.1"
-        "Manufacturer" = "8:Capibara"
+        "Manufacturer" = "8:Sergio Núñez"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:Capibara"
