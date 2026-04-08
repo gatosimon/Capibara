@@ -225,6 +225,7 @@ namespace Capibara
                 configuracion.Claves = nombresClaves;
 
                 configuracion.Guardar();
+                CustomMessageBox.Show($"Se generaron con éxito las CapiCapas a partir de la {(generarDesdeConsulta? "consulta" : $"tabla {tabla}")}!!!", CustomMessageBox.INFORMACION, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception err)
             {

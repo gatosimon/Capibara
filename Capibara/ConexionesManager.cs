@@ -11,8 +11,7 @@ namespace Capibara
 
         public static string[] BasesDB2 = new string[] { "CONTABIL", "CONTAICD", "CONTAIMV", "CONTCBEL", "CONTIDS", "DOCUMENT", "GENERAL", "GIS", "HISTABM", "HISTORIC", "INFORMAT", "LICENCIA", "RRHH", "SISUS", "TRIBUTOS" };
 
-        private static readonly string ArchivoXml = "conexiones.xml";
-
+        private static readonly string ArchivoXml = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Capibara", "conexiones.xml");
         public static Dictionary<string, Conexion> Cargar()
         {
             #region CONEXIONES BASICAS
