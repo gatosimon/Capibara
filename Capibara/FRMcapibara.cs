@@ -962,7 +962,7 @@ namespace Capibara
             Repositories.AppendLine("\t{");
 
             string comando = "DataBase";
-            string consultaComando = "Command.CommandText";
+            string consultaComando = "CommandText";
             string parametros = "AddParameter";
             string seguirLeyendo = "SQLconsulta.Read()";
             string cerrarConexion = "SQLconsulta.Connection.Close()";
