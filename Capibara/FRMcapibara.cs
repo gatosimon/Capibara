@@ -579,11 +579,14 @@ namespace Capibara
             #region ALTA
             if (CHKalta.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpPost, Route(\"nuevo\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> alta{nombreDeClase}([FromBody] {tipoClase} nuevo{origen})");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -599,11 +602,14 @@ namespace Capibara
             #region BAJA
             if (CHKbaja.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"baja\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"baja\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"baja\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"baja\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> baja{nombreDeClase}({camposFromUri}, [FromUri] int codigoBaja, [FromUri] string motivoBaja)");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -619,11 +625,14 @@ namespace Capibara
             #region MODIFICACION
             if (CHKmodificacion.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpPut, Route(\"modificacion\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> modificacion{nombreDeClase}([FromBody] {tipoClase} nuevo{origen})");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -639,11 +648,14 @@ namespace Capibara
             #region BUSCAR POR ID
             if (CHKobtenerPorId.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"buscarid\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> obtenerPorId({ camposFromUri })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -667,11 +679,14 @@ namespace Capibara
             #region TODOS
             if (CHKtodos.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"todos\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"todos\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"todos\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"todos\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine("\t\tpublic async Task<Respuesta> obtenerTodos()");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
@@ -694,11 +709,14 @@ namespace Capibara
             #region RECUPERAR
             if (CHKrecuperacion.Checked)
             {
-                Controller.AppendLine("\t\t#if DEBUG");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\")]");
-                Controller.AppendLine("\t\t#else");
-                Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\"), ControlarPermisos]");
-                Controller.AppendLine("\t\t#endif");
+                if (CHKusarControlarPermisos.Checked)
+                {
+                    Controller.AppendLine("\t\t#if DEBUG");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\")]");
+                    Controller.AppendLine("\t\t#else");
+                    Controller.AppendLine("\t\t[HttpGet, Route(\"recuperar\"), ControlarPermisos]");
+                    Controller.AppendLine("\t\t#endif"); 
+                }
                 Controller.AppendLine($"\t\tpublic async Task<Respuesta> recuperar{ nombreDeClase }({ camposFromUri })");
                 Controller.AppendLine("\t\t{");
                 Controller.AppendLine("\t\t\tRespuesta rta = new Respuesta();");
