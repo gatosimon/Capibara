@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.IO;
+
 namespace Capibara
 {
     partial class FRMcapibara
@@ -69,6 +71,7 @@ namespace Capibara
             this.CHKbaja = new System.Windows.Forms.CheckBox();
             this.CHKalta = new System.Windows.Forms.CheckBox();
             this.GPBajustes = new System.Windows.Forms.GroupBox();
+            this.CHKusarControlarPermisos = new System.Windows.Forms.CheckBox();
             this.CHKusarCapiDL = new System.Windows.Forms.CheckBox();
             this.CHKmostrarOverlayEnIicio = new System.Windows.Forms.CheckBox();
             this.CHKtryOrIf = new System.Windows.Forms.CheckBox();
@@ -132,7 +135,6 @@ namespace Capibara
             this.CMBnamespaces = new Capibara.CustomControls.BoldComboBox();
             this.MSTmenu = new System.Windows.Forms.MenuStrip();
             this.TSMversion = new System.Windows.Forms.ToolStripMenuItem();
-            this.CHKusarControlarPermisos = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.SPCseparador)).BeginInit();
             this.SPCseparador.Panel1.SuspendLayout();
             this.SPCseparador.Panel2.SuspendLayout();
@@ -229,7 +231,6 @@ namespace Capibara
             this.TXTpathCapas.Name = "TXTpathCapas";
             this.TXTpathCapas.Size = new System.Drawing.Size(332, 23);
             this.TXTpathCapas.TabIndex = 4;
-            this.TXTpathCapas.Text = "C:\\temp\\";
             // 
             // BTNdirectorioCapas
             // 
@@ -625,6 +626,20 @@ namespace Capibara
             this.GPBajustes.TabIndex = 0;
             this.GPBajustes.TabStop = false;
             this.GPBajustes.Text = "AJUSTES";
+            // 
+            // CHKusarControlarPermisos
+            // 
+            this.CHKusarControlarPermisos.AutoSize = true;
+            this.CHKusarControlarPermisos.Checked = true;
+            this.CHKusarControlarPermisos.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHKusarControlarPermisos.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CHKusarControlarPermisos.Location = new System.Drawing.Point(8, 147);
+            this.CHKusarControlarPermisos.Name = "CHKusarControlarPermisos";
+            this.CHKusarControlarPermisos.Size = new System.Drawing.Size(178, 20);
+            this.CHKusarControlarPermisos.TabIndex = 4;
+            this.CHKusarControlarPermisos.Text = "Usar ControlarPermisos";
+            this.TTPusarTryOrIf.SetToolTip(this.CHKusarControlarPermisos, "Indica si el back usara la cada de datos CapiDL");
+            this.CHKusarControlarPermisos.UseVisualStyleBackColor = true;
             // 
             // CHKusarCapiDL
             // 
@@ -1384,20 +1399,6 @@ namespace Capibara
             this.TSMversion.Size = new System.Drawing.Size(92, 20);
             this.TSMversion.Text = "Versión actual";
             this.TSMversion.Click += new System.EventHandler(this.TSMversion_Click);
-            // 
-            // CHKusarControlarPermisos
-            // 
-            this.CHKusarControlarPermisos.AutoSize = true;
-            this.CHKusarControlarPermisos.Checked = true;
-            this.CHKusarControlarPermisos.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHKusarControlarPermisos.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CHKusarControlarPermisos.Location = new System.Drawing.Point(8, 147);
-            this.CHKusarControlarPermisos.Name = "CHKusarControlarPermisos";
-            this.CHKusarControlarPermisos.Size = new System.Drawing.Size(178, 20);
-            this.CHKusarControlarPermisos.TabIndex = 4;
-            this.CHKusarControlarPermisos.Text = "Usar ControlarPermisos";
-            this.TTPusarTryOrIf.SetToolTip(this.CHKusarControlarPermisos, "Indica si el back usara la cada de datos CapiDL");
-            this.CHKusarControlarPermisos.UseVisualStyleBackColor = true;
             // 
             // FRMcapibara
             // 

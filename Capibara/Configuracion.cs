@@ -21,7 +21,7 @@ public class Configuracion
     public string NombreAmigable { get; set; } = string.Empty;
     public string CarpetaDestino { get; set; } = string.Empty;
     public string OrigenDeDatosMsSQL { get; set; } = string.Empty;
-    public string RutaPorDefectoResultados { get; set; } = @"C:\Temp\";
+    public string RutaPorDefectoResultados { get; set; } = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Capibara\Temp\";
     public bool MostrarOverlayEnInicio { get; set; } = false;
     public bool InsertarEnProyecto { get; set; } = true;
     public List<string> Claves { get; set; }
@@ -34,7 +34,7 @@ public class Configuracion
     {
         get
         {
-            string carpeta = AppDomain.CurrentDomain.BaseDirectory + @"\Configuracion\";
+            string carpeta = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Capibara\Configuracion\";
             if (!Directory.Exists(carpeta))
             {
                 Directory.CreateDirectory(carpeta);

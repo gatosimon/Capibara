@@ -49,6 +49,7 @@ namespace Capibara
             capas = new Capas(this);
             configuracion = Configuracion.Cargar();
             desplegarCombo = false;
+            TXTpathCapas.Text = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Capibara\Temp\";
             overlay = new WaitOverlay(this);
             Utilidades.IniciarDeteccionDispositivos(this);
             Utilidades.ReproducirIntro();
